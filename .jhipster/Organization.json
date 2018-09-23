@@ -1,0 +1,182 @@
+{
+    "name": "Organization",
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "phone",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "siteTitle",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "tagLine",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "logoURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "logoURLMobile",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "favIconURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "mobileIconURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "baiduVerificationCode",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "bingVerificationCode",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "googleVerificationCode",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "yandexVerificationCode",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "facebookURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "twitterURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "instagramURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "linkedInURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "pinterestURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "youTubeURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "googlePlusURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "githubURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "facebookPageAccessToken",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "gaTrackingCode",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "githubClientId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "githubClientSecret",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "twitterClientId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "twitterClientSecret",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "facebookClientId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "facebookClientSecret",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "googleClientId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "googleClientSecret",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "linkedInClientId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "linkedInClientSecret",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "instagramClientId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "instagramClientSecret",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "mailchimpAPIKey",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "siteLanguage",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "timeZone",
+            "fieldType": "String"
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20180923010442",
+    "entityTableName": "organization",
+    "dto": "mapstruct",
+    "pagination": "pagination",
+    "service": "serviceImpl",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "core",
+    "applications": "*",
+    "microserviceName": "core",
+    "searchEngine": "elasticsearch"
+}
