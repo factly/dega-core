@@ -163,6 +163,9 @@ public class OrganizationResourceIntTest {
     private static final String DEFAULT_TIME_ZONE = "AAAAAAAAAA";
     private static final String UPDATED_TIME_ZONE = "BBBBBBBBBB";
 
+    private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
+    private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
+
     @Autowired
     private OrganizationRepository organizationRepository;
 
@@ -250,7 +253,8 @@ public class OrganizationResourceIntTest {
             .instagramClientSecret(DEFAULT_INSTAGRAM_CLIENT_SECRET)
             .mailchimpAPIKey(DEFAULT_MAILCHIMP_API_KEY)
             .siteLanguage(DEFAULT_SITE_LANGUAGE)
-            .timeZone(DEFAULT_TIME_ZONE);
+            .timeZone(DEFAULT_TIME_ZONE)
+            .clientId(DEFAULT_CLIENT_ID);
         return organization;
     }
 
@@ -314,6 +318,7 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getMailchimpAPIKey()).isEqualTo(DEFAULT_MAILCHIMP_API_KEY);
         assertThat(testOrganization.getSiteLanguage()).isEqualTo(DEFAULT_SITE_LANGUAGE);
         assertThat(testOrganization.getTimeZone()).isEqualTo(DEFAULT_TIME_ZONE);
+        assertThat(testOrganization.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -396,6 +401,24 @@ public class OrganizationResourceIntTest {
     }
 
     @Test
+    public void checkClientIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = organizationRepository.findAll().size();
+        // set the field null
+        organization.setClientId(null);
+
+        // Create the Organization, which fails.
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        restOrganizationMockMvc.perform(post("/api/organizations")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllOrganizations() throws Exception {
         // Initialize the database
         organizationRepository.save(organization);
@@ -443,7 +466,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].instagramClientSecret").value(hasItem(DEFAULT_INSTAGRAM_CLIENT_SECRET.toString())))
             .andExpect(jsonPath("$.[*].mailchimpAPIKey").value(hasItem(DEFAULT_MAILCHIMP_API_KEY.toString())))
             .andExpect(jsonPath("$.[*].siteLanguage").value(hasItem(DEFAULT_SITE_LANGUAGE.toString())))
-            .andExpect(jsonPath("$.[*].timeZone").value(hasItem(DEFAULT_TIME_ZONE.toString())));
+            .andExpect(jsonPath("$.[*].timeZone").value(hasItem(DEFAULT_TIME_ZONE.toString())))
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
     }
     
     @Test
@@ -494,7 +518,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.instagramClientSecret").value(DEFAULT_INSTAGRAM_CLIENT_SECRET.toString()))
             .andExpect(jsonPath("$.mailchimpAPIKey").value(DEFAULT_MAILCHIMP_API_KEY.toString()))
             .andExpect(jsonPath("$.siteLanguage").value(DEFAULT_SITE_LANGUAGE.toString()))
-            .andExpect(jsonPath("$.timeZone").value(DEFAULT_TIME_ZONE.toString()));
+            .andExpect(jsonPath("$.timeZone").value(DEFAULT_TIME_ZONE.toString()))
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()));
     }
 
     @Test
@@ -552,7 +577,8 @@ public class OrganizationResourceIntTest {
             .instagramClientSecret(UPDATED_INSTAGRAM_CLIENT_SECRET)
             .mailchimpAPIKey(UPDATED_MAILCHIMP_API_KEY)
             .siteLanguage(UPDATED_SITE_LANGUAGE)
-            .timeZone(UPDATED_TIME_ZONE);
+            .timeZone(UPDATED_TIME_ZONE)
+            .clientId(UPDATED_CLIENT_ID);
         OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
 
         restOrganizationMockMvc.perform(put("/api/organizations")
@@ -603,6 +629,7 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getMailchimpAPIKey()).isEqualTo(UPDATED_MAILCHIMP_API_KEY);
         assertThat(testOrganization.getSiteLanguage()).isEqualTo(UPDATED_SITE_LANGUAGE);
         assertThat(testOrganization.getTimeZone()).isEqualTo(UPDATED_TIME_ZONE);
+        assertThat(testOrganization.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -698,7 +725,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].instagramClientSecret").value(hasItem(DEFAULT_INSTAGRAM_CLIENT_SECRET.toString())))
             .andExpect(jsonPath("$.[*].mailchimpAPIKey").value(hasItem(DEFAULT_MAILCHIMP_API_KEY.toString())))
             .andExpect(jsonPath("$.[*].siteLanguage").value(hasItem(DEFAULT_SITE_LANGUAGE.toString())))
-            .andExpect(jsonPath("$.[*].timeZone").value(hasItem(DEFAULT_TIME_ZONE.toString())));
+            .andExpect(jsonPath("$.[*].timeZone").value(hasItem(DEFAULT_TIME_ZONE.toString())))
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
     }
 
     @Test

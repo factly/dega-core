@@ -140,6 +140,10 @@ public class Organization implements Serializable {
     @Field("time_zone")
     private String timeZone;
 
+    @NotNull
+    @Field("client_id")
+    private String clientId;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -655,6 +659,19 @@ public class Organization implements Serializable {
     public void setTimeZone(String timeZone) {
         this.timeZone = timeZone;
     }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public Organization clientId(String clientId) {
+        this.clientId = clientId;
+        return this;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -720,6 +737,7 @@ public class Organization implements Serializable {
             ", mailchimpAPIKey='" + getMailchimpAPIKey() + "'" +
             ", siteLanguage='" + getSiteLanguage() + "'" +
             ", timeZone='" + getTimeZone() + "'" +
+            ", clientId='" + getClientId() + "'" +
             "}";
     }
 }

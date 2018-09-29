@@ -92,6 +92,9 @@ public class OrganizationDTO implements Serializable {
 
     private String timeZone;
 
+    @NotNull
+    private String clientId;
+
     public String getId() {
         return id;
     }
@@ -412,6 +415,14 @@ public class OrganizationDTO implements Serializable {
         this.timeZone = timeZone;
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -476,6 +487,7 @@ public class OrganizationDTO implements Serializable {
             ", mailchimpAPIKey='" + getMailchimpAPIKey() + "'" +
             ", siteLanguage='" + getSiteLanguage() + "'" +
             ", timeZone='" + getTimeZone() + "'" +
+            ", clientId='" + getClientId() + "'" +
             "}";
     }
 }

@@ -1,5 +1,7 @@
 {
-    "name": "Organization",
+    "fluentMethods": true,
+    "clientRootFolder": "core",
+    "relationships": [],
     "fields": [
         {
             "fieldName": "name",
@@ -165,18 +167,21 @@
         {
             "fieldName": "timeZone",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "clientId",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
-    "relationships": [],
     "changelogDate": "20180923010442",
-    "entityTableName": "organization",
     "dto": "mapstruct",
-    "pagination": "pagination",
+    "searchEngine": "elasticsearch",
     "service": "serviceImpl",
+    "entityTableName": "organization",
     "jpaMetamodelFiltering": false,
-    "fluentMethods": true,
-    "clientRootFolder": "core",
-    "applications": "*",
-    "microserviceName": "core",
-    "searchEngine": "elasticsearch"
+    "pagination": "pagination",
+    "microserviceName": "core"
 }
