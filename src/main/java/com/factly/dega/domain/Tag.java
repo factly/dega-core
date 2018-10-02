@@ -31,6 +31,9 @@ public class Tag implements Serializable {
     @Field("description")
     private String description;
 
+    @Field("meta")
+    private String meta;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -78,6 +81,19 @@ public class Tag implements Serializable {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public String getMeta() {
+        return meta;
+    }
+
+    public Tag meta(String meta) {
+        this.meta = meta;
+        return this;
+    }
+
+    public void setMeta(String meta) {
+        this.meta = meta;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -107,6 +123,7 @@ public class Tag implements Serializable {
             ", name='" + getName() + "'" +
             ", slug='" + getSlug() + "'" +
             ", description='" + getDescription() + "'" +
+            ", meta='" + getMeta() + "'" +
             "}";
     }
 }

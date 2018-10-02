@@ -19,6 +19,8 @@ public class TagDTO implements Serializable {
 
     private String description;
 
+    private String meta;
+
     public String getId() {
         return id;
     }
@@ -51,6 +53,14 @@ public class TagDTO implements Serializable {
         this.description = description;
     }
 
+    public String getMeta() {
+        return meta;
+    }
+
+    public void setMeta(String meta) {
+        this.meta = meta;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -79,6 +89,7 @@ public class TagDTO implements Serializable {
             ", name='" + getName() + "'" +
             ", slug='" + getSlug() + "'" +
             ", description='" + getDescription() + "'" +
+            ", meta='" + getMeta() + "'" +
             "}";
     }
 }

@@ -20,6 +20,10 @@
         {
             "fieldName": "description",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "meta",
+            "fieldType": "String"
         }
     ],
     "dto": "mapstruct",

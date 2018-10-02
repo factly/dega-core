@@ -55,6 +55,9 @@ public class TagResourceIntTest {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
+    private static final String DEFAULT_META = "AAAAAAAAAA";
+    private static final String UPDATED_META = "BBBBBBBBBB";
+
     @Autowired
     private TagRepository tagRepository;
 
@@ -106,7 +109,8 @@ public class TagResourceIntTest {
         Tag tag = new Tag()
             .name(DEFAULT_NAME)
             .slug(DEFAULT_SLUG)
-            .description(DEFAULT_DESCRIPTION);
+            .description(DEFAULT_DESCRIPTION)
+            .meta(DEFAULT_META);
         return tag;
     }
 
@@ -134,6 +138,7 @@ public class TagResourceIntTest {
         assertThat(testTag.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testTag.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testTag.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testTag.getMeta()).isEqualTo(DEFAULT_META);
 
         // Validate the Tag in Elasticsearch
         verify(mockTagSearchRepository, times(1)).save(testTag);
@@ -209,7 +214,8 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(tag.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
+            .andExpect(jsonPath("$.[*].meta").value(hasItem(DEFAULT_META.toString())));
     }
     
     @Test
@@ -224,7 +230,8 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.id").value(tag.getId()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
-            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
+            .andExpect(jsonPath("$.meta").value(DEFAULT_META.toString()));
     }
 
     @Test
@@ -246,7 +253,8 @@ public class TagResourceIntTest {
         updatedTag
             .name(UPDATED_NAME)
             .slug(UPDATED_SLUG)
-            .description(UPDATED_DESCRIPTION);
+            .description(UPDATED_DESCRIPTION)
+            .meta(UPDATED_META);
         TagDTO tagDTO = tagMapper.toDto(updatedTag);
 
         restTagMockMvc.perform(put("/api/tags")
@@ -261,6 +269,7 @@ public class TagResourceIntTest {
         assertThat(testTag.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testTag.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testTag.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testTag.getMeta()).isEqualTo(UPDATED_META);
 
         // Validate the Tag in Elasticsearch
         verify(mockTagSearchRepository, times(1)).save(testTag);
@@ -320,7 +329,8 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(tag.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
+            .andExpect(jsonPath("$.[*].meta").value(hasItem(DEFAULT_META.toString())));
     }
 
     @Test
