@@ -1,0 +1,48 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.factly.dega",
+      "nativeLanguage": "en"
+    },
+    "jhipsterVersion": "5.3.4",
+    "applicationType": "microservice",
+    "baseName": "core",
+    "packageName": "com.factly.dega",
+    "packageFolder": "com/factly/dega",
+    "serverPort": "8082",
+    "authenticationType": "oauth2",
+    "cacheProvider": "hazelcast",
+    "enableHibernateCache": false,
+    "websocket": false,
+    "databaseType": "mongodb",
+    "devDatabaseType": "mongodb",
+    "prodDatabaseType": "mongodb",
+    "searchEngine": "elasticsearch",
+    "messageBroker": false,
+    "serviceDiscoveryType": "consul",
+    "buildTool": "gradle",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "YzdjOTRjODE3Njk4NjJiOGNlMTNmNmU0ODQwOWVmOTNjNzk2N2FhYzczYTg5Y2FiNGMwMDE5NmJkNzlhZTliMGYzNWYzMGE0ZTk5MDFmMDI1ZDY5NDQwMzEzNmUxODA4MDVjZTM2YjdmMzk4MGE2NjUwMzAxOWRjMDQyZTU4ODE=",
+    "enableTranslation": true,
+    "languages": [
+      "en",
+      "hi",
+      "es"
+    ],
+    "testFrameworks": [
+      "gatling",
+      "cucumber"
+    ],
+    "jhiPrefix": "jhi",
+    "otherModules": [
+      {
+        "name": "generator-jhipster-audit-helper",
+        "version": "1.0.3"
+      }
+    ],
+    "clientPackageManager": "npm",
+    "nativeLanguage": "en",
+    "skipClient": true,
+    "skipUserManagement": true
+  }
+}

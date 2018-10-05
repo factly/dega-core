@@ -1,0 +1,8 @@
+version: '2'
+services:
+    core-mongodb:
+        image: mongo:3.6.3
+        ports:
+            - "27017:27017"
+        # volumes:
+        #     - ~/volumes/jhipster/core/mongodb/:/data/db/
