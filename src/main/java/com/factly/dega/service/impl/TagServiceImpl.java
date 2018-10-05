@@ -46,6 +46,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDTO save(TagDTO tagDTO) {
         log.debug("Request to save Tag : {}", tagDTO);
+
         Tag tag = tagMapper.toEntity(tagDTO);
         tag = tagRepository.save(tag);
         TagDTO result = tagMapper.toDto(tag);

@@ -12,4 +12,13 @@ import org.mapstruct.*;
 public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organization> {
 
 
+
+    default Organization fromId(String id) {
+        if (id == null) {
+            return null;
+        }
+        Organization organization = new Organization();
+        organization.setId(id);
+        return organization;
+    }
 }

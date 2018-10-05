@@ -12,4 +12,13 @@ import org.mapstruct.*;
 public interface TagMapper extends EntityMapper<TagDTO, Tag> {
 
 
+
+    default Tag fromId(String id) {
+        if (id == null) {
+            return null;
+        }
+        Tag tag = new Tag();
+        tag.setId(id);
+        return tag;
+    }
 }
