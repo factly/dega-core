@@ -12,4 +12,13 @@ import org.mapstruct.*;
 public interface PostMapper extends EntityMapper<PostDTO, Post> {
 
 
+
+    default Post fromId(String id) {
+        if (id == null) {
+            return null;
+        }
+        Post post = new Post();
+        post.setId(id);
+        return post;
+    }
 }

@@ -46,6 +46,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public PostDTO save(PostDTO postDTO) {
         log.debug("Request to save Post : {}", postDTO);
+
         Post post = postMapper.toEntity(postDTO);
         post = postRepository.save(post);
         PostDTO result = postMapper.toDto(post);

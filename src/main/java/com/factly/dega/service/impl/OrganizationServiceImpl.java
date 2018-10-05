@@ -46,6 +46,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     @Override
     public OrganizationDTO save(OrganizationDTO organizationDTO) {
         log.debug("Request to save Organization : {}", organizationDTO);
+
         Organization organization = organizationMapper.toEntity(organizationDTO);
         organization = organizationRepository.save(organization);
         OrganizationDTO result = organizationMapper.toDto(organization);
