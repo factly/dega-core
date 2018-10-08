@@ -29,6 +29,19 @@ public class Post implements Serializable {
     @Field("client_id")
     private String clientId;
 
+    @Field("category")
+    private Category category;
+
+    public Category getCategory() {
+        return category;
+    }
+
+
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;

@@ -4,6 +4,8 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.factly.dega.domain.Category;
+
 /**
  * A DTO for the Post entity.
  */
@@ -16,6 +18,16 @@ public class PostDTO implements Serializable {
 
     @NotNull
     private String clientId;
+
+    private Category category;
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
     public String getId() {
         return id;
