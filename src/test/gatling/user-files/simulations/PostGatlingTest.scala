@@ -76,7 +76,7 @@ class PostGatlingTest extends Simulation {
             .exec(http("Create new post")
             .post("/core/api/posts")
             .headers(headers_http_authenticated)
-            .body(StringBody("""{"id":null, "title":"SAMPLE_TEXT", "clientId":"SAMPLE_TEXT"}""")).asJSON
+            .body(StringBody("""{"id":null, "title":"SAMPLE_TEXT", "clientId":"SAMPLE_TEXT", "content":"SAMPLE_TEXT"}""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_post_url"))).exitHereIfFailed
             .pause(10)
