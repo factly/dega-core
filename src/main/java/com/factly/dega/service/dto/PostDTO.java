@@ -19,15 +19,8 @@ public class PostDTO implements Serializable {
     @NotNull
     private String clientId;
 
-    private Category category;
-
-    public Category getCategory() {
-        return category;
-    }
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
+    @NotNull
+    private String content;
 
     public String getId() {
         return id;
@@ -51,6 +44,14 @@ public class PostDTO implements Serializable {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
     }
 
     @Override
@@ -80,6 +81,7 @@ public class PostDTO implements Serializable {
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
             ", clientId='" + getClientId() + "'" +
+            ", content='" + getContent() + "'" +
             "}";
     }
 }

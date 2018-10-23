@@ -52,6 +52,9 @@ public class PostResourceIntTest {
     private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
     private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
 
+    private static final String DEFAULT_CONTENT = "AAAAAAAAAA";
+    private static final String UPDATED_CONTENT = "BBBBBBBBBB";
+
     @Autowired
     private PostRepository postRepository;
 
@@ -102,7 +105,8 @@ public class PostResourceIntTest {
     public static Post createEntity() {
         Post post = new Post()
             .title(DEFAULT_TITLE)
-            .clientId(DEFAULT_CLIENT_ID);
+            .clientId(DEFAULT_CLIENT_ID)
+            .content(DEFAULT_CONTENT);
         return post;
     }
 
@@ -129,6 +133,7 @@ public class PostResourceIntTest {
         Post testPost = postList.get(postList.size() - 1);
         assertThat(testPost.getTitle()).isEqualTo(DEFAULT_TITLE);
         assertThat(testPost.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
+        assertThat(testPost.getContent()).isEqualTo(DEFAULT_CONTENT);
 
         // Validate the Post in Elasticsearch
         verify(mockPostSearchRepository, times(1)).save(testPost);
@@ -193,6 +198,24 @@ public class PostResourceIntTest {
     }
 
     @Test
+    public void checkContentIsRequired() throws Exception {
+        int databaseSizeBeforeTest = postRepository.findAll().size();
+        // set the field null
+        post.setContent(null);
+
+        // Create the Post, which fails.
+        PostDTO postDTO = postMapper.toDto(post);
+
+        restPostMockMvc.perform(post("/api/posts")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(postDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Post> postList = postRepository.findAll();
+        assertThat(postList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllPosts() throws Exception {
         // Initialize the database
         postRepository.save(post);
@@ -203,7 +226,8 @@ public class PostResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].content").value(hasItem(DEFAULT_CONTENT.toString())));
     }
     
     @Test
@@ -217,7 +241,8 @@ public class PostResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(post.getId()))
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE.toString()))
-            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()));
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
+            .andExpect(jsonPath("$.content").value(DEFAULT_CONTENT.toString()));
     }
 
     @Test
@@ -238,7 +263,8 @@ public class PostResourceIntTest {
         Post updatedPost = postRepository.findById(post.getId()).get();
         updatedPost
             .title(UPDATED_TITLE)
-            .clientId(UPDATED_CLIENT_ID);
+            .clientId(UPDATED_CLIENT_ID)
+            .content(UPDATED_CONTENT);
         PostDTO postDTO = postMapper.toDto(updatedPost);
 
         restPostMockMvc.perform(put("/api/posts")
@@ -252,6 +278,7 @@ public class PostResourceIntTest {
         Post testPost = postList.get(postList.size() - 1);
         assertThat(testPost.getTitle()).isEqualTo(UPDATED_TITLE);
         assertThat(testPost.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testPost.getContent()).isEqualTo(UPDATED_CONTENT);
 
         // Validate the Post in Elasticsearch
         verify(mockPostSearchRepository, times(1)).save(testPost);
@@ -310,7 +337,8 @@ public class PostResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId())))
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].content").value(hasItem(DEFAULT_CONTENT.toString())));
     }
 
     @Test

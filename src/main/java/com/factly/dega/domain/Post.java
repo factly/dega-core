@@ -29,18 +29,9 @@ public class Post implements Serializable {
     @Field("client_id")
     private String clientId;
 
-    @Field("category")
-    private Category category;
-
-    public Category getCategory() {
-        return category;
-    }
-
-
-
-    public void setCategory(Category category) {
-        this.category = category;
-    }
+    @NotNull
+    @Field("content")
+    private String content;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -76,6 +67,19 @@ public class Post implements Serializable {
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Post content(String content) {
+        this.content = content;
+        return this;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -104,6 +108,7 @@ public class Post implements Serializable {
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
             ", clientId='" + getClientId() + "'" +
+            ", content='" + getContent() + "'" +
             "}";
     }
 }
