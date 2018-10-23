@@ -4,8 +4,6 @@ import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.factly.dega.domain.Category;
-
 /**
  * A DTO for the Post entity.
  */

@@ -1,6 +1,5 @@
 package com.factly.dega.service.impl;
 
-import com.factly.dega.domain.Category;
 import com.factly.dega.service.PostService;
 import com.factly.dega.domain.Post;
 import com.factly.dega.repository.PostRepository;
@@ -48,9 +47,6 @@ public class PostServiceImpl implements PostService {
     public PostDTO save(PostDTO postDTO) {
         log.debug("Request to save Post : {}", postDTO);
 
-        Category category = new Category();
-        category.setName("Sports");
-        postDTO.setCategory(category);
         Post post = postMapper.toEntity(postDTO);
         post = postRepository.save(post);
         PostDTO result = postMapper.toDto(post);
