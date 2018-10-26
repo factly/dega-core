@@ -37,7 +37,7 @@ public class PostResource {
 
     private static final String ENTITY_NAME = "corePost";
 
-    private final PostService postService;
+    private PostService postService;
 
     public PostResource(PostService postService) {
         this.postService = postService;

@@ -37,7 +37,7 @@ public class OrganizationResource {
 
     private static final String ENTITY_NAME = "coreOrganization";
 
-    private final OrganizationService organizationService;
+    private OrganizationService organizationService;
 
     public OrganizationResource(OrganizationService organizationService) {
         this.organizationService = organizationService;
