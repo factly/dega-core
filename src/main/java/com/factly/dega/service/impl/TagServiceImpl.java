@@ -25,11 +25,11 @@ public class TagServiceImpl implements TagService {
 
     private final Logger log = LoggerFactory.getLogger(TagServiceImpl.class);
 
-    private final TagRepository tagRepository;
+    private TagRepository tagRepository;
 
-    private final TagMapper tagMapper;
+    private TagMapper tagMapper;
 
-    private final TagSearchRepository tagSearchRepository;
+    private TagSearchRepository tagSearchRepository;
 
     public TagServiceImpl(TagRepository tagRepository, TagMapper tagMapper, TagSearchRepository tagSearchRepository) {
         this.tagRepository = tagRepository;

@@ -37,7 +37,7 @@ public class TagResource {
 
     private static final String ENTITY_NAME = "coreTag";
 
-    private final TagService tagService;
+    private TagService tagService;
 
     public TagResource(TagService tagService) {
         this.tagService = tagService;
