@@ -1,0 +1,28 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "core",
+    "relationships": [],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "clientId",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "dto": "mapstruct",
+    "searchEngine": "elasticsearch",
+    "service": "serviceImpl",
+    "entityTableName": "status",
+    "jpaMetamodelFiltering": false,
+    "pagination": "pagination",
+    "microserviceName": "core"
+}

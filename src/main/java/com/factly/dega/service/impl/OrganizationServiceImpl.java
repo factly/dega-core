@@ -25,11 +25,11 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final Logger log = LoggerFactory.getLogger(OrganizationServiceImpl.class);
 
-    private final OrganizationRepository organizationRepository;
+    private OrganizationRepository organizationRepository;
 
-    private final OrganizationMapper organizationMapper;
+    private OrganizationMapper organizationMapper;
 
-    private final OrganizationSearchRepository organizationSearchRepository;
+    private OrganizationSearchRepository organizationSearchRepository;
 
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper, OrganizationSearchRepository organizationSearchRepository) {
         this.organizationRepository = organizationRepository;
