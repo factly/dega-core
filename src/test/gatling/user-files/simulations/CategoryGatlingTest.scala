@@ -105,7 +105,7 @@ class CategoryGatlingTest extends Simulation {
                 , "description":"SAMPLE_TEXT"
                 , "slug":"SAMPLE_TEXT"
                 , "parent":"SAMPLE_TEXT"
-                , "meta":"SAMPLE_TEXT"
+                , "clientId":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_category_url"))).exitHereIfFailed

@@ -58,8 +58,8 @@ public class CategoryResourceIntTest {
     private static final String DEFAULT_PARENT = "AAAAAAAAAA";
     private static final String UPDATED_PARENT = "BBBBBBBBBB";
 
-    private static final String DEFAULT_META = "AAAAAAAAAA";
-    private static final String UPDATED_META = "BBBBBBBBBB";
+    private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
+    private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -114,7 +114,7 @@ public class CategoryResourceIntTest {
             .description(DEFAULT_DESCRIPTION)
             .slug(DEFAULT_SLUG)
             .parent(DEFAULT_PARENT)
-            .meta(DEFAULT_META);
+            .clientId(DEFAULT_CLIENT_ID);
         return category;
     }
 
@@ -143,7 +143,7 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testCategory.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testCategory.getParent()).isEqualTo(DEFAULT_PARENT);
-        assertThat(testCategory.getMeta()).isEqualTo(DEFAULT_META);
+        assertThat(testCategory.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
 
         // Validate the Category in Elasticsearch
         verify(mockCategorySearchRepository, times(1)).save(testCategory);
@@ -208,6 +208,24 @@ public class CategoryResourceIntTest {
     }
 
     @Test
+    public void checkClientIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = categoryRepository.findAll().size();
+        // set the field null
+        category.setClientId(null);
+
+        // Create the Category, which fails.
+        CategoryDTO categoryDTO = categoryMapper.toDto(category);
+
+        restCategoryMockMvc.perform(post("/api/categories")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(categoryDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Category> categoryList = categoryRepository.findAll();
+        assertThat(categoryList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllCategories() throws Exception {
         // Initialize the database
         categoryRepository.save(category);
@@ -221,7 +239,7 @@ public class CategoryResourceIntTest {
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].parent").value(hasItem(DEFAULT_PARENT.toString())))
-            .andExpect(jsonPath("$.[*].meta").value(hasItem(DEFAULT_META.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
     }
     
     @Test
@@ -238,7 +256,7 @@ public class CategoryResourceIntTest {
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.parent").value(DEFAULT_PARENT.toString()))
-            .andExpect(jsonPath("$.meta").value(DEFAULT_META.toString()));
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()));
     }
 
     @Test
@@ -262,7 +280,7 @@ public class CategoryResourceIntTest {
             .description(UPDATED_DESCRIPTION)
             .slug(UPDATED_SLUG)
             .parent(UPDATED_PARENT)
-            .meta(UPDATED_META);
+            .clientId(UPDATED_CLIENT_ID);
         CategoryDTO categoryDTO = categoryMapper.toDto(updatedCategory);
 
         restCategoryMockMvc.perform(put("/api/categories")
@@ -278,7 +296,7 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testCategory.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testCategory.getParent()).isEqualTo(UPDATED_PARENT);
-        assertThat(testCategory.getMeta()).isEqualTo(UPDATED_META);
+        assertThat(testCategory.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
 
         // Validate the Category in Elasticsearch
         verify(mockCategorySearchRepository, times(1)).save(testCategory);
@@ -340,7 +358,7 @@ public class CategoryResourceIntTest {
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].parent").value(hasItem(DEFAULT_PARENT.toString())))
-            .andExpect(jsonPath("$.[*].meta").value(hasItem(DEFAULT_META.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
     }
 
     @Test
