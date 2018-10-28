@@ -25,11 +25,11 @@ public class StatusServiceImpl implements StatusService {
 
     private final Logger log = LoggerFactory.getLogger(StatusServiceImpl.class);
 
-    private final StatusRepository statusRepository;
+    private StatusRepository statusRepository;
 
-    private final StatusMapper statusMapper;
+    private StatusMapper statusMapper;
 
-    private final StatusSearchRepository statusSearchRepository;
+    private StatusSearchRepository statusSearchRepository;
 
     public StatusServiceImpl(StatusRepository statusRepository, StatusMapper statusMapper, StatusSearchRepository statusSearchRepository) {
         this.statusRepository = statusRepository;

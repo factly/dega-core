@@ -37,7 +37,7 @@ public class StatusResource {
 
     private static final String ENTITY_NAME = "coreStatus";
 
-    private final StatusService statusService;
+    private StatusService statusService;
 
     public StatusResource(StatusService statusService) {
         this.statusService = statusService;
