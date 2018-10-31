@@ -1,5 +1,6 @@
 package com.factly.dega.service.dto;
 
+import java.time.ZonedDateTime;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -19,6 +20,31 @@ public class PostDTO implements Serializable {
 
     @NotNull
     private String content;
+
+    private String excerpt;
+
+    @NotNull
+    private ZonedDateTime publishedDate;
+
+    @NotNull
+    private ZonedDateTime publishedDateGMT;
+
+    @NotNull
+    private ZonedDateTime lastUpdatedDate;
+
+    @NotNull
+    private ZonedDateTime lastUpdatedDateGMT;
+
+    private Boolean featured;
+
+    private Boolean sticky;
+
+    private String updates;
+
+    @NotNull
+    private String slug;
+
+    private String featuredImage;
 
     public String getId() {
         return id;
@@ -52,6 +78,86 @@ public class PostDTO implements Serializable {
         this.content = content;
     }
 
+    public String getExcerpt() {
+        return excerpt;
+    }
+
+    public void setExcerpt(String excerpt) {
+        this.excerpt = excerpt;
+    }
+
+    public ZonedDateTime getPublishedDate() {
+        return publishedDate;
+    }
+
+    public void setPublishedDate(ZonedDateTime publishedDate) {
+        this.publishedDate = publishedDate;
+    }
+
+    public ZonedDateTime getPublishedDateGMT() {
+        return publishedDateGMT;
+    }
+
+    public void setPublishedDateGMT(ZonedDateTime publishedDateGMT) {
+        this.publishedDateGMT = publishedDateGMT;
+    }
+
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    public ZonedDateTime getLastUpdatedDateGMT() {
+        return lastUpdatedDateGMT;
+    }
+
+    public void setLastUpdatedDateGMT(ZonedDateTime lastUpdatedDateGMT) {
+        this.lastUpdatedDateGMT = lastUpdatedDateGMT;
+    }
+
+    public Boolean isFeatured() {
+        return featured;
+    }
+
+    public void setFeatured(Boolean featured) {
+        this.featured = featured;
+    }
+
+    public Boolean isSticky() {
+        return sticky;
+    }
+
+    public void setSticky(Boolean sticky) {
+        this.sticky = sticky;
+    }
+
+    public String getUpdates() {
+        return updates;
+    }
+
+    public void setUpdates(String updates) {
+        this.updates = updates;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getFeaturedImage() {
+        return featuredImage;
+    }
+
+    public void setFeaturedImage(String featuredImage) {
+        this.featuredImage = featuredImage;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -80,6 +186,16 @@ public class PostDTO implements Serializable {
             ", title='" + getTitle() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", content='" + getContent() + "'" +
+            ", excerpt='" + getExcerpt() + "'" +
+            ", publishedDate='" + getPublishedDate() + "'" +
+            ", publishedDateGMT='" + getPublishedDateGMT() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
+            ", lastUpdatedDateGMT='" + getLastUpdatedDateGMT() + "'" +
+            ", featured='" + isFeatured() + "'" +
+            ", sticky='" + isSticky() + "'" +
+            ", updates='" + getUpdates() + "'" +
+            ", slug='" + getSlug() + "'" +
+            ", featuredImage='" + getFeaturedImage() + "'" +
             "}";
     }
 }

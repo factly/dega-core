@@ -21,7 +21,8 @@ public class CategoryDTO implements Serializable {
 
     private String parent;
 
-    private String meta;
+    @NotNull
+    private String clientId;
 
     public String getId() {
         return id;
@@ -63,12 +64,12 @@ public class CategoryDTO implements Serializable {
         this.parent = parent;
     }
 
-    public String getMeta() {
-        return meta;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setMeta(String meta) {
-        this.meta = meta;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
 
     @Override
@@ -100,7 +101,7 @@ public class CategoryDTO implements Serializable {
             ", description='" + getDescription() + "'" +
             ", slug='" + getSlug() + "'" +
             ", parent='" + getParent() + "'" +
-            ", meta='" + getMeta() + "'" +
+            ", clientId='" + getClientId() + "'" +
             "}";
     }
 }

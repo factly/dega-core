@@ -26,8 +26,11 @@
             "fieldType": "String"
         },
         {
-            "fieldName": "meta",
-            "fieldType": "String"
+            "fieldName": "clientId",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "dto": "mapstruct",

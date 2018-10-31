@@ -99,15 +99,22 @@ class PostGatlingTest extends Simulation {
             .exec(http("Create new post")
             .post("/core/api/posts")
             .headers(headers_http_authenticated)
-<<<<<<< HEAD
-            .body(StringBody("""{"id":null, "title":"SAMPLE_TEXT", "clientId":"SAMPLE_TEXT", "content":"SAMPLE_TEXT"}""")).asJSON
-=======
             .body(StringBody("""{
                 "id":null
                 , "title":"SAMPLE_TEXT"
                 , "clientId":"SAMPLE_TEXT"
+                , "content":"SAMPLE_TEXT"
+                , "excerpt":"SAMPLE_TEXT"
+                , "publishedDate":"2020-01-01T00:00:00.000Z"
+                , "publishedDateGMT":"2020-01-01T00:00:00.000Z"
+                , "lastUpdatedDate":"2020-01-01T00:00:00.000Z"
+                , "lastUpdatedDateGMT":"2020-01-01T00:00:00.000Z"
+                , "featured":null
+                , "sticky":null
+                , "updates":"SAMPLE_TEXT"
+                , "slug":"SAMPLE_TEXT"
+                , "featuredImage":"SAMPLE_TEXT"
                 }""")).asJSON
->>>>>>> jhipster_upgrade
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_post_url"))).exitHereIfFailed
             .pause(10)

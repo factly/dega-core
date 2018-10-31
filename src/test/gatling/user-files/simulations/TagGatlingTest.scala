@@ -104,7 +104,7 @@ class TagGatlingTest extends Simulation {
                 , "name":"SAMPLE_TEXT"
                 , "slug":"SAMPLE_TEXT"
                 , "description":"SAMPLE_TEXT"
-                , "meta":"SAMPLE_TEXT"
+                , "clientId":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_tag_url"))).exitHereIfFailed
