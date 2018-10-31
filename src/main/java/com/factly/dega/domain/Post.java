@@ -1,5 +1,6 @@
 package com.factly.dega.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -68,6 +69,11 @@ public class Post implements Serializable {
 
     @Field("featured_image")
     private String featuredImage;
+
+    @DBRef
+    @Field("status")
+    @JsonIgnoreProperties("posts")
+    private Status status;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -245,6 +251,19 @@ public class Post implements Serializable {
 
     public void setFeaturedImage(String featuredImage) {
         this.featuredImage = featuredImage;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Post status(Status status) {
+        this.status = status;
+        return this;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

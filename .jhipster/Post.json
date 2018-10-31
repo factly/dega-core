@@ -1,7 +1,14 @@
 {
     "fluentMethods": true,
     "clientRootFolder": "core",
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipName": "status",
+            "otherEntityName": "status",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "name"
+        }
+    ],
     "fields": [
         {
             "fieldName": "title",
