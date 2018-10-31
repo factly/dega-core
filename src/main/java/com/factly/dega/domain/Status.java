@@ -1,6 +1,5 @@
 package com.factly.dega.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,8 +7,6 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -32,9 +29,6 @@ public class Status implements Serializable {
     @Field("client_id")
     private String clientId;
 
-    @DBRef
-    @Field("post")
-    private Set<Post> posts = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -68,31 +62,6 @@ public class Status implements Serializable {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
-    }
-
-    public Set<Post> getPosts() {
-        return posts;
-    }
-
-    public Status posts(Set<Post> posts) {
-        this.posts = posts;
-        return this;
-    }
-
-    public Status addPost(Post post) {
-        this.posts.add(post);
-        post.setStatus(this);
-        return this;
-    }
-
-    public Status removePost(Post post) {
-        this.posts.remove(post);
-        post.setStatus(null);
-        return this;
-    }
-
-    public void setPosts(Set<Post> posts) {
-        this.posts = posts;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

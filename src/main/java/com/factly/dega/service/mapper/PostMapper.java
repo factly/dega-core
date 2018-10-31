@@ -8,15 +8,10 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity Post and its DTO PostDTO.
  */
-@Mapper(componentModel = "spring", uses = {StatusMapper.class})
+@Mapper(componentModel = "spring", uses = {})
 public interface PostMapper extends EntityMapper<PostDTO, Post> {
 
-    @Mapping(source = "status.id", target = "statusId")
-    @Mapping(source = "status.name", target = "statusName")
-    PostDTO toDto(Post post);
 
-    @Mapping(source = "statusId", target = "status")
-    Post toEntity(PostDTO postDTO);
 
     default Post fromId(String id) {
         if (id == null) {

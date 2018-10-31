@@ -46,10 +46,6 @@ public class PostDTO implements Serializable {
 
     private String featuredImage;
 
-    private String statusId;
-
-    private String statusName;
-
     public String getId() {
         return id;
     }
@@ -162,22 +158,6 @@ public class PostDTO implements Serializable {
         this.featuredImage = featuredImage;
     }
 
-    public String getStatusId() {
-        return statusId;
-    }
-
-    public void setStatusId(String statusId) {
-        this.statusId = statusId;
-    }
-
-    public String getStatusName() {
-        return statusName;
-    }
-
-    public void setStatusName(String statusName) {
-        this.statusName = statusName;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -216,8 +196,6 @@ public class PostDTO implements Serializable {
             ", updates='" + getUpdates() + "'" +
             ", slug='" + getSlug() + "'" +
             ", featuredImage='" + getFeaturedImage() + "'" +
-            ", status=" + getStatusId() +
-            ", status='" + getStatusName() + "'" +
             "}";
     }
 }
