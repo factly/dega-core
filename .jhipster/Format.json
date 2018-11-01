@@ -5,9 +5,8 @@
         {
             "relationshipName": "post",
             "otherEntityName": "post",
-            "relationshipType": "many-to-many",
-            "ownerSide": false,
-            "otherEntityRelationshipName": "tag"
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "format"
         }
     ],
     "fields": [
@@ -19,28 +18,22 @@
             ]
         },
         {
-            "fieldName": "slug",
-            "fieldType": "String",
-            "fieldValidateRules": [
-                "required"
-            ]
+            "fieldName": "isDefault",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "clientId",
+            "fieldType": "String"
         },
         {
             "fieldName": "description",
             "fieldType": "String"
-        },
-        {
-            "fieldName": "clientId",
-            "fieldType": "String",
-            "fieldValidateRules": [
-                "required"
-            ]
         }
     ],
     "dto": "mapstruct",
     "searchEngine": "elasticsearch",
     "service": "serviceImpl",
-    "entityTableName": "tag",
+    "entityTableName": "format",
     "jpaMetamodelFiltering": false,
     "pagination": "pagination",
     "microserviceName": "core"

@@ -13,11 +13,11 @@ import java.util.Set;
 import java.util.Objects;
 
 /**
- * A Status.
+ * A Format.
  */
-@Document(collection = "status")
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "status")
-public class Status implements Serializable {
+@Document(collection = "format")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "format")
+public class Format implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -28,12 +28,14 @@ public class Status implements Serializable {
     @Field("name")
     private String name;
 
-    @NotNull
+    @Field("is_default")
+    private Boolean isDefault;
+
     @Field("client_id")
     private String clientId;
 
-    @Field("is_default")
-    private Boolean isDefault;
+    @Field("description")
+    private String description;
 
     @DBRef
     @Field("post")
@@ -51,7 +53,7 @@ public class Status implements Serializable {
         return name;
     }
 
-    public Status name(String name) {
+    public Format name(String name) {
         this.name = name;
         return this;
     }
@@ -60,24 +62,11 @@ public class Status implements Serializable {
         this.name = name;
     }
 
-    public String getClientId() {
-        return clientId;
-    }
-
-    public Status clientId(String clientId) {
-        this.clientId = clientId;
-        return this;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
     public Boolean isIsDefault() {
         return isDefault;
     }
 
-    public Status isDefault(Boolean isDefault) {
+    public Format isDefault(Boolean isDefault) {
         this.isDefault = isDefault;
         return this;
     }
@@ -86,24 +75,50 @@ public class Status implements Serializable {
         this.isDefault = isDefault;
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
+    public Format clientId(String clientId) {
+        this.clientId = clientId;
+        return this;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Format description(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public Set<Post> getPosts() {
         return posts;
     }
 
-    public Status posts(Set<Post> posts) {
+    public Format posts(Set<Post> posts) {
         this.posts = posts;
         return this;
     }
 
-    public Status addPost(Post post) {
+    public Format addPost(Post post) {
         this.posts.add(post);
-        post.setStatus(this);
+        post.setFormat(this);
         return this;
     }
 
-    public Status removePost(Post post) {
+    public Format removePost(Post post) {
         this.posts.remove(post);
-        post.setStatus(null);
+        post.setFormat(null);
         return this;
     }
 
@@ -120,11 +135,11 @@ public class Status implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Status status = (Status) o;
-        if (status.getId() == null || getId() == null) {
+        Format format = (Format) o;
+        if (format.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), status.getId());
+        return Objects.equals(getId(), format.getId());
     }
 
     @Override
@@ -134,11 +149,12 @@ public class Status implements Serializable {
 
     @Override
     public String toString() {
-        return "Status{" +
+        return "Format{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", clientId='" + getClientId() + "'" +
             ", isDefault='" + isIsDefault() + "'" +
+            ", clientId='" + getClientId() + "'" +
+            ", description='" + getDescription() + "'" +
             "}";
     }
 }

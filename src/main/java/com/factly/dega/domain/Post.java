@@ -1,5 +1,6 @@
 package com.factly.dega.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,6 +9,8 @@ import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -66,8 +69,32 @@ public class Post implements Serializable {
     @Field("slug")
     private String slug;
 
-    @Field("featured_image")
-    private String featuredImage;
+    @Field("password")
+    private String password;
+
+    @Field("featured_media")
+    private String featuredMedia;
+
+    @Field("sub_title")
+    private String subTitle;
+
+    @DBRef
+    @Field("tags")
+    private Set<Tag> tags = new HashSet<>();
+
+    @DBRef
+    @Field("categories")
+    private Set<Category> categories = new HashSet<>();
+
+    @DBRef
+    @Field("status")
+    @JsonIgnoreProperties("posts")
+    private Status status;
+
+    @DBRef
+    @Field("format")
+    @JsonIgnoreProperties("posts")
+    private Format format;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -234,17 +261,119 @@ public class Post implements Serializable {
         this.slug = slug;
     }
 
-    public String getFeaturedImage() {
-        return featuredImage;
+    public String getPassword() {
+        return password;
     }
 
-    public Post featuredImage(String featuredImage) {
-        this.featuredImage = featuredImage;
+    public Post password(String password) {
+        this.password = password;
         return this;
     }
 
-    public void setFeaturedImage(String featuredImage) {
-        this.featuredImage = featuredImage;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFeaturedMedia() {
+        return featuredMedia;
+    }
+
+    public Post featuredMedia(String featuredMedia) {
+        this.featuredMedia = featuredMedia;
+        return this;
+    }
+
+    public void setFeaturedMedia(String featuredMedia) {
+        this.featuredMedia = featuredMedia;
+    }
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public Post subTitle(String subTitle) {
+        this.subTitle = subTitle;
+        return this;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
+
+    public Set<Tag> getTags() {
+        return tags;
+    }
+
+    public Post tags(Set<Tag> tags) {
+        this.tags = tags;
+        return this;
+    }
+
+    public Post addTag(Tag tag) {
+        this.tags.add(tag);
+        tag.getPosts().add(this);
+        return this;
+    }
+
+    public Post removeTag(Tag tag) {
+        this.tags.remove(tag);
+        tag.getPosts().remove(this);
+        return this;
+    }
+
+    public void setTags(Set<Tag> tags) {
+        this.tags = tags;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public Post categories(Set<Category> categories) {
+        this.categories = categories;
+        return this;
+    }
+
+    public Post addCategory(Category category) {
+        this.categories.add(category);
+        category.getPosts().add(this);
+        return this;
+    }
+
+    public Post removeCategory(Category category) {
+        this.categories.remove(category);
+        category.getPosts().remove(this);
+        return this;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public Post status(Status status) {
+        this.status = status;
+        return this;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Format getFormat() {
+        return format;
+    }
+
+    public Post format(Format format) {
+        this.format = format;
+        return this;
+    }
+
+    public void setFormat(Format format) {
+        this.format = format;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -284,7 +413,9 @@ public class Post implements Serializable {
             ", sticky='" + isSticky() + "'" +
             ", updates='" + getUpdates() + "'" +
             ", slug='" + getSlug() + "'" +
-            ", featuredImage='" + getFeaturedImage() + "'" +
+            ", password='" + getPassword() + "'" +
+            ", featuredMedia='" + getFeaturedMedia() + "'" +
+            ", subTitle='" + getSubTitle() + "'" +
             "}";
     }
 }

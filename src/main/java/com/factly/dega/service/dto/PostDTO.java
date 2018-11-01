@@ -3,6 +3,8 @@ package com.factly.dega.service.dto;
 import java.time.ZonedDateTime;
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -44,7 +46,23 @@ public class PostDTO implements Serializable {
     @NotNull
     private String slug;
 
-    private String featuredImage;
+    private String password;
+
+    private String featuredMedia;
+
+    private String subTitle;
+
+    private Set<TagDTO> tags = new HashSet<>();
+
+    private Set<CategoryDTO> categories = new HashSet<>();
+
+    private String statusId;
+
+    private String statusName;
+
+    private String formatId;
+
+    private String formatName;
 
     public String getId() {
         return id;
@@ -150,12 +168,76 @@ public class PostDTO implements Serializable {
         this.slug = slug;
     }
 
-    public String getFeaturedImage() {
-        return featuredImage;
+    public String getPassword() {
+        return password;
     }
 
-    public void setFeaturedImage(String featuredImage) {
-        this.featuredImage = featuredImage;
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getFeaturedMedia() {
+        return featuredMedia;
+    }
+
+    public void setFeaturedMedia(String featuredMedia) {
+        this.featuredMedia = featuredMedia;
+    }
+
+    public String getSubTitle() {
+        return subTitle;
+    }
+
+    public void setSubTitle(String subTitle) {
+        this.subTitle = subTitle;
+    }
+
+    public Set<TagDTO> getTags() {
+        return tags;
+    }
+
+    public void setTags(Set<TagDTO> tags) {
+        this.tags = tags;
+    }
+
+    public Set<CategoryDTO> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<CategoryDTO> categories) {
+        this.categories = categories;
+    }
+
+    public String getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(String statusId) {
+        this.statusId = statusId;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
+    public String getFormatId() {
+        return formatId;
+    }
+
+    public void setFormatId(String formatId) {
+        this.formatId = formatId;
+    }
+
+    public String getFormatName() {
+        return formatName;
+    }
+
+    public void setFormatName(String formatName) {
+        this.formatName = formatName;
     }
 
     @Override
@@ -195,7 +277,13 @@ public class PostDTO implements Serializable {
             ", sticky='" + isSticky() + "'" +
             ", updates='" + getUpdates() + "'" +
             ", slug='" + getSlug() + "'" +
-            ", featuredImage='" + getFeaturedImage() + "'" +
+            ", password='" + getPassword() + "'" +
+            ", featuredMedia='" + getFeaturedMedia() + "'" +
+            ", subTitle='" + getSubTitle() + "'" +
+            ", status=" + getStatusId() +
+            ", status='" + getStatusName() + "'" +
+            ", format=" + getFormatId() +
+            ", format='" + getFormatName() + "'" +
             "}";
     }
 }

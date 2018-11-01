@@ -12,6 +12,8 @@ import org.mapstruct.*;
 public interface TagMapper extends EntityMapper<TagDTO, Tag> {
 
 
+    @Mapping(target = "posts", ignore = true)
+    Tag toEntity(TagDTO tagDTO);
 
     default Tag fromId(String id) {
         if (id == null) {

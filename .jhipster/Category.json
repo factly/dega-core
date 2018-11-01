@@ -1,7 +1,15 @@
 {
     "fluentMethods": true,
     "clientRootFolder": "core",
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipName": "post",
+            "otherEntityName": "post",
+            "relationshipType": "many-to-many",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "category"
+        }
+    ],
     "fields": [
         {
             "fieldName": "name",

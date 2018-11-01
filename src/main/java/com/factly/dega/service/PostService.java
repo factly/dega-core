@@ -28,7 +28,13 @@ public interface PostService {
      */
     Page<PostDTO> findAll(Pageable pageable);
 
-
+    /**
+     * Get all the Post with eager load of many-to-many relationships.
+     *
+     * @return the list of entities
+     */
+    Page<PostDTO> findAllWithEagerRelationships(Pageable pageable);
+    
     /**
      * Get the "id" post.
      *

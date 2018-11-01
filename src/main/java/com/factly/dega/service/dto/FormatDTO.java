@@ -5,19 +5,20 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A DTO for the Status entity.
+ * A DTO for the Format entity.
  */
-public class StatusDTO implements Serializable {
+public class FormatDTO implements Serializable {
 
     private String id;
 
     @NotNull
     private String name;
 
-    @NotNull
+    private Boolean isDefault;
+
     private String clientId;
 
-    private Boolean isDefault;
+    private String description;
 
     public String getId() {
         return id;
@@ -35,6 +36,14 @@ public class StatusDTO implements Serializable {
         this.name = name;
     }
 
+    public Boolean isIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
     public String getClientId() {
         return clientId;
     }
@@ -43,12 +52,12 @@ public class StatusDTO implements Serializable {
         this.clientId = clientId;
     }
 
-    public Boolean isIsDefault() {
-        return isDefault;
+    public String getDescription() {
+        return description;
     }
 
-    public void setIsDefault(Boolean isDefault) {
-        this.isDefault = isDefault;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -60,11 +69,11 @@ public class StatusDTO implements Serializable {
             return false;
         }
 
-        StatusDTO statusDTO = (StatusDTO) o;
-        if (statusDTO.getId() == null || getId() == null) {
+        FormatDTO formatDTO = (FormatDTO) o;
+        if (formatDTO.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), statusDTO.getId());
+        return Objects.equals(getId(), formatDTO.getId());
     }
 
     @Override
@@ -74,11 +83,12 @@ public class StatusDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "StatusDTO{" +
+        return "FormatDTO{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", clientId='" + getClientId() + "'" +
             ", isDefault='" + isIsDefault() + "'" +
+            ", clientId='" + getClientId() + "'" +
+            ", description='" + getDescription() + "'" +
             "}";
     }
 }
