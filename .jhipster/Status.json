@@ -11,21 +11,6 @@
             ]
         },
         {
-            "fieldName": "description",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "slug",
-            "fieldType": "String",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
-            "fieldName": "parent",
-            "fieldType": "String"
-        },
-        {
             "fieldName": "clientId",
             "fieldType": "String",
             "fieldValidateRules": [
@@ -36,7 +21,7 @@
     "dto": "mapstruct",
     "searchEngine": "elasticsearch",
     "service": "serviceImpl",
-    "entityTableName": "category",
+    "entityTableName": "status",
     "jpaMetamodelFiltering": false,
     "pagination": "pagination",
     "microserviceName": "core"

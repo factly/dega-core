@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 /**
@@ -32,6 +33,41 @@ public class Post implements Serializable {
     @NotNull
     @Field("content")
     private String content;
+
+    @Field("excerpt")
+    private String excerpt;
+
+    @NotNull
+    @Field("published_date")
+    private ZonedDateTime publishedDate;
+
+    @NotNull
+    @Field("published_date_gmt")
+    private ZonedDateTime publishedDateGMT;
+
+    @NotNull
+    @Field("last_updated_date")
+    private ZonedDateTime lastUpdatedDate;
+
+    @NotNull
+    @Field("last_updated_date_gmt")
+    private ZonedDateTime lastUpdatedDateGMT;
+
+    @Field("featured")
+    private Boolean featured;
+
+    @Field("sticky")
+    private Boolean sticky;
+
+    @Field("updates")
+    private String updates;
+
+    @NotNull
+    @Field("slug")
+    private String slug;
+
+    @Field("featured_image")
+    private String featuredImage;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -80,6 +116,136 @@ public class Post implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+
+    public String getExcerpt() {
+        return excerpt;
+    }
+
+    public Post excerpt(String excerpt) {
+        this.excerpt = excerpt;
+        return this;
+    }
+
+    public void setExcerpt(String excerpt) {
+        this.excerpt = excerpt;
+    }
+
+    public ZonedDateTime getPublishedDate() {
+        return publishedDate;
+    }
+
+    public Post publishedDate(ZonedDateTime publishedDate) {
+        this.publishedDate = publishedDate;
+        return this;
+    }
+
+    public void setPublishedDate(ZonedDateTime publishedDate) {
+        this.publishedDate = publishedDate;
+    }
+
+    public ZonedDateTime getPublishedDateGMT() {
+        return publishedDateGMT;
+    }
+
+    public Post publishedDateGMT(ZonedDateTime publishedDateGMT) {
+        this.publishedDateGMT = publishedDateGMT;
+        return this;
+    }
+
+    public void setPublishedDateGMT(ZonedDateTime publishedDateGMT) {
+        this.publishedDateGMT = publishedDateGMT;
+    }
+
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public Post lastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+        return this;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    public ZonedDateTime getLastUpdatedDateGMT() {
+        return lastUpdatedDateGMT;
+    }
+
+    public Post lastUpdatedDateGMT(ZonedDateTime lastUpdatedDateGMT) {
+        this.lastUpdatedDateGMT = lastUpdatedDateGMT;
+        return this;
+    }
+
+    public void setLastUpdatedDateGMT(ZonedDateTime lastUpdatedDateGMT) {
+        this.lastUpdatedDateGMT = lastUpdatedDateGMT;
+    }
+
+    public Boolean isFeatured() {
+        return featured;
+    }
+
+    public Post featured(Boolean featured) {
+        this.featured = featured;
+        return this;
+    }
+
+    public void setFeatured(Boolean featured) {
+        this.featured = featured;
+    }
+
+    public Boolean isSticky() {
+        return sticky;
+    }
+
+    public Post sticky(Boolean sticky) {
+        this.sticky = sticky;
+        return this;
+    }
+
+    public void setSticky(Boolean sticky) {
+        this.sticky = sticky;
+    }
+
+    public String getUpdates() {
+        return updates;
+    }
+
+    public Post updates(String updates) {
+        this.updates = updates;
+        return this;
+    }
+
+    public void setUpdates(String updates) {
+        this.updates = updates;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public Post slug(String slug) {
+        this.slug = slug;
+        return this;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getFeaturedImage() {
+        return featuredImage;
+    }
+
+    public Post featuredImage(String featuredImage) {
+        this.featuredImage = featuredImage;
+        return this;
+    }
+
+    public void setFeaturedImage(String featuredImage) {
+        this.featuredImage = featuredImage;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -109,6 +275,16 @@ public class Post implements Serializable {
             ", title='" + getTitle() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", content='" + getContent() + "'" +
+            ", excerpt='" + getExcerpt() + "'" +
+            ", publishedDate='" + getPublishedDate() + "'" +
+            ", publishedDateGMT='" + getPublishedDateGMT() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
+            ", lastUpdatedDateGMT='" + getLastUpdatedDateGMT() + "'" +
+            ", featured='" + isFeatured() + "'" +
+            ", sticky='" + isSticky() + "'" +
+            ", updates='" + getUpdates() + "'" +
+            ", slug='" + getSlug() + "'" +
+            ", featuredImage='" + getFeaturedImage() + "'" +
             "}";
     }
 }

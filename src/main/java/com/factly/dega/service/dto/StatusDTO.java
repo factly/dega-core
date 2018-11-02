@@ -5,19 +5,14 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A DTO for the Tag entity.
+ * A DTO for the Status entity.
  */
-public class TagDTO implements Serializable {
+public class StatusDTO implements Serializable {
 
     private String id;
 
     @NotNull
     private String name;
-
-    @NotNull
-    private String slug;
-
-    private String description;
 
     @NotNull
     private String clientId;
@@ -38,22 +33,6 @@ public class TagDTO implements Serializable {
         this.name = name;
     }
 
-    public String getSlug() {
-        return slug;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getClientId() {
         return clientId;
     }
@@ -71,11 +50,11 @@ public class TagDTO implements Serializable {
             return false;
         }
 
-        TagDTO tagDTO = (TagDTO) o;
-        if (tagDTO.getId() == null || getId() == null) {
+        StatusDTO statusDTO = (StatusDTO) o;
+        if (statusDTO.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), tagDTO.getId());
+        return Objects.equals(getId(), statusDTO.getId());
     }
 
     @Override
@@ -85,11 +64,9 @@ public class TagDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "TagDTO{" +
+        return "StatusDTO{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", slug='" + getSlug() + "'" +
-            ", description='" + getDescription() + "'" +
             ", clientId='" + getClientId() + "'" +
             "}";
     }

@@ -23,6 +23,61 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "excerpt",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "publishedDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "publishedDateGMT",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "lastUpdatedDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "lastUpdatedDateGMT",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "featured",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "sticky",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "updates",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "slug",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "featuredImage",
+            "fieldType": "String"
         }
     ],
     "changelogDate": "20180923010443",

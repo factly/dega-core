@@ -55,8 +55,8 @@ public class TagResourceIntTest {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final String DEFAULT_META = "AAAAAAAAAA";
-    private static final String UPDATED_META = "BBBBBBBBBB";
+    private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
+    private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
 
     @Autowired
     private TagRepository tagRepository;
@@ -110,7 +110,7 @@ public class TagResourceIntTest {
             .name(DEFAULT_NAME)
             .slug(DEFAULT_SLUG)
             .description(DEFAULT_DESCRIPTION)
-            .meta(DEFAULT_META);
+            .clientId(DEFAULT_CLIENT_ID);
         return tag;
     }
 
@@ -138,7 +138,7 @@ public class TagResourceIntTest {
         assertThat(testTag.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testTag.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testTag.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testTag.getMeta()).isEqualTo(DEFAULT_META);
+        assertThat(testTag.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
 
         // Validate the Tag in Elasticsearch
         verify(mockTagSearchRepository, times(1)).save(testTag);
@@ -203,6 +203,24 @@ public class TagResourceIntTest {
     }
 
     @Test
+    public void checkClientIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = tagRepository.findAll().size();
+        // set the field null
+        tag.setClientId(null);
+
+        // Create the Tag, which fails.
+        TagDTO tagDTO = tagMapper.toDto(tag);
+
+        restTagMockMvc.perform(post("/api/tags")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(tagDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Tag> tagList = tagRepository.findAll();
+        assertThat(tagList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllTags() throws Exception {
         // Initialize the database
         tagRepository.save(tag);
@@ -215,7 +233,7 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].meta").value(hasItem(DEFAULT_META.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
     }
     
     @Test
@@ -231,7 +249,7 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
-            .andExpect(jsonPath("$.meta").value(DEFAULT_META.toString()));
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()));
     }
 
     @Test
@@ -254,7 +272,7 @@ public class TagResourceIntTest {
             .name(UPDATED_NAME)
             .slug(UPDATED_SLUG)
             .description(UPDATED_DESCRIPTION)
-            .meta(UPDATED_META);
+            .clientId(UPDATED_CLIENT_ID);
         TagDTO tagDTO = tagMapper.toDto(updatedTag);
 
         restTagMockMvc.perform(put("/api/tags")
@@ -269,7 +287,7 @@ public class TagResourceIntTest {
         assertThat(testTag.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testTag.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testTag.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testTag.getMeta()).isEqualTo(UPDATED_META);
+        assertThat(testTag.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
 
         // Validate the Tag in Elasticsearch
         verify(mockTagSearchRepository, times(1)).save(testTag);
@@ -330,7 +348,7 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].meta").value(hasItem(DEFAULT_META.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
     }
 
     @Test

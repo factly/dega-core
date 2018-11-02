@@ -35,8 +35,9 @@ public class Category implements Serializable {
     @Field("parent")
     private String parent;
 
-    @Field("meta")
-    private String meta;
+    @NotNull
+    @Field("client_id")
+    private String clientId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -99,17 +100,17 @@ public class Category implements Serializable {
         this.parent = parent;
     }
 
-    public String getMeta() {
-        return meta;
+    public String getClientId() {
+        return clientId;
     }
 
-    public Category meta(String meta) {
-        this.meta = meta;
+    public Category clientId(String clientId) {
+        this.clientId = clientId;
         return this;
     }
 
-    public void setMeta(String meta) {
-        this.meta = meta;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -141,7 +142,7 @@ public class Category implements Serializable {
             ", description='" + getDescription() + "'" +
             ", slug='" + getSlug() + "'" +
             ", parent='" + getParent() + "'" +
-            ", meta='" + getMeta() + "'" +
+            ", clientId='" + getClientId() + "'" +
             "}";
     }
 }

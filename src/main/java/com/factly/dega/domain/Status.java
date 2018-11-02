@@ -10,11 +10,11 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * A Tag.
+ * A Status.
  */
-@Document(collection = "tag")
-@org.springframework.data.elasticsearch.annotations.Document(indexName = "tag")
-public class Tag implements Serializable {
+@Document(collection = "status")
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "status")
+public class Status implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,13 +24,6 @@ public class Tag implements Serializable {
     @NotNull
     @Field("name")
     private String name;
-
-    @NotNull
-    @Field("slug")
-    private String slug;
-
-    @Field("description")
-    private String description;
 
     @NotNull
     @Field("client_id")
@@ -49,7 +42,7 @@ public class Tag implements Serializable {
         return name;
     }
 
-    public Tag name(String name) {
+    public Status name(String name) {
         this.name = name;
         return this;
     }
@@ -58,37 +51,11 @@ public class Tag implements Serializable {
         this.name = name;
     }
 
-    public String getSlug() {
-        return slug;
-    }
-
-    public Tag slug(String slug) {
-        this.slug = slug;
-        return this;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public Tag description(String description) {
-        this.description = description;
-        return this;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public String getClientId() {
         return clientId;
     }
 
-    public Tag clientId(String clientId) {
+    public Status clientId(String clientId) {
         this.clientId = clientId;
         return this;
     }
@@ -106,11 +73,11 @@ public class Tag implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Tag tag = (Tag) o;
-        if (tag.getId() == null || getId() == null) {
+        Status status = (Status) o;
+        if (status.getId() == null || getId() == null) {
             return false;
         }
-        return Objects.equals(getId(), tag.getId());
+        return Objects.equals(getId(), status.getId());
     }
 
     @Override
@@ -120,11 +87,9 @@ public class Tag implements Serializable {
 
     @Override
     public String toString() {
-        return "Tag{" +
+        return "Status{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", slug='" + getSlug() + "'" +
-            ", description='" + getDescription() + "'" +
             ", clientId='" + getClientId() + "'" +
             "}";
     }

@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.duration._
 
 /**
- * Performance test for the Organization entity.
+ * Performance test for the Status entity.
  */
-class OrganizationGatlingTest extends Simulation {
+class StatusGatlingTest extends Simulation {
 
     val context: LoggerContext = LoggerFactory.getILoggerFactory.asInstanceOf[LoggerContext]
     // Log all HTTP requests
@@ -45,7 +45,7 @@ class OrganizationGatlingTest extends Simulation {
         "Upgrade-Insecure-Requests" -> "1"
     )
 
-    val scn = scenario("Test the Organization entity")
+    val scn = scenario("Test the Status entity")
         .exec(http("First unauthenticated request")
         .get("/api/account")
         .headers(headers_http)
@@ -91,68 +91,30 @@ class OrganizationGatlingTest extends Simulation {
         .check(status.is(200)))
         .pause(10)
         .repeat(2) {
-            exec(http("Get all organizations")
-            .get("/core/api/organizations")
+            exec(http("Get all statuses")
+            .get("/core/api/statuses")
             .headers(headers_http_authenticated)
             .check(status.is(200)))
             .pause(10 seconds, 20 seconds)
-            .exec(http("Create new organization")
-            .post("/core/api/organizations")
+            .exec(http("Create new status")
+            .post("/core/api/statuses")
             .headers(headers_http_authenticated)
             .body(StringBody("""{
                 "id":null
                 , "name":"SAMPLE_TEXT"
-                , "email":"SAMPLE_TEXT"
-                , "phone":"SAMPLE_TEXT"
-                , "siteTitle":"SAMPLE_TEXT"
-                , "tagLine":"SAMPLE_TEXT"
-                , "description":"SAMPLE_TEXT"
-                , "logoURL":"SAMPLE_TEXT"
-                , "logoURLMobile":"SAMPLE_TEXT"
-                , "favIconURL":"SAMPLE_TEXT"
-                , "mobileIconURL":"SAMPLE_TEXT"
-                , "baiduVerificationCode":"SAMPLE_TEXT"
-                , "bingVerificationCode":"SAMPLE_TEXT"
-                , "googleVerificationCode":"SAMPLE_TEXT"
-                , "yandexVerificationCode":"SAMPLE_TEXT"
-                , "facebookURL":"SAMPLE_TEXT"
-                , "twitterURL":"SAMPLE_TEXT"
-                , "instagramURL":"SAMPLE_TEXT"
-                , "linkedInURL":"SAMPLE_TEXT"
-                , "pinterestURL":"SAMPLE_TEXT"
-                , "youTubeURL":"SAMPLE_TEXT"
-                , "googlePlusURL":"SAMPLE_TEXT"
-                , "githubURL":"SAMPLE_TEXT"
-                , "facebookPageAccessToken":"SAMPLE_TEXT"
-                , "gaTrackingCode":"SAMPLE_TEXT"
-                , "githubClientId":"SAMPLE_TEXT"
-                , "githubClientSecret":"SAMPLE_TEXT"
-                , "twitterClientId":"SAMPLE_TEXT"
-                , "twitterClientSecret":"SAMPLE_TEXT"
-                , "facebookClientId":"SAMPLE_TEXT"
-                , "facebookClientSecret":"SAMPLE_TEXT"
-                , "googleClientId":"SAMPLE_TEXT"
-                , "googleClientSecret":"SAMPLE_TEXT"
-                , "linkedInClientId":"SAMPLE_TEXT"
-                , "linkedInClientSecret":"SAMPLE_TEXT"
-                , "instagramClientId":"SAMPLE_TEXT"
-                , "instagramClientSecret":"SAMPLE_TEXT"
-                , "mailchimpAPIKey":"SAMPLE_TEXT"
-                , "siteLanguage":"SAMPLE_TEXT"
-                , "timeZone":"SAMPLE_TEXT"
                 , "clientId":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
-            .check(headerRegex("Location", "(.*)").saveAs("new_organization_url"))).exitHereIfFailed
+            .check(headerRegex("Location", "(.*)").saveAs("new_status_url"))).exitHereIfFailed
             .pause(10)
             .repeat(5) {
-                exec(http("Get created organization")
-                .get("/core${new_organization_url}")
+                exec(http("Get created status")
+                .get("/core${new_status_url}")
                 .headers(headers_http_authenticated))
                 .pause(10)
             }
-            .exec(http("Delete created organization")
-            .delete("/core${new_organization_url}")
+            .exec(http("Delete created status")
+            .delete("/core${new_status_url}")
             .headers(headers_http_authenticated))
             .pause(10)
         }

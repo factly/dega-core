@@ -37,7 +37,7 @@ public class CategoryResource {
 
     private static final String ENTITY_NAME = "coreCategory";
 
-    private final CategoryService categoryService;
+    private CategoryService categoryService;
 
     public CategoryResource(CategoryService categoryService) {
         this.categoryService = categoryService;
