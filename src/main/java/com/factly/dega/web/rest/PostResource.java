@@ -95,7 +95,7 @@ public class PostResource {
     @GetMapping("/posts")
     @Timed
     public ResponseEntity<List<PostDTO>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
-        log.debug("REST request to get a page of Posts");git co
+        log.debug("REST request to get a page of Posts");
         Page<PostDTO> page;
         if (eagerload) {
             page = postService.findAllWithEagerRelationships(pageable);
