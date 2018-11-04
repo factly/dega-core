@@ -37,7 +37,7 @@ public class PostResource {
 
     private static final String ENTITY_NAME = "corePost";
 
-    private PostService postService;
+    private final PostService postService;
 
     public PostResource(PostService postService) {
         this.postService = postService;
@@ -97,7 +97,7 @@ public class PostResource {
         log.debug("REST request to get a page of Posts");
         Page<PostDTO> page = postService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/posts");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

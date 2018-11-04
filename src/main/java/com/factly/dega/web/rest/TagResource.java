@@ -37,7 +37,7 @@ public class TagResource {
 
     private static final String ENTITY_NAME = "coreTag";
 
-    private TagService tagService;
+    private final TagService tagService;
 
     public TagResource(TagService tagService) {
         this.tagService = tagService;
@@ -97,7 +97,7 @@ public class TagResource {
         log.debug("REST request to get a page of Tags");
         Page<TagDTO> page = tagService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/tags");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

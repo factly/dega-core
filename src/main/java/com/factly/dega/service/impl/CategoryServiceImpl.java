@@ -25,11 +25,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     private final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
 
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
-    private CategoryMapper categoryMapper;
+    private final CategoryMapper categoryMapper;
 
-    private CategorySearchRepository categorySearchRepository;
+    private final CategorySearchRepository categorySearchRepository;
 
     public CategoryServiceImpl(CategoryRepository categoryRepository, CategoryMapper categoryMapper, CategorySearchRepository categorySearchRepository) {
         this.categoryRepository = categoryRepository;
