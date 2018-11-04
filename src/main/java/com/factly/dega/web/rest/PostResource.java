@@ -37,7 +37,7 @@ public class PostResource {
 
     private static final String ENTITY_NAME = "corePost";
 
-    private PostService postService;
+    private final PostService postService;
 
     public PostResource(PostService postService) {
         this.postService = postService;
@@ -95,7 +95,7 @@ public class PostResource {
     @GetMapping("/posts")
     @Timed
     public ResponseEntity<List<PostDTO>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
-        log.debug("REST request to get a page of Posts");
+        log.debug("REST request to get a page of Posts");git co
         Page<PostDTO> page;
         if (eagerload) {
             page = postService.findAllWithEagerRelationships(pageable);

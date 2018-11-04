@@ -25,11 +25,11 @@ public class PostServiceImpl implements PostService {
 
     private final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
 
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
-    private PostMapper postMapper;
+    private final PostMapper postMapper;
 
-    private PostSearchRepository postSearchRepository;
+    private final PostSearchRepository postSearchRepository;
 
     public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, PostSearchRepository postSearchRepository) {
         this.postRepository = postRepository;
