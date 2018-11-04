@@ -1,7 +1,42 @@
 {
     "fluentMethods": true,
     "clientRootFolder": "core",
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipName": "tag",
+            "otherEntityName": "tag",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "post"
+        },
+        {
+            "relationshipName": "category",
+            "otherEntityName": "category",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "post"
+        },
+        {
+            "relationshipName": "status",
+            "otherEntityName": "status",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipName": "format",
+            "otherEntityName": "format",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
+        }
+    ],
     "fields": [
         {
             "fieldName": "title",
@@ -76,7 +111,15 @@
             ]
         },
         {
-            "fieldName": "featuredImage",
+            "fieldName": "password",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "featuredMedia",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "subTitle",
             "fieldType": "String"
         }
     ],

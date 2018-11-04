@@ -37,7 +37,7 @@ public class PostResource {
 
     private static final String ENTITY_NAME = "corePost";
 
-    private PostService postService;
+    private final PostService postService;
 
     public PostResource(PostService postService) {
         this.postService = postService;
@@ -89,14 +89,20 @@ public class PostResource {
      * GET  /posts : get all the posts.
      *
      * @param pageable the pagination information
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
      * @return the ResponseEntity with status 200 (OK) and the list of posts in body
      */
     @GetMapping("/posts")
     @Timed
-    public ResponseEntity<List<PostDTO>> getAllPosts(Pageable pageable) {
+    public ResponseEntity<List<PostDTO>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of Posts");
-        Page<PostDTO> page = postService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/posts");
+        Page<PostDTO> page;
+        if (eagerload) {
+            page = postService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = postService.findAll(pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, String.format("/api/posts?eagerload=%b", eagerload));
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 

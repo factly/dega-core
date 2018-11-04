@@ -37,7 +37,7 @@ public class OrganizationResource {
 
     private static final String ENTITY_NAME = "coreOrganization";
 
-    private OrganizationService organizationService;
+    private final OrganizationService organizationService;
 
     public OrganizationResource(OrganizationService organizationService) {
         this.organizationService = organizationService;
@@ -97,7 +97,7 @@ public class OrganizationResource {
         log.debug("REST request to get a page of Organizations");
         Page<OrganizationDTO> page = organizationService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

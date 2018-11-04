@@ -12,6 +12,8 @@ import org.mapstruct.*;
 public interface StatusMapper extends EntityMapper<StatusDTO, Status> {
 
 
+    @Mapping(target = "posts", ignore = true)
+    Status toEntity(StatusDTO statusDTO);
 
     default Status fromId(String id) {
         if (id == null) {

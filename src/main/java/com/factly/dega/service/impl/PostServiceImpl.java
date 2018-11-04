@@ -25,11 +25,11 @@ public class PostServiceImpl implements PostService {
 
     private final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
 
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
 
-    private PostMapper postMapper;
+    private final PostMapper postMapper;
 
-    private PostSearchRepository postSearchRepository;
+    private final PostSearchRepository postSearchRepository;
 
     public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, PostSearchRepository postSearchRepository) {
         this.postRepository = postRepository;
@@ -67,6 +67,15 @@ public class PostServiceImpl implements PostService {
             .map(postMapper::toDto);
     }
 
+    /**
+     * Get all the Post with eager load of many-to-many relationships.
+     *
+     * @return the list of entities
+     */
+    public Page<PostDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return postRepository.findAllWithEagerRelationships(pageable).map(postMapper::toDto);
+    }
+    
 
     /**
      * Get one post by id.
@@ -77,7 +86,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public Optional<PostDTO> findOne(String id) {
         log.debug("Request to get Post : {}", id);
-        return postRepository.findById(id)
+        return postRepository.findOneWithEagerRelationships(id)
             .map(postMapper::toDto);
     }
 

@@ -113,7 +113,9 @@ class PostGatlingTest extends Simulation {
                 , "sticky":null
                 , "updates":"SAMPLE_TEXT"
                 , "slug":"SAMPLE_TEXT"
-                , "featuredImage":"SAMPLE_TEXT"
+                , "password":"SAMPLE_TEXT"
+                , "featuredMedia":"SAMPLE_TEXT"
+                , "subTitle":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_post_url"))).exitHereIfFailed
