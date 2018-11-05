@@ -23,6 +23,10 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "isDefault",
+            "fieldType": "Boolean"
         }
     ],
     "dto": "mapstruct",

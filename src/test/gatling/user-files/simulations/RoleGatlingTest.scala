@@ -103,6 +103,7 @@ class RoleGatlingTest extends Simulation {
                 "id":null
                 , "name":"SAMPLE_TEXT"
                 , "clientId":"SAMPLE_TEXT"
+                , "isDefault":null
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_role_url"))).exitHereIfFailed
