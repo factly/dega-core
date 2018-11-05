@@ -2,6 +2,8 @@ package com.factly.dega.service.dto;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -37,9 +39,6 @@ public class DegaUserDTO implements Serializable {
 
     private String description;
 
-    @NotNull
-    private String clientId;
-
     private Boolean isActive;
 
     @NotNull
@@ -48,6 +47,12 @@ public class DegaUserDTO implements Serializable {
     private String roleId;
 
     private String roleName;
+
+    private Set<OrganizationDTO> organizations = new HashSet<>();
+
+    private String organizationDefaultId;
+
+    private String organizationDefaultName;
 
     public String getId() {
         return id;
@@ -153,14 +158,6 @@ public class DegaUserDTO implements Serializable {
         this.description = description;
     }
 
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
     public Boolean isIsActive() {
         return isActive;
     }
@@ -191,6 +188,30 @@ public class DegaUserDTO implements Serializable {
 
     public void setRoleName(String roleName) {
         this.roleName = roleName;
+    }
+
+    public Set<OrganizationDTO> getOrganizations() {
+        return organizations;
+    }
+
+    public void setOrganizations(Set<OrganizationDTO> organizations) {
+        this.organizations = organizations;
+    }
+
+    public String getOrganizationDefaultId() {
+        return organizationDefaultId;
+    }
+
+    public void setOrganizationDefaultId(String organizationId) {
+        this.organizationDefaultId = organizationId;
+    }
+
+    public String getOrganizationDefaultName() {
+        return organizationDefaultName;
+    }
+
+    public void setOrganizationDefaultName(String organizationName) {
+        this.organizationDefaultName = organizationName;
     }
 
     @Override
@@ -230,11 +251,12 @@ public class DegaUserDTO implements Serializable {
             ", githubURL='" + getGithubURL() + "'" +
             ", profilePicture='" + getProfilePicture() + "'" +
             ", description='" + getDescription() + "'" +
-            ", clientId='" + getClientId() + "'" +
             ", isActive='" + isIsActive() + "'" +
             ", slug='" + getSlug() + "'" +
             ", role=" + getRoleId() +
             ", role='" + getRoleName() + "'" +
+            ", organizationDefault=" + getOrganizationDefaultId() +
+            ", organizationDefault='" + getOrganizationDefaultName() + "'" +
             "}";
     }
 }

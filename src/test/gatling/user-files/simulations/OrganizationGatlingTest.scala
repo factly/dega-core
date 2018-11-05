@@ -141,6 +141,7 @@ class OrganizationGatlingTest extends Simulation {
                 , "siteLanguage":"SAMPLE_TEXT"
                 , "timeZone":"SAMPLE_TEXT"
                 , "clientId":"SAMPLE_TEXT"
+                , "slug":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_organization_url"))).exitHereIfFailed
