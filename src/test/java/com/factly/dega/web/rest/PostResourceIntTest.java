@@ -3,6 +3,8 @@ package com.factly.dega.web.rest;
 import com.factly.dega.CoreApp;
 
 import com.factly.dega.domain.Post;
+import com.factly.dega.domain.Status;
+import com.factly.dega.domain.Format;
 import com.factly.dega.repository.PostRepository;
 import com.factly.dega.repository.search.PostSearchRepository;
 import com.factly.dega.service.PostService;
@@ -13,6 +15,7 @@ import com.factly.dega.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +32,7 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -87,15 +91,28 @@ public class PostResourceIntTest {
     private static final String DEFAULT_SLUG = "AAAAAAAAAA";
     private static final String UPDATED_SLUG = "BBBBBBBBBB";
 
-    private static final String DEFAULT_FEATURED_IMAGE = "AAAAAAAAAA";
-    private static final String UPDATED_FEATURED_IMAGE = "BBBBBBBBBB";
+    private static final String DEFAULT_PASSWORD = "AAAAAAAAAA";
+    private static final String UPDATED_PASSWORD = "BBBBBBBBBB";
+
+    private static final String DEFAULT_FEATURED_MEDIA = "AAAAAAAAAA";
+    private static final String UPDATED_FEATURED_MEDIA = "BBBBBBBBBB";
+
+    private static final String DEFAULT_SUB_TITLE = "AAAAAAAAAA";
+    private static final String UPDATED_SUB_TITLE = "BBBBBBBBBB";
 
     @Autowired
     private PostRepository postRepository;
 
+    @Mock
+    private PostRepository postRepositoryMock;
+
     @Autowired
     private PostMapper postMapper;
     
+
+    @Mock
+    private PostService postServiceMock;
+
     @Autowired
     private PostService postService;
 
@@ -151,7 +168,17 @@ public class PostResourceIntTest {
             .sticky(DEFAULT_STICKY)
             .updates(DEFAULT_UPDATES)
             .slug(DEFAULT_SLUG)
-            .featuredImage(DEFAULT_FEATURED_IMAGE);
+            .password(DEFAULT_PASSWORD)
+            .featuredMedia(DEFAULT_FEATURED_MEDIA)
+            .subTitle(DEFAULT_SUB_TITLE);
+        // Add required entity
+        Status status = StatusResourceIntTest.createEntity();
+        status.setId("fixed-id-for-tests");
+        post.setStatus(status);
+        // Add required entity
+        Format format = FormatResourceIntTest.createEntity();
+        format.setId("fixed-id-for-tests");
+        post.setFormat(format);
         return post;
     }
 
@@ -188,7 +215,9 @@ public class PostResourceIntTest {
         assertThat(testPost.isSticky()).isEqualTo(DEFAULT_STICKY);
         assertThat(testPost.getUpdates()).isEqualTo(DEFAULT_UPDATES);
         assertThat(testPost.getSlug()).isEqualTo(DEFAULT_SLUG);
-        assertThat(testPost.getFeaturedImage()).isEqualTo(DEFAULT_FEATURED_IMAGE);
+        assertThat(testPost.getPassword()).isEqualTo(DEFAULT_PASSWORD);
+        assertThat(testPost.getFeaturedMedia()).isEqualTo(DEFAULT_FEATURED_MEDIA);
+        assertThat(testPost.getSubTitle()).isEqualTo(DEFAULT_SUB_TITLE);
 
         // Validate the Post in Elasticsearch
         verify(mockPostSearchRepository, times(1)).save(testPost);
@@ -382,9 +411,42 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.[*].sticky").value(hasItem(DEFAULT_STICKY.booleanValue())))
             .andExpect(jsonPath("$.[*].updates").value(hasItem(DEFAULT_UPDATES.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].featuredImage").value(hasItem(DEFAULT_FEATURED_IMAGE.toString())));
+            .andExpect(jsonPath("$.[*].password").value(hasItem(DEFAULT_PASSWORD.toString())))
+            .andExpect(jsonPath("$.[*].featuredMedia").value(hasItem(DEFAULT_FEATURED_MEDIA.toString())))
+            .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())));
     }
     
+    public void getAllPostsWithEagerRelationshipsIsEnabled() throws Exception {
+        PostResource postResource = new PostResource(postServiceMock);
+        when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restPostMockMvc.perform(get("/api/posts?eagerload=true"))
+        .andExpect(status().isOk());
+
+        verify(postServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    public void getAllPostsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        PostResource postResource = new PostResource(postServiceMock);
+            when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+            MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restPostMockMvc.perform(get("/api/posts?eagerload=true"))
+        .andExpect(status().isOk());
+
+            verify(postServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
     @Test
     public void getPost() throws Exception {
         // Initialize the database
@@ -407,7 +469,9 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.sticky").value(DEFAULT_STICKY.booleanValue()))
             .andExpect(jsonPath("$.updates").value(DEFAULT_UPDATES.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
-            .andExpect(jsonPath("$.featuredImage").value(DEFAULT_FEATURED_IMAGE.toString()));
+            .andExpect(jsonPath("$.password").value(DEFAULT_PASSWORD.toString()))
+            .andExpect(jsonPath("$.featuredMedia").value(DEFAULT_FEATURED_MEDIA.toString()))
+            .andExpect(jsonPath("$.subTitle").value(DEFAULT_SUB_TITLE.toString()));
     }
 
     @Test
@@ -439,7 +503,9 @@ public class PostResourceIntTest {
             .sticky(UPDATED_STICKY)
             .updates(UPDATED_UPDATES)
             .slug(UPDATED_SLUG)
-            .featuredImage(UPDATED_FEATURED_IMAGE);
+            .password(UPDATED_PASSWORD)
+            .featuredMedia(UPDATED_FEATURED_MEDIA)
+            .subTitle(UPDATED_SUB_TITLE);
         PostDTO postDTO = postMapper.toDto(updatedPost);
 
         restPostMockMvc.perform(put("/api/posts")
@@ -463,7 +529,9 @@ public class PostResourceIntTest {
         assertThat(testPost.isSticky()).isEqualTo(UPDATED_STICKY);
         assertThat(testPost.getUpdates()).isEqualTo(UPDATED_UPDATES);
         assertThat(testPost.getSlug()).isEqualTo(UPDATED_SLUG);
-        assertThat(testPost.getFeaturedImage()).isEqualTo(UPDATED_FEATURED_IMAGE);
+        assertThat(testPost.getPassword()).isEqualTo(UPDATED_PASSWORD);
+        assertThat(testPost.getFeaturedMedia()).isEqualTo(UPDATED_FEATURED_MEDIA);
+        assertThat(testPost.getSubTitle()).isEqualTo(UPDATED_SUB_TITLE);
 
         // Validate the Post in Elasticsearch
         verify(mockPostSearchRepository, times(1)).save(testPost);
@@ -533,7 +601,9 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.[*].sticky").value(hasItem(DEFAULT_STICKY.booleanValue())))
             .andExpect(jsonPath("$.[*].updates").value(hasItem(DEFAULT_UPDATES.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].featuredImage").value(hasItem(DEFAULT_FEATURED_IMAGE.toString())));
+            .andExpect(jsonPath("$.[*].password").value(hasItem(DEFAULT_PASSWORD.toString())))
+            .andExpect(jsonPath("$.[*].featuredMedia").value(hasItem(DEFAULT_FEATURED_MEDIA.toString())))
+            .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())));
     }
 
     @Test

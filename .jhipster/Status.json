@@ -1,7 +1,14 @@
 {
     "fluentMethods": true,
     "clientRootFolder": "core",
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipName": "post",
+            "otherEntityName": "post",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "status"
+        }
+    ],
     "fields": [
         {
             "fieldName": "name",
@@ -16,6 +23,10 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "isDefault",
+            "fieldType": "Boolean"
         }
     ],
     "dto": "mapstruct",
