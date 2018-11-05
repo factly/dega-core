@@ -1,0 +1,96 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "core",
+    "relationships": [
+        {
+            "relationshipName": "role",
+            "otherEntityName": "role",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
+        }
+    ],
+    "fields": [
+        {
+            "fieldName": "firstName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "lastName",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "displayName",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "website",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "facebookURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "twitterURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "instagramURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "linkedinURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "githubURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "profilePicture",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "description",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "clientId",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "isActive",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "slug",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "dto": "mapstruct",
+    "searchEngine": "elasticsearch",
+    "service": "serviceImpl",
+    "entityTableName": "dega_user",
+    "jpaMetamodelFiltering": false,
+    "pagination": "pagination",
+    "microserviceName": "core"
+}
