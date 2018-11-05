@@ -13,88 +13,86 @@ import { OrganizationUpdateComponent } from './organization-update.component';
 import { OrganizationDeletePopupComponent } from './organization-delete-dialog.component';
 import { IOrganization } from 'app/shared/model/core/organization.model';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class OrganizationResolve implements Resolve<IOrganization> {
+  constructor(private service: OrganizationService) {}
 
-    constructor(private service: OrganizationService) {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Organization> {
+    const id = route.params['id'] ? route.params['id'] : null;
+    if (id) {
+      return this.service.find(id).pipe(
+        filter((response: HttpResponse<Organization>) => response.ok),
+        map((organization: HttpResponse<Organization>) => organization.body)
+      );
     }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Organization> {
-        const id = route.params['id'] ? route.params['id'] : null;
-        if (id) {
-            return this.service.find(id).pipe(
-                filter((response: HttpResponse<Organization>) => response.ok),
-                map((organization: HttpResponse<Organization>) => organization.body)
-            );
-        }
-        return of(new Organization());
-    }
+    return of(new Organization());
+  }
 }
 
-
 export const organizationRoute: Routes = [
-    {
-        path: 'organization',
-        component: OrganizationComponent,
-        resolve: {
-            'pagingParams': JhiResolvePagingParams
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            defaultSort: 'id,asc',
-            pageTitle: 'coreApp.coreOrganization.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }, {
-        path: 'organization/:id/view',
-        component: OrganizationDetailComponent,
-        resolve: {
-            organization: OrganizationResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreOrganization.home.title'
-        },
-        canActivate: [UserRouteAccessService]
+  {
+    path: 'organization',
+    component: OrganizationComponent,
+    resolve: {
+      pagingParams: JhiResolvePagingParams
     },
-    {
-        path: 'organization/new',
-        component: OrganizationUpdateComponent,
-        resolve: {
-            organization: OrganizationResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreOrganization.home.title'
-        },
-        canActivate: [UserRouteAccessService]
+    data: {
+      authorities: ['ROLE_USER'],
+      defaultSort: 'id,asc',
+      pageTitle: 'coreApp.coreOrganization.home.title'
     },
-    {
-        path: 'organization/:id/edit',
-        component: OrganizationUpdateComponent,
-        resolve: {
-            organization: OrganizationResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreOrganization.home.title'
-        },
-        canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'organization/:id/view',
+    component: OrganizationDetailComponent,
+    resolve: {
+      organization: OrganizationResolve
     },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreOrganization.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'organization/new',
+    component: OrganizationUpdateComponent,
+    resolve: {
+      organization: OrganizationResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreOrganization.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'organization/:id/edit',
+    component: OrganizationUpdateComponent,
+    resolve: {
+      organization: OrganizationResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreOrganization.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  }
 ];
 
 export const organizationPopupRoute: Routes = [
-    {
-        path: 'organization/:id/delete',
-        component: OrganizationDeletePopupComponent,
-        resolve: {
-            organization: OrganizationResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreOrganization.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    }
+  {
+    path: 'organization/:id/delete',
+    component: OrganizationDeletePopupComponent,
+    resolve: {
+      organization: OrganizationResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreOrganization.home.title'
+    },
+    canActivate: [UserRouteAccessService],
+    outlet: 'popup'
+  }
 ];

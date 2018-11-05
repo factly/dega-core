@@ -12,6 +12,9 @@ import org.mapstruct.*;
 public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organization> {
 
 
+    @Mapping(target = "degaUsers", ignore = true)
+    @Mapping(target = "degaUserDefaults", ignore = true)
+    Organization toEntity(OrganizationDTO organizationDTO);
 
     default Organization fromId(String id) {
         if (id == null) {

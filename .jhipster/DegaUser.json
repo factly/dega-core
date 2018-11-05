@@ -10,6 +10,26 @@
                 "required"
             ],
             "otherEntityField": "name"
+        },
+        {
+            "relationshipName": "organization",
+            "otherEntityName": "organization",
+            "relationshipType": "many-to-many",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "degaUser"
+        },
+        {
+            "relationshipName": "organizationDefault",
+            "otherEntityName": "organization",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
         }
     ],
     "fields": [
@@ -66,13 +86,6 @@
         {
             "fieldName": "description",
             "fieldType": "String"
-        },
-        {
-            "fieldName": "clientId",
-            "fieldType": "String",
-            "fieldValidateRules": [
-                "required"
-            ]
         },
         {
             "fieldName": "isActive",

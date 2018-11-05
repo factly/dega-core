@@ -1,7 +1,21 @@
 {
     "fluentMethods": true,
     "clientRootFolder": "core",
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipName": "degaUser",
+            "otherEntityName": "degaUser",
+            "relationshipType": "many-to-many",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "organization"
+        },
+        {
+            "relationshipName": "degaUserDefault",
+            "otherEntityName": "degaUser",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "organizationDefault"
+        }
+    ],
     "fields": [
         {
             "fieldName": "name",
@@ -170,6 +184,13 @@
         },
         {
             "fieldName": "clientId",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "slug",
             "fieldType": "String",
             "fieldValidateRules": [
                 "required"

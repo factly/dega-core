@@ -67,6 +67,15 @@ public class DegaUserServiceImpl implements DegaUserService {
             .map(degaUserMapper::toDto);
     }
 
+    /**
+     * Get all the DegaUser with eager load of many-to-many relationships.
+     *
+     * @return the list of entities
+     */
+    public Page<DegaUserDTO> findAllWithEagerRelationships(Pageable pageable) {
+        return degaUserRepository.findAllWithEagerRelationships(pageable).map(degaUserMapper::toDto);
+    }
+    
 
     /**
      * Get one degaUser by id.
@@ -77,7 +86,7 @@ public class DegaUserServiceImpl implements DegaUserService {
     @Override
     public Optional<DegaUserDTO> findOne(String id) {
         log.debug("Request to get DegaUser : {}", id);
-        return degaUserRepository.findById(id)
+        return degaUserRepository.findOneWithEagerRelationships(id)
             .map(degaUserMapper::toDto);
     }
 

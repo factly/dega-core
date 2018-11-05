@@ -28,7 +28,13 @@ public interface DegaUserService {
      */
     Page<DegaUserDTO> findAll(Pageable pageable);
 
-
+    /**
+     * Get all the DegaUser with eager load of many-to-many relationships.
+     *
+     * @return the list of entities
+     */
+    Page<DegaUserDTO> findAllWithEagerRelationships(Pageable pageable);
+    
     /**
      * Get the "id" degaUser.
      *

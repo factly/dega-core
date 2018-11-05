@@ -4,6 +4,8 @@ import com.factly.dega.CoreApp;
 
 import com.factly.dega.domain.DegaUser;
 import com.factly.dega.domain.Role;
+import com.factly.dega.domain.Organization;
+import com.factly.dega.domain.Organization;
 import com.factly.dega.repository.DegaUserRepository;
 import com.factly.dega.repository.search.DegaUserSearchRepository;
 import com.factly.dega.service.DegaUserService;
@@ -14,6 +16,7 @@ import com.factly.dega.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +29,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -83,9 +87,6 @@ public class DegaUserResourceIntTest {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
-    private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
-
     private static final Boolean DEFAULT_IS_ACTIVE = false;
     private static final Boolean UPDATED_IS_ACTIVE = true;
 
@@ -95,9 +96,16 @@ public class DegaUserResourceIntTest {
     @Autowired
     private DegaUserRepository degaUserRepository;
 
+    @Mock
+    private DegaUserRepository degaUserRepositoryMock;
+
     @Autowired
     private DegaUserMapper degaUserMapper;
     
+
+    @Mock
+    private DegaUserService degaUserServiceMock;
+
     @Autowired
     private DegaUserService degaUserService;
 
@@ -153,13 +161,18 @@ public class DegaUserResourceIntTest {
             .githubURL(DEFAULT_GITHUB_URL)
             .profilePicture(DEFAULT_PROFILE_PICTURE)
             .description(DEFAULT_DESCRIPTION)
-            .clientId(DEFAULT_CLIENT_ID)
             .isActive(DEFAULT_IS_ACTIVE)
             .slug(DEFAULT_SLUG);
         // Add required entity
         Role role = RoleResourceIntTest.createEntity();
         role.setId("fixed-id-for-tests");
         degaUser.setRole(role);
+        // Add required entity
+        Organization organization = OrganizationResourceIntTest.createEntity();
+        organization.setId("fixed-id-for-tests");
+        degaUser.getOrganizations().add(organization);
+        // Add required entity
+        degaUser.setOrganizationDefault(organization);
         return degaUser;
     }
 
@@ -196,7 +209,6 @@ public class DegaUserResourceIntTest {
         assertThat(testDegaUser.getGithubURL()).isEqualTo(DEFAULT_GITHUB_URL);
         assertThat(testDegaUser.getProfilePicture()).isEqualTo(DEFAULT_PROFILE_PICTURE);
         assertThat(testDegaUser.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testDegaUser.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testDegaUser.isIsActive()).isEqualTo(DEFAULT_IS_ACTIVE);
         assertThat(testDegaUser.getSlug()).isEqualTo(DEFAULT_SLUG);
 
@@ -263,24 +275,6 @@ public class DegaUserResourceIntTest {
     }
 
     @Test
-    public void checkClientIdIsRequired() throws Exception {
-        int databaseSizeBeforeTest = degaUserRepository.findAll().size();
-        // set the field null
-        degaUser.setClientId(null);
-
-        // Create the DegaUser, which fails.
-        DegaUserDTO degaUserDTO = degaUserMapper.toDto(degaUser);
-
-        restDegaUserMockMvc.perform(post("/api/dega-users")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(degaUserDTO)))
-            .andExpect(status().isBadRequest());
-
-        List<DegaUser> degaUserList = degaUserRepository.findAll();
-        assertThat(degaUserList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
     public void checkSlugIsRequired() throws Exception {
         int databaseSizeBeforeTest = degaUserRepository.findAll().size();
         // set the field null
@@ -320,11 +314,41 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.[*].githubURL").value(hasItem(DEFAULT_GITHUB_URL.toString())))
             .andExpect(jsonPath("$.[*].profilePicture").value(hasItem(DEFAULT_PROFILE_PICTURE.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].isActive").value(hasItem(DEFAULT_IS_ACTIVE.booleanValue())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
     }
     
+    public void getAllDegaUsersWithEagerRelationshipsIsEnabled() throws Exception {
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock);
+        when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restDegaUserMockMvc.perform(get("/api/dega-users?eagerload=true"))
+        .andExpect(status().isOk());
+
+        verify(degaUserServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    public void getAllDegaUsersWithEagerRelationshipsIsNotEnabled() throws Exception {
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock);
+            when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+            MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        restDegaUserMockMvc.perform(get("/api/dega-users?eagerload=true"))
+        .andExpect(status().isOk());
+
+            verify(degaUserServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
     @Test
     public void getDegaUser() throws Exception {
         // Initialize the database
@@ -347,7 +371,6 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.githubURL").value(DEFAULT_GITHUB_URL.toString()))
             .andExpect(jsonPath("$.profilePicture").value(DEFAULT_PROFILE_PICTURE.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
-            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
             .andExpect(jsonPath("$.isActive").value(DEFAULT_IS_ACTIVE.booleanValue()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()));
     }
@@ -381,7 +404,6 @@ public class DegaUserResourceIntTest {
             .githubURL(UPDATED_GITHUB_URL)
             .profilePicture(UPDATED_PROFILE_PICTURE)
             .description(UPDATED_DESCRIPTION)
-            .clientId(UPDATED_CLIENT_ID)
             .isActive(UPDATED_IS_ACTIVE)
             .slug(UPDATED_SLUG);
         DegaUserDTO degaUserDTO = degaUserMapper.toDto(updatedDegaUser);
@@ -407,7 +429,6 @@ public class DegaUserResourceIntTest {
         assertThat(testDegaUser.getGithubURL()).isEqualTo(UPDATED_GITHUB_URL);
         assertThat(testDegaUser.getProfilePicture()).isEqualTo(UPDATED_PROFILE_PICTURE);
         assertThat(testDegaUser.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testDegaUser.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testDegaUser.isIsActive()).isEqualTo(UPDATED_IS_ACTIVE);
         assertThat(testDegaUser.getSlug()).isEqualTo(UPDATED_SLUG);
 
@@ -479,7 +500,6 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.[*].githubURL").value(hasItem(DEFAULT_GITHUB_URL.toString())))
             .andExpect(jsonPath("$.[*].profilePicture").value(hasItem(DEFAULT_PROFILE_PICTURE.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].isActive").value(hasItem(DEFAULT_IS_ACTIVE.booleanValue())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
     }

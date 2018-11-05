@@ -95,6 +95,9 @@ public class OrganizationDTO implements Serializable {
     @NotNull
     private String clientId;
 
+    @NotNull
+    private String slug;
+
     public String getId() {
         return id;
     }
@@ -423,6 +426,14 @@ public class OrganizationDTO implements Serializable {
         this.clientId = clientId;
     }
 
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -488,6 +499,7 @@ public class OrganizationDTO implements Serializable {
             ", siteLanguage='" + getSiteLanguage() + "'" +
             ", timeZone='" + getTimeZone() + "'" +
             ", clientId='" + getClientId() + "'" +
+            ", slug='" + getSlug() + "'" +
             "}";
     }
 }

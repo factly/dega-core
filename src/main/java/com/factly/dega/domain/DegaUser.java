@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -60,10 +62,6 @@ public class DegaUser implements Serializable {
     @Field("description")
     private String description;
 
-    @NotNull
-    @Field("client_id")
-    private String clientId;
-
     @Field("is_active")
     private Boolean isActive;
 
@@ -73,8 +71,17 @@ public class DegaUser implements Serializable {
 
     @DBRef
     @Field("role")
-    @JsonIgnoreProperties("")
+    @JsonIgnoreProperties("degaUsers")
     private Role role;
+
+    @DBRef
+    @Field("organizations")
+    private Set<Organization> organizations = new HashSet<>();
+
+    @DBRef
+    @Field("organizationDefault")
+    @JsonIgnoreProperties("degaUserDefaults")
+    private Organization organizationDefault;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -241,19 +248,6 @@ public class DegaUser implements Serializable {
         this.description = description;
     }
 
-    public String getClientId() {
-        return clientId;
-    }
-
-    public DegaUser clientId(String clientId) {
-        this.clientId = clientId;
-        return this;
-    }
-
-    public void setClientId(String clientId) {
-        this.clientId = clientId;
-    }
-
     public Boolean isIsActive() {
         return isActive;
     }
@@ -291,6 +285,44 @@ public class DegaUser implements Serializable {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public Set<Organization> getOrganizations() {
+        return organizations;
+    }
+
+    public DegaUser organizations(Set<Organization> organizations) {
+        this.organizations = organizations;
+        return this;
+    }
+
+    public DegaUser addOrganization(Organization organization) {
+        this.organizations.add(organization);
+        organization.getDegaUsers().add(this);
+        return this;
+    }
+
+    public DegaUser removeOrganization(Organization organization) {
+        this.organizations.remove(organization);
+        organization.getDegaUsers().remove(this);
+        return this;
+    }
+
+    public void setOrganizations(Set<Organization> organizations) {
+        this.organizations = organizations;
+    }
+
+    public Organization getOrganizationDefault() {
+        return organizationDefault;
+    }
+
+    public DegaUser organizationDefault(Organization organization) {
+        this.organizationDefault = organization;
+        return this;
+    }
+
+    public void setOrganizationDefault(Organization organization) {
+        this.organizationDefault = organization;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -330,7 +362,6 @@ public class DegaUser implements Serializable {
             ", githubURL='" + getGithubURL() + "'" +
             ", profilePicture='" + getProfilePicture() + "'" +
             ", description='" + getDescription() + "'" +
-            ", clientId='" + getClientId() + "'" +
             ", isActive='" + isIsActive() + "'" +
             ", slug='" + getSlug() + "'" +
             "}";

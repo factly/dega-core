@@ -89,14 +89,20 @@ public class DegaUserResource {
      * GET  /dega-users : get all the degaUsers.
      *
      * @param pageable the pagination information
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
      * @return the ResponseEntity with status 200 (OK) and the list of degaUsers in body
      */
     @GetMapping("/dega-users")
     @Timed
-    public ResponseEntity<List<DegaUserDTO>> getAllDegaUsers(Pageable pageable) {
+    public ResponseEntity<List<DegaUserDTO>> getAllDegaUsers(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of DegaUsers");
-        Page<DegaUserDTO> page = degaUserService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/dega-users");
+        Page<DegaUserDTO> page;
+        if (eagerload) {
+            page = degaUserService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = degaUserService.findAll(pageable);
+        }
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, String.format("/api/dega-users?eagerload=%b", eagerload));
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
