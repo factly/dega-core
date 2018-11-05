@@ -7,11 +7,45 @@ entity Category {
   parent String,
   clientId String required
 }
+entity DegaUser {
+  firstName String,
+  lastName String,
+  displayName String required,
+  email String required,
+  website String,
+  facebookURL String,
+  twitterURL String,
+  instagramURL String,
+  linkedinURL String,
+  githubURL String,
+  profilePicture String,
+  description String,
+  clientId String required,
+  isActive Boolean,
+  slug String required
+}
 entity Format {
   name String required,
   isDefault Boolean,
   clientId String,
   description String
+}
+entity Media {
+  name String required,
+  type String required,
+  url String required,
+  fileSize String,
+  dimensions String,
+  title String,
+  caption String,
+  altText String,
+  description String,
+  uploadedBy String required,
+  publishedDate ZonedDateTime required,
+  publishedDateGMT ZonedDateTime required,
+  lastUpdatedDate ZonedDateTime required,
+  lastUpdatedDateGMT ZonedDateTime required,
+  slug String required
 }
 entity Organization {
   name String required,
@@ -72,6 +106,10 @@ entity Post {
   featuredMedia String,
   subTitle String
 }
+entity Role {
+  name String required,
+  clientId String required
+}
 entity Status {
   name String required,
   clientId String required,
@@ -84,6 +122,7 @@ entity Tag {
   clientId String required
 }
 relationship OneToMany {
+  Role{degaUser} to DegaUser{role(name) required},
   Status{post} to Post{status(name) required},
   Format{post} to Post{format(name) required}
 }
@@ -92,9 +131,9 @@ relationship ManyToMany {
   Post{category(name)} to Category{post}
 }
 
-dto Category, Format, Organization, Post, Status, Tag with mapstruct
-paginate Category, Format, Organization, Post, Status, Tag with pagination
-service Category, Format, Organization, Post, Status, Tag with serviceImpl
-search Category, Format, Organization, Post, Status, Tag with elasticsearch
-microservice Category, Format, Organization, Post, Status, Tag with core
-clientRootFolder Category, Format, Organization, Post, Status, Tag with core
+dto Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with mapstruct
+paginate Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with pagination
+service Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with serviceImpl
+search Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with elasticsearch
+microservice Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with core
+clientRootFolder Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with core
