@@ -52,6 +52,9 @@ public class RoleResourceIntTest {
     private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
     private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
 
+    private static final Boolean DEFAULT_IS_DEFAULT = false;
+    private static final Boolean UPDATED_IS_DEFAULT = true;
+
     @Autowired
     private RoleRepository roleRepository;
 
@@ -102,7 +105,8 @@ public class RoleResourceIntTest {
     public static Role createEntity() {
         Role role = new Role()
             .name(DEFAULT_NAME)
-            .clientId(DEFAULT_CLIENT_ID);
+            .clientId(DEFAULT_CLIENT_ID)
+            .isDefault(DEFAULT_IS_DEFAULT);
         return role;
     }
 
@@ -129,6 +133,7 @@ public class RoleResourceIntTest {
         Role testRole = roleList.get(roleList.size() - 1);
         assertThat(testRole.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testRole.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
+        assertThat(testRole.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);
@@ -203,7 +208,8 @@ public class RoleResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(role.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())));
     }
     
     @Test
@@ -217,7 +223,8 @@ public class RoleResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(role.getId()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()));
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
+            .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()));
     }
 
     @Test
@@ -238,7 +245,8 @@ public class RoleResourceIntTest {
         Role updatedRole = roleRepository.findById(role.getId()).get();
         updatedRole
             .name(UPDATED_NAME)
-            .clientId(UPDATED_CLIENT_ID);
+            .clientId(UPDATED_CLIENT_ID)
+            .isDefault(UPDATED_IS_DEFAULT);
         RoleDTO roleDTO = roleMapper.toDto(updatedRole);
 
         restRoleMockMvc.perform(put("/api/roles")
@@ -252,6 +260,7 @@ public class RoleResourceIntTest {
         Role testRole = roleList.get(roleList.size() - 1);
         assertThat(testRole.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testRole.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testRole.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);
@@ -310,7 +319,8 @@ public class RoleResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(role.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())));
     }
 
     @Test

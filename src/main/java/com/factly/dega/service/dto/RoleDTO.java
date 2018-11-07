@@ -17,6 +17,8 @@ public class RoleDTO implements Serializable {
     @NotNull
     private String clientId;
 
+    private Boolean isDefault;
+
     public String getId() {
         return id;
     }
@@ -39,6 +41,14 @@ public class RoleDTO implements Serializable {
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public Boolean isIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Boolean isDefault) {
+        this.isDefault = isDefault;
     }
 
     @Override
@@ -68,6 +78,7 @@ public class RoleDTO implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", clientId='" + getClientId() + "'" +
+            ", isDefault='" + isIsDefault() + "'" +
             "}";
     }
 }

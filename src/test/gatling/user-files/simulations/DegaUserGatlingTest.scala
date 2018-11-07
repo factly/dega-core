@@ -113,7 +113,6 @@ class DegaUserGatlingTest extends Simulation {
                 , "githubURL":"SAMPLE_TEXT"
                 , "profilePicture":"SAMPLE_TEXT"
                 , "description":"SAMPLE_TEXT"
-                , "clientId":"SAMPLE_TEXT"
                 , "isActive":null
                 , "slug":"SAMPLE_TEXT"
                 }""")).asJSON
