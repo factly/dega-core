@@ -1,3 +1,4 @@
+[
 { 
     "_id" : ObjectId("5bded84dbea132818c6d908c"), 
     "name" : "status 1", 
@@ -7,7 +8,7 @@
 
     ], 
     "_class" : "com.factly.dega.domain.Status"
-}
+},
 { 
     "_id" : ObjectId("5be0ac93bea13298572265c8"), 
     "name" : "status 2", 
@@ -18,3 +19,4 @@
     ], 
     "_class" : "com.factly.dega.domain.Status"
 }
+]

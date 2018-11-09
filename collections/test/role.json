@@ -1,3 +1,4 @@
+[
 { 
     "_id" : ObjectId("5be0a6a6bea132948585fc38"), 
     "name" : "admin", 
@@ -6,7 +7,7 @@
 
     ], 
     "_class" : "com.factly.dega.domain.Role"
-}
+},
 { 
     "_id" : ObjectId("5be0a7f5bea132948585fc3c"), 
     "name" : "role 2", 
@@ -16,3 +17,4 @@
     ], 
     "_class" : "com.factly.dega.domain.Role"
 }
+]

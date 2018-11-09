@@ -1,3 +1,4 @@
+[
 { 
     "_id" : ObjectId("5bded8ddbea132818c6d9094"), 
     "title" : "test", 
@@ -22,7 +23,7 @@
     "status" : DBRef("status", ObjectId("5bded84dbea132818c6d908c")), 
     "format" : DBRef("format", ObjectId("5bded7dabea132818c6d9088")), 
     "_class" : "com.factly.dega.domain.Post"
-}
+},
 { 
     "_id" : ObjectId("5be4bb87ebcaa1b74c9768af"), 
     "title" : "test 1", 
@@ -45,7 +46,7 @@
     "status" : DBRef("status", ObjectId("5bded84dbea132818c6d908c")), 
     "format" : DBRef("format", ObjectId("5bded7dabea132818c6d9088")), 
     "_class" : "com.factly.dega.domain.Post"
-}
+},
 { 
     "_id" : ObjectId("5be4bd81ebcaa1b74c9768c0"), 
     "title" : "test 2", 
@@ -69,7 +70,7 @@
     "status" : DBRef("status", ObjectId("5bded84dbea132818c6d908c")), 
     "format" : DBRef("format", ObjectId("5bded7dabea132818c6d9088")), 
     "_class" : "com.factly.dega.domain.Post"
-}
+},
 { 
     "_id" : ObjectId("5be4be36ebcaa1b74c9768c9"), 
     "title" : "test 3", 
@@ -93,3 +94,4 @@
     "format" : DBRef("format", ObjectId("5bded7dabea132818c6d9088")), 
     "_class" : "com.factly.dega.domain.Post"
 }
+]

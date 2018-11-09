@@ -1,3 +1,4 @@
+[
 { 
     "_id" : ObjectId("5be0a822bea132948585fc41"), 
     "display_name" : "test", 
@@ -12,3 +13,4 @@
     "organizationDefault" : DBRef("organization", ObjectId("5be0a5e6bea132948585fc28")), 
     "_class" : "com.factly.dega.domain.DegaUser"
 }
+]

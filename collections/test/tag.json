@@ -1,3 +1,4 @@
+[
 { 
     "_id" : ObjectId("5bded7b3bea132818c6d907f"), 
     "name" : "tag 1", 
@@ -8,3 +9,4 @@
     ], 
     "_class" : "com.factly.dega.domain.Tag"
 }
+]

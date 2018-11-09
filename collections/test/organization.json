@@ -1,3 +1,4 @@
+[
 { 
     "_id" : ObjectId("5be0a5e6bea132948585fc28"), 
     "name" : "org 1", 
@@ -12,7 +13,7 @@
 
     ], 
     "_class" : "com.factly.dega.domain.Organization"
-}
+},
 { 
     "_id" : ObjectId("5be0a613bea132948585fc31"), 
     "name" : "org 2", 
@@ -28,3 +29,4 @@
     ], 
     "_class" : "com.factly.dega.domain.Organization"
 }
+]
