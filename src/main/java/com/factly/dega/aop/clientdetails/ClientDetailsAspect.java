@@ -86,14 +86,14 @@ public class ClientDetailsAspect {
                         OrganizationDTO orgDTO = user.get()
                             .getOrganizations()
                             .stream()
-                            .filter(o -> o.getEmail().equals(userId))
+                            .filter(o -> o.getId().equals(user.get().getOrganizationDefaultId()))
                             .findAny()
                             .orElse(null);
                         if (orgDTO != null) {
                             String clientId = orgDTO.getClientId();
                             context.setAttribute("ClientID", clientId);
                         } else {
-                            log.warn("No user found with the principal {}, exiting", userId);
+                            log.warn("No org found with the default org id {}, exiting", user.get().getOrganizationDefaultId());
                         }
                     }
                 }
