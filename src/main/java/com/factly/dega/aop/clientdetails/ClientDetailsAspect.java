@@ -73,11 +73,14 @@ public class ClientDetailsAspect {
                     if (tokens.length == 2) {
                         String clientID = tokens[1];
                         context.setAttribute("ClientID", clientID);
+                    } else {
+                        log.warn("No client found with the principal {}, exiting", principal);
                     }
                 } else {
                     // request with user login
                     String userId = principal;
                     Optional<DegaUserDTO> user = degaUserService.findByEmailId(userId);
+                    log.info("Login userID is {}", userId);
                     if (user.isPresent()) {
                         // get the default org dto
                         OrganizationDTO orgDTO = user.get()
@@ -86,8 +89,12 @@ public class ClientDetailsAspect {
                             .filter(o -> o.getEmail().equals(userId))
                             .findAny()
                             .orElse(null);
-                        String clientId = orgDTO.getClientId();
-                        context.setAttribute("ClientID", clientId);
+                        if (orgDTO != null) {
+                            String clientId = orgDTO.getClientId();
+                            context.setAttribute("ClientID", clientId);
+                        } else {
+                            log.warn("No user found with the principal {}, exiting", userId);
+                        }
                     }
                 }
             }
