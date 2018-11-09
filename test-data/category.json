@@ -1,0 +1,40 @@
+{ 
+    "_id" : ObjectId("5bded7cabea132818c6d9084"), 
+    "name" : "cat 1", 
+    "slug" : "cat1", 
+    "client_id" : "factly", 
+    "posts" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Category"
+}
+{ 
+    "_id" : ObjectId("5bdee695bea13207545667e0"), 
+    "name" : "cat 2", 
+    "slug" : "cat2", 
+    "client_id" : "factly", 
+    "posts" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Category"
+}
+{ 
+    "_id" : ObjectId("5bdef86fbea1321071bbae19"), 
+    "name" : "cat 3", 
+    "slug" : "cat3", 
+    "client_id" : "newslaundry", 
+    "posts" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Category"
+}
+{ 
+    "_id" : ObjectId("5be31501ebcaa1385d21efb7"), 
+    "name" : "cat 3", 
+    "slug" : "cat3", 
+    "client_id" : "1234", 
+    "posts" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Category"
+}

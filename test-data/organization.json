@@ -1,0 +1,30 @@
+{ 
+    "_id" : ObjectId("5be0a5e6bea132948585fc28"), 
+    "name" : "org 1", 
+    "email" : "org1@org.com", 
+    "site_title" : "org 1 title", 
+    "client_id" : "test", 
+    "slug" : "test", 
+    "degaUsers" : [
+
+    ], 
+    "degaUserDefault" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Organization"
+}
+{ 
+    "_id" : ObjectId("5be0a613bea132948585fc31"), 
+    "name" : "org 2", 
+    "email" : "org2@org.com", 
+    "site_title" : "org 2 site title", 
+    "client_id" : "test1", 
+    "slug" : "test", 
+    "degaUsers" : [
+
+    ], 
+    "degaUserDefault" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Organization"
+}
