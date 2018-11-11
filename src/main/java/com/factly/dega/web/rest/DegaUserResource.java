@@ -2,29 +2,35 @@ package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.service.DegaUserService;
+import com.factly.dega.service.dto.UserDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.DegaUserDTO;
 import io.github.jhipster.web.util.ResponseUtil;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import com.google.gson.*;
+import java.lang.reflect.Type;
 
 /**
  * REST controller for managing DegaUser.
@@ -39,8 +45,14 @@ public class DegaUserResource {
 
     private final DegaUserService degaUserService;
 
-    public DegaUserResource(DegaUserService degaUserService) {
+    private final RestTemplate restTemplate;
+
+    private String keycloakServerURI;
+
+    public DegaUserResource(DegaUserService degaUserService, RestTemplate restTemplate, @Value("${keycloak.api.uri}") String keycloakServerURI) {
         this.degaUserService = degaUserService;
+        this.restTemplate = restTemplate;
+        this.keycloakServerURI = keycloakServerURI;
     }
 
     /**
@@ -52,17 +64,60 @@ public class DegaUserResource {
      */
     @PostMapping("/dega-users")
     @Timed
-    public ResponseEntity<DegaUserDTO> createDegaUser(@Valid @RequestBody DegaUserDTO degaUserDTO) throws URISyntaxException {
+    public ResponseEntity<DegaUserDTO> createDegaUser(@Valid @RequestBody DegaUserDTO degaUserDTO, HttpServletRequest request) throws URISyntaxException, IOException {
         log.debug("REST request to save DegaUser : {}", degaUserDTO);
         if (degaUserDTO.getId() != null) {
             throw new BadRequestAlertException("A new degaUser cannot already have an ID", ENTITY_NAME, "idexists");
         }
         DegaUserDTO result = degaUserService.save(degaUserDTO);
+
+        // create new user in keycloak
+        OAuth2Authentication auth = (OAuth2Authentication) request.getUserPrincipal();
+        String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
+
+        JsonObject jObj = transformDTO(degaUserDTO);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+        httpHeaders.add("Authorization", token);
+        String jsonAsString = jObj.toString();
+        HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
+        restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
+
         return ResponseEntity.created(new URI("/api/dega-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
+    private JsonObject transformDTO(DegaUserDTO degaUserDTO) {
+        JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(degaUserDTO);
+
+        jObj.remove("facebookURL");
+        jObj.remove("isActive");
+        jObj.remove("displayName");
+        jObj.remove("slug");
+        jObj.remove("roleId");
+        jObj.remove("organizations");
+        jObj.remove("organizationDefaultId");
+        jObj.remove("roleName");
+        jObj.remove("description");
+        jObj.remove("profilePicture");
+        jObj.remove("githubURL");
+        jObj.remove("linkedinURL");
+        jObj.remove("instagramURL");
+        jObj.remove("twitterURL");
+        jObj.remove("facebookURL");
+        jObj.remove("website");
+
+        jObj.addProperty("username", degaUserDTO.getEmail());
+        jObj.addProperty("id", String.valueOf(java.util.UUID.randomUUID()));
+
+        // TODO: Add these attributes in dega user
+        jObj.addProperty("enabled", degaUserDTO.isIsActive());
+        jObj.addProperty("emailVerified", true);
+
+        return jObj;
+    }
     /**
      * PUT  /dega-users : Updates an existing degaUser.
      *
@@ -117,6 +172,20 @@ public class DegaUserResource {
     public ResponseEntity<DegaUserDTO> getDegaUser(@PathVariable String id) {
         log.debug("REST request to get DegaUser : {}", id);
         Optional<DegaUserDTO> degaUserDTO = degaUserService.findOne(id);
+        return ResponseUtil.wrapOrNotFound(degaUserDTO);
+    }
+
+    /**
+     * GET  /dega-users/:id : get the "emailId" degaUser.
+     *
+     * @param emailId the email id of the degaUserDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the degaUserDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/dega-users/email/{emailId}")
+    @Timed
+    public ResponseEntity<DegaUserDTO> getDegaUserByEmailId(@PathVariable String emailId) {
+        log.debug("REST request to get DegaUser : {}", emailId);
+        Optional<DegaUserDTO> degaUserDTO = degaUserService.findByEmailId(emailId);
         return ResponseUtil.wrapOrNotFound(degaUserDTO);
     }
 
