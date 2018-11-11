@@ -137,7 +137,7 @@ public class PostServiceImpl implements PostService {
      */
     @Override
     public Optional<PostDTO> findByClientIdAndSlug(String clientId, String slug) {
-        log.debug("Request to get post  by clienId : {} and slug : ", clientId, slug);
+        log.debug("Request to get post  by clienId : {} and slug : {}", clientId, slug);
         return postRepository.findByClientIdAndSlug(clientId, slug)
             .map(postMapper::toDto);
     }
