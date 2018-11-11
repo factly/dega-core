@@ -27,4 +27,6 @@ public interface PostRepository extends MongoRepository<Post, String> {
 
     @Query("{'clientId': ?0}")
     Page<Post> findByClientId(String clientId, Pageable pageable);
+
+    Optional<Post> findByClientIdAndSlug(String clientId, String slug);
 }

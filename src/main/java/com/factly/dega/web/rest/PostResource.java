@@ -171,4 +171,18 @@ public class PostResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    /**
+     * GET  /posts/:clientId/:slug : get the post.
+     *
+     * @param clientId the clientId of the postDTO
+     * @param slug the slug of the PostDTO
+     * @return Optional<PostDTO> post by clientId and slug
+     */
+    @GetMapping("/posts/{clientId}/{slug}")
+    @Timed
+    public Optional<PostDTO> getSlug(@PathVariable String clientId, @PathVariable String slug) {
+        log.debug("REST request to get post by clienId : {} and slug : {}", clientId, slug);
+        Optional<PostDTO> postDTO = postService.findByClientIdAndSlug(clientId, slug);
+        return postDTO;
+    }
 }
