@@ -14,9 +14,6 @@ public class OrganizationDTO implements Serializable {
     @NotNull
     private String name;
 
-    @NotNull
-    private String email;
-
     private String phone;
 
     @NotNull
@@ -98,6 +95,10 @@ public class OrganizationDTO implements Serializable {
     @NotNull
     private String slug;
 
+    @NotNull
+    @Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")
+    private String email;
+
     public String getId() {
         return id;
     }
@@ -112,14 +113,6 @@ public class OrganizationDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {
@@ -434,6 +427,14 @@ public class OrganizationDTO implements Serializable {
         this.slug = slug;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -460,7 +461,6 @@ public class OrganizationDTO implements Serializable {
         return "OrganizationDTO{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", email='" + getEmail() + "'" +
             ", phone='" + getPhone() + "'" +
             ", siteTitle='" + getSiteTitle() + "'" +
             ", tagLine='" + getTagLine() + "'" +
@@ -500,6 +500,7 @@ public class OrganizationDTO implements Serializable {
             ", timeZone='" + getTimeZone() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", slug='" + getSlug() + "'" +
+            ", email='" + getEmail() + "'" +
             "}";
     }
 }
