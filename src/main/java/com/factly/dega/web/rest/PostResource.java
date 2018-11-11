@@ -9,7 +9,6 @@ import com.factly.dega.service.dto.PostDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +16,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -40,9 +38,6 @@ public class PostResource {
     private static final String ENTITY_NAME = "corePost";
 
     private final PostService postService;
-
-    @Autowired
-    private HttpServletRequest context;
 
     public PostResource(PostService postService) {
         this.postService = postService;
@@ -91,7 +86,7 @@ public class PostResource {
     }
 
     /**
-     * GET  /posts : get all the client specific posts.
+     * GET  /posts : get all the posts.
      *
      * @param pageable the pagination information
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
@@ -101,29 +96,14 @@ public class PostResource {
     @Timed
     public ResponseEntity<List<PostDTO>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
         log.debug("REST request to get a page of Posts");
-
         Page<PostDTO> page;
-        if (context != null) {
-            Object obj = context.getAttribute("ClientID");
-
-            if (obj != null) {
-                String clientId = (String) obj;
-                page = postService.findByClientId(clientId, pageable);
-            } else {
-                // TODO: resulting in null pointer exception in generatePaginationHttpHeaders, FIX IT LATER
-                page = null;
-            }
+        if (eagerload) {
+            page = postService.findAllWithEagerRelationships(pageable);
         } else {
-            // TODO: fix the test cases and remove this part
-            if (eagerload) {
-                page = postService.findAllWithEagerRelationships(pageable);
-            } else {
-                page = postService.findAll(pageable);
-            }
+            page = postService.findAll(pageable);
         }
-
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, String.format("/api/posts?eagerload=%b", eagerload));
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

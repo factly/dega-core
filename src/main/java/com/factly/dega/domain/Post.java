@@ -96,6 +96,10 @@ public class Post implements Serializable {
     @JsonIgnoreProperties("posts")
     private Format format;
 
+    @DBRef
+    @Field("degaUsers")
+    private Set<DegaUser> degaUsers = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -374,6 +378,31 @@ public class Post implements Serializable {
 
     public void setFormat(Format format) {
         this.format = format;
+    }
+
+    public Set<DegaUser> getDegaUsers() {
+        return degaUsers;
+    }
+
+    public Post degaUsers(Set<DegaUser> degaUsers) {
+        this.degaUsers = degaUsers;
+        return this;
+    }
+
+    public Post addDegaUser(DegaUser degaUser) {
+        this.degaUsers.add(degaUser);
+        degaUser.getPosts().add(this);
+        return this;
+    }
+
+    public Post removeDegaUser(DegaUser degaUser) {
+        this.degaUsers.remove(degaUser);
+        degaUser.getPosts().remove(this);
+        return this;
+    }
+
+    public void setDegaUsers(Set<DegaUser> degaUsers) {
+        this.degaUsers = degaUsers;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

@@ -64,6 +64,8 @@ public class PostDTO implements Serializable {
 
     private String formatName;
 
+    private Set<DegaUserDTO> degaUsers = new HashSet<>();
+
     public String getId() {
         return id;
     }
@@ -238,6 +240,14 @@ public class PostDTO implements Serializable {
 
     public void setFormatName(String formatName) {
         this.formatName = formatName;
+    }
+
+    public Set<DegaUserDTO> getDegaUsers() {
+        return degaUsers;
+    }
+
+    public void setDegaUsers(Set<DegaUserDTO> degaUsers) {
+        this.degaUsers = degaUsers;
     }
 
     @Override

@@ -34,7 +34,8 @@
       "role": "Role",
       "organization": "Organization",
       "organizationDefault": "Organization Default",
-      "organizationCurrent": "Organization Current"
+      "organizationCurrent": "Organization Current",
+      "post": "Post"
     }
   }
 }

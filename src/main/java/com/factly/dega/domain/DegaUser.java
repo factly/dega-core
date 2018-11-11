@@ -1,5 +1,6 @@
 package com.factly.dega.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -92,6 +93,11 @@ public class DegaUser implements Serializable {
     @Field("organizationCurrent")
     @JsonIgnoreProperties("degaUserCurrents")
     private Organization organizationCurrent;
+
+    @DBRef
+    @Field("posts")
+    @JsonIgnore
+    private Set<Post> posts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -359,6 +365,31 @@ public class DegaUser implements Serializable {
 
     public void setOrganizationCurrent(Organization organization) {
         this.organizationCurrent = organization;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public DegaUser posts(Set<Post> posts) {
+        this.posts = posts;
+        return this;
+    }
+
+    public DegaUser addPost(Post post) {
+        this.posts.add(post);
+        post.getDegaUsers().add(this);
+        return this;
+    }
+
+    public DegaUser removePost(Post post) {
+        this.posts.remove(post);
+        post.getDegaUsers().remove(this);
+        return this;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

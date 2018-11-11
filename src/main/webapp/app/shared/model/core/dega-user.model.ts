@@ -1,4 +1,5 @@
 import { IOrganization } from 'app/shared/model/core/organization.model';
+import { IPost } from 'app/shared/model/core/post.model';
 
 export interface IDegaUser {
   id?: string;
@@ -24,6 +25,7 @@ export interface IDegaUser {
   organizationDefaultId?: string;
   organizationCurrentName?: string;
   organizationCurrentId?: string;
+  posts?: IPost[];
 }
 
 export class DegaUser implements IDegaUser {
@@ -50,7 +52,8 @@ export class DegaUser implements IDegaUser {
     public organizationDefaultName?: string,
     public organizationDefaultId?: string,
     public organizationCurrentName?: string,
-    public organizationCurrentId?: string
+    public organizationCurrentId?: string,
+    public posts?: IPost[]
   ) {
     this.enabled = this.enabled || false;
     this.emailVerified = this.emailVerified || false;
