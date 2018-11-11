@@ -102,7 +102,6 @@ class OrganizationGatlingTest extends Simulation {
             .body(StringBody("""{
                 "id":null
                 , "name":"SAMPLE_TEXT"
-                , "email":"SAMPLE_TEXT"
                 , "phone":"SAMPLE_TEXT"
                 , "siteTitle":"SAMPLE_TEXT"
                 , "tagLine":"SAMPLE_TEXT"
@@ -142,6 +141,7 @@ class OrganizationGatlingTest extends Simulation {
                 , "timeZone":"SAMPLE_TEXT"
                 , "clientId":"SAMPLE_TEXT"
                 , "slug":"SAMPLE_TEXT"
+                , "email":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_organization_url"))).exitHereIfFailed

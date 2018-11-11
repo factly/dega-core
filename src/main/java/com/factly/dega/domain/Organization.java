@@ -28,10 +28,6 @@ public class Organization implements Serializable {
     @Field("name")
     private String name;
 
-    @NotNull
-    @Field("email")
-    private String email;
-
     @Field("phone")
     private String phone;
 
@@ -152,6 +148,11 @@ public class Organization implements Serializable {
     @Field("slug")
     private String slug;
 
+    @NotNull
+    @Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")
+    @Field("email")
+    private String email;
+
     @DBRef
     @Field("degaUsers")
     @JsonIgnore
@@ -160,6 +161,9 @@ public class Organization implements Serializable {
     @DBRef
     @Field("degaUserDefault")
     private Set<DegaUser> degaUserDefaults = new HashSet<>();
+    @DBRef
+    @Field("degaUserCurrent")
+    private Set<DegaUser> degaUserCurrents = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -180,19 +184,6 @@ public class Organization implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Organization email(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {
@@ -702,6 +693,19 @@ public class Organization implements Serializable {
         this.slug = slug;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public Organization email(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public Set<DegaUser> getDegaUsers() {
         return degaUsers;
     }
@@ -751,6 +755,31 @@ public class Organization implements Serializable {
     public void setDegaUserDefaults(Set<DegaUser> degaUsers) {
         this.degaUserDefaults = degaUsers;
     }
+
+    public Set<DegaUser> getDegaUserCurrents() {
+        return degaUserCurrents;
+    }
+
+    public Organization degaUserCurrents(Set<DegaUser> degaUsers) {
+        this.degaUserCurrents = degaUsers;
+        return this;
+    }
+
+    public Organization addDegaUserCurrent(DegaUser degaUser) {
+        this.degaUserCurrents.add(degaUser);
+        degaUser.setOrganizationCurrent(this);
+        return this;
+    }
+
+    public Organization removeDegaUserCurrent(DegaUser degaUser) {
+        this.degaUserCurrents.remove(degaUser);
+        degaUser.setOrganizationCurrent(null);
+        return this;
+    }
+
+    public void setDegaUserCurrents(Set<DegaUser> degaUsers) {
+        this.degaUserCurrents = degaUsers;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -778,7 +807,6 @@ public class Organization implements Serializable {
         return "Organization{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", email='" + getEmail() + "'" +
             ", phone='" + getPhone() + "'" +
             ", siteTitle='" + getSiteTitle() + "'" +
             ", tagLine='" + getTagLine() + "'" +
@@ -818,6 +846,7 @@ public class Organization implements Serializable {
             ", timeZone='" + getTimeZone() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", slug='" + getSlug() + "'" +
+            ", email='" + getEmail() + "'" +
             "}";
     }
 }

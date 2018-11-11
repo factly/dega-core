@@ -20,9 +20,6 @@ public class DegaUserDTO implements Serializable {
     @NotNull
     private String displayName;
 
-    @NotNull
-    private String email;
-
     private String website;
 
     private String facebookURL;
@@ -39,10 +36,17 @@ public class DegaUserDTO implements Serializable {
 
     private String description;
 
-    private Boolean isActive;
-
     @NotNull
     private String slug;
+
+    @NotNull
+    private Boolean enabled;
+
+    private Boolean emailVerified;
+
+    @NotNull
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+    private String email;
 
     private String roleId;
 
@@ -53,6 +57,10 @@ public class DegaUserDTO implements Serializable {
     private String organizationDefaultId;
 
     private String organizationDefaultName;
+
+    private String organizationCurrentId;
+
+    private String organizationCurrentName;
 
     public String getId() {
         return id;
@@ -84,14 +92,6 @@ public class DegaUserDTO implements Serializable {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getWebsite() {
@@ -158,20 +158,36 @@ public class DegaUserDTO implements Serializable {
         this.description = description;
     }
 
-    public Boolean isIsActive() {
-        return isActive;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
     public String getSlug() {
         return slug;
     }
 
     public void setSlug(String slug) {
         this.slug = slug;
+    }
+
+    public Boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getRoleId() {
@@ -214,6 +230,22 @@ public class DegaUserDTO implements Serializable {
         this.organizationDefaultName = organizationName;
     }
 
+    public String getOrganizationCurrentId() {
+        return organizationCurrentId;
+    }
+
+    public void setOrganizationCurrentId(String organizationId) {
+        this.organizationCurrentId = organizationId;
+    }
+
+    public String getOrganizationCurrentName() {
+        return organizationCurrentName;
+    }
+
+    public void setOrganizationCurrentName(String organizationName) {
+        this.organizationCurrentName = organizationName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -242,7 +274,6 @@ public class DegaUserDTO implements Serializable {
             ", firstName='" + getFirstName() + "'" +
             ", lastName='" + getLastName() + "'" +
             ", displayName='" + getDisplayName() + "'" +
-            ", email='" + getEmail() + "'" +
             ", website='" + getWebsite() + "'" +
             ", facebookURL='" + getFacebookURL() + "'" +
             ", twitterURL='" + getTwitterURL() + "'" +
@@ -251,12 +282,16 @@ public class DegaUserDTO implements Serializable {
             ", githubURL='" + getGithubURL() + "'" +
             ", profilePicture='" + getProfilePicture() + "'" +
             ", description='" + getDescription() + "'" +
-            ", isActive='" + isIsActive() + "'" +
             ", slug='" + getSlug() + "'" +
+            ", enabled='" + isEnabled() + "'" +
+            ", emailVerified='" + isEmailVerified() + "'" +
+            ", email='" + getEmail() + "'" +
             ", role=" + getRoleId() +
             ", role='" + getRoleName() + "'" +
             ", organizationDefault=" + getOrganizationDefaultId() +
             ", organizationDefault='" + getOrganizationDefaultName() + "'" +
+            ", organizationCurrent=" + getOrganizationCurrentId() +
+            ", organizationCurrent='" + getOrganizationCurrentName() + "'" +
             "}";
     }
 }

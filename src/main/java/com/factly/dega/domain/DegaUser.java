@@ -1,5 +1,6 @@
 package com.factly.dega.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -34,10 +35,6 @@ public class DegaUser implements Serializable {
     @Field("display_name")
     private String displayName;
 
-    @NotNull
-    @Field("email")
-    private String email;
-
     @Field("website")
     private String website;
 
@@ -62,12 +59,21 @@ public class DegaUser implements Serializable {
     @Field("description")
     private String description;
 
-    @Field("is_active")
-    private Boolean isActive;
-
     @NotNull
     @Field("slug")
     private String slug;
+
+    @NotNull
+    @Field("enabled")
+    private Boolean enabled;
+
+    @Field("email_verified")
+    private Boolean emailVerified;
+
+    @NotNull
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+    @Field("email")
+    private String email;
 
     @DBRef
     @Field("role")
@@ -82,6 +88,16 @@ public class DegaUser implements Serializable {
     @Field("organizationDefault")
     @JsonIgnoreProperties("degaUserDefaults")
     private Organization organizationDefault;
+
+    @DBRef
+    @Field("organizationCurrent")
+    @JsonIgnoreProperties("degaUserCurrents")
+    private Organization organizationCurrent;
+
+    @DBRef
+    @Field("posts")
+    @JsonIgnore
+    private Set<Post> posts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -129,19 +145,6 @@ public class DegaUser implements Serializable {
 
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public DegaUser email(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getWebsite() {
@@ -248,19 +251,6 @@ public class DegaUser implements Serializable {
         this.description = description;
     }
 
-    public Boolean isIsActive() {
-        return isActive;
-    }
-
-    public DegaUser isActive(Boolean isActive) {
-        this.isActive = isActive;
-        return this;
-    }
-
-    public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
-    }
-
     public String getSlug() {
         return slug;
     }
@@ -272,6 +262,45 @@ public class DegaUser implements Serializable {
 
     public void setSlug(String slug) {
         this.slug = slug;
+    }
+
+    public Boolean isEnabled() {
+        return enabled;
+    }
+
+    public DegaUser enabled(Boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public Boolean isEmailVerified() {
+        return emailVerified;
+    }
+
+    public DegaUser emailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+        return this;
+    }
+
+    public void setEmailVerified(Boolean emailVerified) {
+        this.emailVerified = emailVerified;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public DegaUser email(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Role getRole() {
@@ -324,6 +353,44 @@ public class DegaUser implements Serializable {
     public void setOrganizationDefault(Organization organization) {
         this.organizationDefault = organization;
     }
+
+    public Organization getOrganizationCurrent() {
+        return organizationCurrent;
+    }
+
+    public DegaUser organizationCurrent(Organization organization) {
+        this.organizationCurrent = organization;
+        return this;
+    }
+
+    public void setOrganizationCurrent(Organization organization) {
+        this.organizationCurrent = organization;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public DegaUser posts(Set<Post> posts) {
+        this.posts = posts;
+        return this;
+    }
+
+    public DegaUser addPost(Post post) {
+        this.posts.add(post);
+        post.getDegaUsers().add(this);
+        return this;
+    }
+
+    public DegaUser removePost(Post post) {
+        this.posts.remove(post);
+        post.getDegaUsers().remove(this);
+        return this;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -353,7 +420,6 @@ public class DegaUser implements Serializable {
             ", firstName='" + getFirstName() + "'" +
             ", lastName='" + getLastName() + "'" +
             ", displayName='" + getDisplayName() + "'" +
-            ", email='" + getEmail() + "'" +
             ", website='" + getWebsite() + "'" +
             ", facebookURL='" + getFacebookURL() + "'" +
             ", twitterURL='" + getTwitterURL() + "'" +
@@ -362,8 +428,10 @@ public class DegaUser implements Serializable {
             ", githubURL='" + getGithubURL() + "'" +
             ", profilePicture='" + getProfilePicture() + "'" +
             ", description='" + getDescription() + "'" +
-            ", isActive='" + isIsActive() + "'" +
             ", slug='" + getSlug() + "'" +
+            ", enabled='" + isEnabled() + "'" +
+            ", emailVerified='" + isEmailVerified() + "'" +
+            ", email='" + getEmail() + "'" +
             "}";
     }
 }

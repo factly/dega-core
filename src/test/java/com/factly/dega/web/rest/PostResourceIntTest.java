@@ -5,6 +5,7 @@ import com.factly.dega.CoreApp;
 import com.factly.dega.domain.Post;
 import com.factly.dega.domain.Status;
 import com.factly.dega.domain.Format;
+import com.factly.dega.domain.DegaUser;
 import com.factly.dega.repository.PostRepository;
 import com.factly.dega.repository.search.PostSearchRepository;
 import com.factly.dega.service.PostService;
@@ -179,6 +180,10 @@ public class PostResourceIntTest {
         Format format = FormatResourceIntTest.createEntity();
         format.setId("fixed-id-for-tests");
         post.setFormat(format);
+        // Add required entity
+        DegaUser degaUser = DegaUserResourceIntTest.createEntity();
+        degaUser.setId("fixed-id-for-tests");
+        post.getDegaUsers().add(degaUser);
         return post;
     }
 

@@ -176,20 +176,6 @@ public class DegaUserResource {
     }
 
     /**
-     * GET  /dega-users/:id : get the "emailId" degaUser.
-     *
-     * @param emailId the email id of the degaUserDTO to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the degaUserDTO, or with status 404 (Not Found)
-     */
-    @GetMapping("/dega-users/email/{emailId}")
-    @Timed
-    public ResponseEntity<DegaUserDTO> getDegaUserByEmailId(@PathVariable String emailId) {
-        log.debug("REST request to get DegaUser : {}", emailId);
-        Optional<DegaUserDTO> degaUserDTO = degaUserService.findByEmailId(emailId);
-        return ResponseUtil.wrapOrNotFound(degaUserDTO);
-    }
-
-    /**
      * DELETE  /dega-users/:id : delete the "id" degaUser.
      *
      * @param id the id of the degaUserDTO to delete

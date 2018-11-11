@@ -1,0 +1,12 @@
+[
+{ 
+    "_id" : ObjectId("5bded7b3bea132818c6d907f"), 
+    "name" : "tag 1", 
+    "slug" : "tag1", 
+    "client_id" : "1234", 
+    "posts" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Tag"
+}
+]

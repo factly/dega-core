@@ -1,0 +1,10 @@
+[
+{ 
+    "_id" : ObjectId("5bded310bea132818c6d9072"), 
+    "changeId" : "01-addAuthorities", 
+    "author" : "initiator", 
+    "timestamp" : ISODate("2018-11-04T11:08:00.584+0000"), 
+    "changeLogClass" : "com.factly.dega.config.dbmigrations.InitialSetupMigration", 
+    "changeSetMethod" : "addAuthorities"
+}
+]

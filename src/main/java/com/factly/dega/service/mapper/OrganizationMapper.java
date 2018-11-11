@@ -14,6 +14,7 @@ public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organi
 
     @Mapping(target = "degaUsers", ignore = true)
     @Mapping(target = "degaUserDefaults", ignore = true)
+    @Mapping(target = "degaUserCurrents", ignore = true)
     Organization toEntity(OrganizationDTO organizationDTO);
 
     default Organization fromId(String id) {
