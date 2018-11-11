@@ -181,7 +181,7 @@ public class PostResource {
     @GetMapping("/posts/{clientId}/{slug}")
     @Timed
     public Optional<PostDTO> getSlug(@PathVariable String clientId, @PathVariable String slug) {
-        log.debug("REST request to get Slug : {}", clientId);
+        log.debug("REST request to get post by clienId : {} and slug : ", clientId, slug);
         Optional<PostDTO> postDTO = postService.findByClientIdAndSlug(clientId, slug);
         return postDTO;
     }
