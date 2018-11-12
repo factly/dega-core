@@ -1,16 +1,18 @@
+function loadSeedData(collection, json) {
+    for (var i = 0; i < json.length; i++) {
+        collection.insert(json[i]);
+    }
+}
 
-
-// load org data
-print('Loading organizations data.');
-loadSeedData(db.organization, JSON.parse(cat('collections/test/organization.json')));
-
-// load categories data
 print('Loading category data.');
-loadSeedData(db.category, JSON.parse(cat('collections/test/category.json')));
+loadSeedData(db.category, JSON.parse(cat('./collections/test/category.json')));
 
 // load format data
 print('Loading format data.');
 loadSeedData(db.format, JSON.parse(cat('collections/test/format.json')));
+
+print('Loading organizations data');
+loadSeedData(db.organization, JSON.parse(cat('collections/test/organization.json')));
 
 // load roles data
 print('Loading role data.');
@@ -27,6 +29,3 @@ loadSeedData(db.tag, JSON.parse(cat('collections/test/tag.json')));
 
 // .. so on
 
-function loadSeedData(collection, json) {
-    json.forEach(doc => collection.insert(doc));
-}

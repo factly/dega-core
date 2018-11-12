@@ -1,42 +1,38 @@
 [
-{ 
-    "_id" : ObjectId("5be8dcb1ebcaa1724eab05c1"), 
-    "name" : "Tag 1", 
-    "slug" : "tag-1", 
-    "client_id" : "factly", 
+{
+    "name" : "Tag 1",
+    "slug" : "tag-1",
+    "client_id" : "factly",
     "posts" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Tag"
 },
-{ 
-    "_id" : ObjectId("5be8dcc3ebcaa1724eab05c5"), 
-    "name" : "Tag 2", 
-    "slug" : "tag-2", 
-    "client_id" : "factly", 
+{
+    "name" : "Tag 2",
+    "slug" : "tag-2",
+    "client_id" : "factly",
     "posts" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Tag"
 },
-{ 
-    "_id" : ObjectId("5be8dcd0ebcaa1724eab05c9"), 
-    "name" : "Tag 1", 
-    "slug" : "tag-1", 
-    "client_id" : "factlyhindi", 
+{
+    "name" : "Tag 1",
+    "slug" : "tag-1",
+    "client_id" : "factlyhindi",
     "posts" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Tag"
 },
-{ 
-    "_id" : ObjectId("5be8dcdeebcaa1724eab05cd"), 
-    "name" : "Tag 2", 
-    "slug" : "tag-2", 
-    "client_id" : "factlyhindi", 
+{
+    "name" : "Tag 2",
+    "slug" : "tag-2",
+    "client_id" : "factlyhindi",
     "posts" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Tag"
 }
 ]

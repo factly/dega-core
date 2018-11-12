@@ -1,46 +1,42 @@
 [
-{ 
-    "_id" : ObjectId("5be8da2febcaa1724eab05ae"), 
-    "name" : "Category 1", 
-    "description" : "Sample description of Category 1", 
-    "slug" : "category-1", 
-    "client_id" : "factly", 
+{
+    "name" : "Category 1",
+    "description" : "Sample description of Category 1",
+    "slug" : "category-1",
+    "client_id" : "factly",
     "posts" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Category"
 },
-{ 
-    "_id" : ObjectId("5be8da4eebcaa1724eab05b2"), 
-    "name" : "Category 2", 
-    "description" : "Sample description of Category 2", 
-    "slug" : "category-2", 
-    "client_id" : "factly", 
+{
+    "name" : "Category 2",
+    "description" : "Sample description of Category 2",
+    "slug" : "category-2",
+    "client_id" : "factly",
     "posts" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Category"
 },
-{ 
-    "_id" : ObjectId("5be8dab8ebcaa1724eab05b8"), 
-    "name" : "Category 1", 
-    "description" : "Sample description of Category 1", 
-    "slug" : "category-1", 
-    "client_id" : "factlyhindi", 
+{
+    "name" : "Category 1",
+    "description" : "Sample description of Category 1",
+    "slug" : "category-1",
+    "client_id" : "factlyhindi",
     "posts" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Category"
 },
-{ 
-    "_id" : ObjectId("5be8dad9ebcaa1724eab05bc"), 
-    "name" : "Category 2", 
-    "description" : "Sample description of Category 2", 
-    "slug" : "category-2", 
-    "client_id" : "factlyhindi", 
+{
+    "name" : "Category 2",
+    "description" : "Sample description of Category 2",
+    "slug" : "category-2",
+    "client_id" : "factlyhindi",
     "posts" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Category"
 }
 ]

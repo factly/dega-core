@@ -1,57 +1,52 @@
 [
-{ 
-    "_id" : ObjectId("5be8d591ebcaa1724eab0584"), 
-    "name" : "Standard", 
-    "is_default" : true, 
-    "client_id" : "All", 
-    "slug" : "standard", 
+{
+    "name" : "Standard",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "standard",
     "post" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Format"
 },
-{ 
-    "_id" : ObjectId("5be8d5b9ebcaa1724eab058a"), 
-    "name" : "Gallery", 
-    "is_default" : true, 
-    "client_id" : "All", 
-    "slug" : "gallery", 
+{
+    "name" : "Gallery",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "gallery",
     "post" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Format"
 },
-{ 
-    "_id" : ObjectId("5be8d5d4ebcaa1724eab058d"), 
-    "name" : "Image", 
-    "is_default" : true, 
-    "client_id" : "All", 
-    "slug" : "image", 
+{
+    "name" : "Image",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "image",
     "post" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Format"
 },
-{ 
-    "_id" : ObjectId("5be8d604ebcaa1724eab0590"), 
-    "name" : "Video", 
-    "is_default" : true, 
-    "client_id" : "All", 
-    "slug" : "video", 
+{
+    "name" : "Video",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "video",
     "post" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Format"
 },
-{ 
-    "_id" : ObjectId("5be8d61febcaa1724eab0593"), 
-    "name" : "Audio", 
-    "is_default" : true, 
-    "client_id" : "All", 
-    "slug" : "audio", 
+{
+    "name" : "Audio",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "audio",
     "post" : [
 
-    ], 
+    ],
     "_class" : "com.factly.dega.domain.Format"
 }
 ]
