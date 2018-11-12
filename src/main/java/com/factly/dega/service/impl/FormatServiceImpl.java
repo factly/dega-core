@@ -25,11 +25,11 @@ public class FormatServiceImpl implements FormatService {
 
     private final Logger log = LoggerFactory.getLogger(FormatServiceImpl.class);
 
-    private FormatRepository formatRepository;
+    private final FormatRepository formatRepository;
 
-    private FormatMapper formatMapper;
+    private final FormatMapper formatMapper;
 
-    private FormatSearchRepository formatSearchRepository;
+    private final FormatSearchRepository formatSearchRepository;
 
     public FormatServiceImpl(FormatRepository formatRepository, FormatMapper formatMapper, FormatSearchRepository formatSearchRepository) {
         this.formatRepository = formatRepository;

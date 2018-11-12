@@ -55,6 +55,9 @@ public class RoleResourceIntTest {
     private static final Boolean DEFAULT_IS_DEFAULT = false;
     private static final Boolean UPDATED_IS_DEFAULT = true;
 
+    private static final String DEFAULT_SLUG = "AAAAAAAAAA";
+    private static final String UPDATED_SLUG = "BBBBBBBBBB";
+
     @Autowired
     private RoleRepository roleRepository;
 
@@ -106,7 +109,8 @@ public class RoleResourceIntTest {
         Role role = new Role()
             .name(DEFAULT_NAME)
             .clientId(DEFAULT_CLIENT_ID)
-            .isDefault(DEFAULT_IS_DEFAULT);
+            .isDefault(DEFAULT_IS_DEFAULT)
+            .slug(DEFAULT_SLUG);
         return role;
     }
 
@@ -134,6 +138,7 @@ public class RoleResourceIntTest {
         assertThat(testRole.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testRole.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testRole.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
+        assertThat(testRole.getSlug()).isEqualTo(DEFAULT_SLUG);
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);
@@ -198,6 +203,24 @@ public class RoleResourceIntTest {
     }
 
     @Test
+    public void checkSlugIsRequired() throws Exception {
+        int databaseSizeBeforeTest = roleRepository.findAll().size();
+        // set the field null
+        role.setSlug(null);
+
+        // Create the Role, which fails.
+        RoleDTO roleDTO = roleMapper.toDto(role);
+
+        restRoleMockMvc.perform(post("/api/roles")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Role> roleList = roleRepository.findAll();
+        assertThat(roleList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllRoles() throws Exception {
         // Initialize the database
         roleRepository.save(role);
@@ -209,7 +232,8 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(role.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())));
+            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
     }
     
     @Test
@@ -224,7 +248,8 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.id").value(role.getId()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
-            .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()));
+            .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()))
+            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()));
     }
 
     @Test
@@ -246,7 +271,8 @@ public class RoleResourceIntTest {
         updatedRole
             .name(UPDATED_NAME)
             .clientId(UPDATED_CLIENT_ID)
-            .isDefault(UPDATED_IS_DEFAULT);
+            .isDefault(UPDATED_IS_DEFAULT)
+            .slug(UPDATED_SLUG);
         RoleDTO roleDTO = roleMapper.toDto(updatedRole);
 
         restRoleMockMvc.perform(put("/api/roles")
@@ -261,6 +287,7 @@ public class RoleResourceIntTest {
         assertThat(testRole.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testRole.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testRole.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
+        assertThat(testRole.getSlug()).isEqualTo(UPDATED_SLUG);
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);
@@ -320,7 +347,8 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(role.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())));
+            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
     }
 
     @Test

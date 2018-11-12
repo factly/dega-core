@@ -36,14 +36,6 @@ public interface DegaUserService {
     Page<DegaUserDTO> findAllWithEagerRelationships(Pageable pageable);
 
     /**
-     * Get the "emailId" degaUser.
-     *
-     * @param emailId the id of the entity
-     * @return the entity
-     */
-    Optional<DegaUserDTO> findByEmailId(String emailId);
-
-    /**
      * Get the "id" degaUser.
      *
      * @param id the id of the entity
@@ -67,4 +59,12 @@ public interface DegaUserService {
      * @return the list of entities
      */
     Page<DegaUserDTO> search(String query, Pageable pageable);
+
+    /**
+     * Get the "emailId" degaUser.
+     *
+     * @param emailId the id of the entity
+     * @return the entity
+     */
+    Optional<DegaUserDTO> findByEmailId(String emailId);
 }

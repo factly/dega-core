@@ -104,7 +104,6 @@ class DegaUserGatlingTest extends Simulation {
                 , "firstName":"SAMPLE_TEXT"
                 , "lastName":"SAMPLE_TEXT"
                 , "displayName":"SAMPLE_TEXT"
-                , "email":"SAMPLE_TEXT"
                 , "website":"SAMPLE_TEXT"
                 , "facebookURL":"SAMPLE_TEXT"
                 , "twitterURL":"SAMPLE_TEXT"
@@ -113,8 +112,10 @@ class DegaUserGatlingTest extends Simulation {
                 , "githubURL":"SAMPLE_TEXT"
                 , "profilePicture":"SAMPLE_TEXT"
                 , "description":"SAMPLE_TEXT"
-                , "isActive":null
                 , "slug":"SAMPLE_TEXT"
+                , "enabled":null
+                , "emailVerified":null
+                , "email":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_degaUser_url"))).exitHereIfFailed

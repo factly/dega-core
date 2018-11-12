@@ -1,0 +1,12 @@
+[
+{ 
+    "_id" : ObjectId("5bded7dabea132818c6d9088"), 
+    "name" : "format 1", 
+    "is_default" : true, 
+    "client_id" : "1234", 
+    "post" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Format"
+}
+]

@@ -1,0 +1,10 @@
+[
+{ 
+    "_id" : "ROLE_ADMIN", 
+    "_class" : "com.factly.dega.domain.Authority"
+},
+{ 
+    "_id" : "ROLE_USER", 
+    "_class" : "com.factly.dega.domain.Authority"
+}
+]

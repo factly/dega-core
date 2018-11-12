@@ -9,8 +9,8 @@ import com.factly.dega.service.dto.PostDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -40,9 +41,6 @@ public class PostResource {
     private static final String ENTITY_NAME = "corePost";
 
     private final PostService postService;
-
-    @Autowired
-    private HttpServletRequest context;
 
     public PostResource(PostService postService) {
         this.postService = postService;
@@ -91,7 +89,7 @@ public class PostResource {
     }
 
     /**
-     * GET  /posts : get all the client specific posts.
+     * GET  /posts : get all the posts.
      *
      * @param pageable the pagination information
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
@@ -99,27 +97,17 @@ public class PostResource {
      */
     @GetMapping("/posts")
     @Timed
-    public ResponseEntity<List<PostDTO>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload) {
+    public ResponseEntity<List<PostDTO>> getAllPosts(Pageable pageable,
+                                                     @RequestParam(required = false, defaultValue = "false") boolean eagerload,
+                                                     HttpServletRequest request) {
         log.debug("REST request to get a page of Posts");
 
-        Page<PostDTO> page;
-        if (context != null) {
-            Object obj = context.getAttribute("ClientID");
+        Page<PostDTO> page = new PageImpl(new ArrayList<>());
+        Object obj = request.getAttribute("ClientID");
 
-            if (obj != null) {
-                String clientId = (String) obj;
-                page = postService.findByClientId(clientId, pageable);
-            } else {
-                // TODO: resulting in null pointer exception in generatePaginationHttpHeaders, FIX IT LATER
-                page = null;
-            }
-        } else {
-            // TODO: fix the test cases and remove this part
-            if (eagerload) {
-                page = postService.findAllWithEagerRelationships(pageable);
-            } else {
-                page = postService.findAll(pageable);
-            }
+        if (obj != null) {
+            String clientId = (String) obj;
+            page = postService.findByClientId(clientId, pageable);
         }
 
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, String.format("/api/posts?eagerload=%b", eagerload));

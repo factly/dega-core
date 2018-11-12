@@ -2,13 +2,13 @@ package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.service.DegaUserService;
-import com.factly.dega.service.dto.UserDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.DegaUserDTO;
 import io.github.jhipster.web.util.ResponseUtil;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,9 +28,6 @@ import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-
-import com.google.gson.*;
-import java.lang.reflect.Type;
 
 /**
  * REST controller for managing DegaUser.
@@ -73,17 +70,17 @@ public class DegaUserResource {
 
         // create new user in keycloak
         OAuth2Authentication auth = (OAuth2Authentication) request.getUserPrincipal();
-        String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
+        if (auth != null) {
+            String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
+            JsonObject jObj = transformDTO(degaUserDTO);
 
-        JsonObject jObj = transformDTO(degaUserDTO);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.add("Authorization", token);
-        String jsonAsString = jObj.toString();
-        HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
-        restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
-
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            httpHeaders.add("Authorization", token);
+            String jsonAsString = jObj.toString();
+            HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
+            restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
+        }
         return ResponseEntity.created(new URI("/api/dega-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -99,6 +96,8 @@ public class DegaUserResource {
         jObj.remove("roleId");
         jObj.remove("organizations");
         jObj.remove("organizationDefaultId");
+        jObj.remove("organizationCurrentId");
+        jObj.remove("organizationCurrentName");
         jObj.remove("roleName");
         jObj.remove("description");
         jObj.remove("profilePicture");
@@ -113,11 +112,10 @@ public class DegaUserResource {
         jObj.addProperty("id", String.valueOf(java.util.UUID.randomUUID()));
 
         // TODO: Add these attributes in dega user
-        jObj.addProperty("enabled", degaUserDTO.isIsActive());
-        jObj.addProperty("emailVerified", true);
 
         return jObj;
     }
+
     /**
      * PUT  /dega-users : Updates an existing degaUser.
      *
@@ -172,20 +170,6 @@ public class DegaUserResource {
     public ResponseEntity<DegaUserDTO> getDegaUser(@PathVariable String id) {
         log.debug("REST request to get DegaUser : {}", id);
         Optional<DegaUserDTO> degaUserDTO = degaUserService.findOne(id);
-        return ResponseUtil.wrapOrNotFound(degaUserDTO);
-    }
-
-    /**
-     * GET  /dega-users/:id : get the "emailId" degaUser.
-     *
-     * @param emailId the email id of the degaUserDTO to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the degaUserDTO, or with status 404 (Not Found)
-     */
-    @GetMapping("/dega-users/email/{emailId}")
-    @Timed
-    public ResponseEntity<DegaUserDTO> getDegaUserByEmailId(@PathVariable String emailId) {
-        log.debug("REST request to get DegaUser : {}", emailId);
-        Optional<DegaUserDTO> degaUserDTO = degaUserService.findByEmailId(emailId);
         return ResponseUtil.wrapOrNotFound(degaUserDTO);
     }
 

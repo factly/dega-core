@@ -27,6 +27,13 @@
         {
             "fieldName": "isDefault",
             "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "slug",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "dto": "mapstruct",

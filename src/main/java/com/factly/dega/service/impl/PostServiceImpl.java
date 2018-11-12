@@ -78,18 +78,6 @@ public class PostServiceImpl implements PostService {
 
 
     /**
-     * Get one post by email id.
-     *
-     * @param clientId the client id of the entity
-     * @return the entity
-     */
-    @Override
-    public Page<PostDTO> findByClientId(String clientId, Pageable pageable) {
-        log.debug("Request to get Post : {}", clientId);
-        return postRepository.findByClientId(clientId, pageable).map(postMapper::toDto);
-    }
-
-    /**
      * Get one post by id.
      *
      * @param id the id of the entity
@@ -129,6 +117,18 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
+     * Get one post by email id.
+     *
+     * @param clientId the client id of the entity
+     * @return the entity
+     */
+    @Override
+    public Page<PostDTO> findByClientId(String clientId, Pageable pageable) {
+        log.debug("Request to get Post : {}", clientId);
+        return postRepository.findByClientId(clientId, pageable).map(postMapper::toDto);
+    }
+
+    /**
      * Get the post by clientId and slug.
      *
      * @param clientId the clientId of the postDTO
@@ -141,5 +141,4 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByClientIdAndSlug(clientId, slug)
             .map(postMapper::toDto);
     }
-
 }

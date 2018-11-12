@@ -14,18 +14,17 @@
             "otherEntityName": "degaUser",
             "relationshipType": "one-to-many",
             "otherEntityRelationshipName": "organizationDefault"
+        },
+        {
+            "relationshipName": "degaUserCurrent",
+            "otherEntityName": "degaUser",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "organizationCurrent"
         }
     ],
     "fields": [
         {
             "fieldName": "name",
-            "fieldType": "String",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
-            "fieldName": "email",
             "fieldType": "String",
             "fieldValidateRules": [
                 "required"
@@ -195,6 +194,15 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "pattern"
+            ],
+            "fieldValidateRulesPattern": "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'"
         }
     ],
     "changelogDate": "20180923010442",
