@@ -58,6 +58,9 @@ public class FormatResourceIntTest {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
+    private static final String DEFAULT_SLUG = "AAAAAAAAAA";
+    private static final String UPDATED_SLUG = "BBBBBBBBBB";
+
     @Autowired
     private FormatRepository formatRepository;
 
@@ -110,7 +113,8 @@ public class FormatResourceIntTest {
             .name(DEFAULT_NAME)
             .isDefault(DEFAULT_IS_DEFAULT)
             .clientId(DEFAULT_CLIENT_ID)
-            .description(DEFAULT_DESCRIPTION);
+            .description(DEFAULT_DESCRIPTION)
+            .slug(DEFAULT_SLUG);
         return format;
     }
 
@@ -139,6 +143,7 @@ public class FormatResourceIntTest {
         assertThat(testFormat.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
         assertThat(testFormat.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testFormat.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
+        assertThat(testFormat.getSlug()).isEqualTo(DEFAULT_SLUG);
 
         // Validate the Format in Elasticsearch
         verify(mockFormatSearchRepository, times(1)).save(testFormat);
@@ -185,6 +190,24 @@ public class FormatResourceIntTest {
     }
 
     @Test
+    public void checkSlugIsRequired() throws Exception {
+        int databaseSizeBeforeTest = formatRepository.findAll().size();
+        // set the field null
+        format.setSlug(null);
+
+        // Create the Format, which fails.
+        FormatDTO formatDTO = formatMapper.toDto(format);
+
+        restFormatMockMvc.perform(post("/api/formats")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(formatDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Format> formatList = formatRepository.findAll();
+        assertThat(formatList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllFormats() throws Exception {
         // Initialize the database
         formatRepository.save(format);
@@ -197,7 +220,8 @@ public class FormatResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
     }
     
     @Test
@@ -213,7 +237,8 @@ public class FormatResourceIntTest {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()))
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
-            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()));
+            .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
+            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()));
     }
 
     @Test
@@ -236,7 +261,8 @@ public class FormatResourceIntTest {
             .name(UPDATED_NAME)
             .isDefault(UPDATED_IS_DEFAULT)
             .clientId(UPDATED_CLIENT_ID)
-            .description(UPDATED_DESCRIPTION);
+            .description(UPDATED_DESCRIPTION)
+            .slug(UPDATED_SLUG);
         FormatDTO formatDTO = formatMapper.toDto(updatedFormat);
 
         restFormatMockMvc.perform(put("/api/formats")
@@ -252,6 +278,7 @@ public class FormatResourceIntTest {
         assertThat(testFormat.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
         assertThat(testFormat.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testFormat.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
+        assertThat(testFormat.getSlug()).isEqualTo(UPDATED_SLUG);
 
         // Validate the Format in Elasticsearch
         verify(mockFormatSearchRepository, times(1)).save(testFormat);
@@ -312,7 +339,8 @@ public class FormatResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())));
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
     }
 
     @Test

@@ -35,6 +35,10 @@ public class Status implements Serializable {
     @Field("is_default")
     private Boolean isDefault;
 
+    @NotNull
+    @Field("slug")
+    private String slug;
+
     @DBRef
     @Field("post")
     private Set<Post> posts = new HashSet<>();
@@ -84,6 +88,19 @@ public class Status implements Serializable {
 
     public void setIsDefault(Boolean isDefault) {
         this.isDefault = isDefault;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public Status slug(String slug) {
+        this.slug = slug;
+        return this;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public Set<Post> getPosts() {
@@ -139,6 +156,7 @@ public class Status implements Serializable {
             ", name='" + getName() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", isDefault='" + isIsDefault() + "'" +
+            ", slug='" + getSlug() + "'" +
             "}";
     }
 }

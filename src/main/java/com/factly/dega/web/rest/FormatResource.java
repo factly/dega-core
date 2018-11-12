@@ -37,7 +37,7 @@ public class FormatResource {
 
     private static final String ENTITY_NAME = "coreFormat";
 
-    private FormatService formatService;
+    private final FormatService formatService;
 
     public FormatResource(FormatService formatService) {
         this.formatService = formatService;
@@ -97,7 +97,7 @@ public class FormatResource {
         log.debug("REST request to get a page of Formats");
         Page<FormatDTO> page = formatService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/formats");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**

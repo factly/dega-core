@@ -6,9 +6,9 @@ import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.DegaUserDTO;
+import io.github.jhipster.web.util.ResponseUtil;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -60,7 +61,7 @@ public class DegaUserResource {
      */
     @PostMapping("/dega-users")
     @Timed
-    public ResponseEntity<DegaUserDTO> createDegaUser(@Valid @RequestBody DegaUserDTO degaUserDTO, HttpServletRequest request) throws URISyntaxException {
+    public ResponseEntity<DegaUserDTO> createDegaUser(@Valid @RequestBody DegaUserDTO degaUserDTO, HttpServletRequest request) throws URISyntaxException, IOException {
         log.debug("REST request to save DegaUser : {}", degaUserDTO);
         if (degaUserDTO.getId() != null) {
             throw new BadRequestAlertException("A new degaUser cannot already have an ID", ENTITY_NAME, "idexists");
@@ -80,7 +81,6 @@ public class DegaUserResource {
             HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
             restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
         }
-
         return ResponseEntity.created(new URI("/api/dega-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -110,11 +110,6 @@ public class DegaUserResource {
 
         jObj.addProperty("username", degaUserDTO.getEmail());
         jObj.addProperty("id", String.valueOf(java.util.UUID.randomUUID()));
-
-        // TODO: Add these attributes in dega user
-
-        // jObj.addProperty("enabled", degaUserDTO.isEnabled());
-        // jObj.addProperty("emailVerified", true);
 
         return jObj;
     }

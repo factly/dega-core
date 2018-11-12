@@ -11,7 +11,6 @@ entity DegaUser {
   firstName String,
   lastName String,
   displayName String required,
-  email String required,
   website String,
   facebookURL String,
   twitterURL String,
@@ -20,15 +19,17 @@ entity DegaUser {
   githubURL String,
   profilePicture String,
   description String,
-  clientId String required,
-  isActive Boolean,
-  slug String required
+  slug String required,
+  enabled Boolean required,
+  emailVerified Boolean,
+  email String required unique pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)
 }
 entity Format {
   name String required,
   isDefault Boolean,
   clientId String,
-  description String
+  description String,
+  slug String required
 }
 entity Media {
   name String required,
@@ -49,7 +50,6 @@ entity Media {
 }
 entity Organization {
   name String required,
-  email String required,
   phone String,
   siteTitle String required,
   tagLine String,
@@ -87,7 +87,9 @@ entity Organization {
   mailchimpAPIKey String,
   siteLanguage String,
   timeZone String,
-  clientId String required
+  clientId String required,
+  slug String required,
+  email String required pattern(/'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,30}$'/)
 }
 entity Post {
   title String required,
@@ -108,12 +110,15 @@ entity Post {
 }
 entity Role {
   name String required,
-  clientId String required
+  clientId String required,
+  isDefault Boolean,
+  slug String required
 }
 entity Status {
   name String required,
   clientId String required,
-  isDefault Boolean
+  isDefault Boolean,
+  slug String required
 }
 entity Tag {
   name String required,
@@ -123,12 +128,16 @@ entity Tag {
 }
 relationship OneToMany {
   Role{degaUser} to DegaUser{role(name) required},
+  Organization{degaUserDefault} to DegaUser{organizationDefault(name) required},
+  Organization{degaUserCurrent} to DegaUser{organizationCurrent(name) required},
   Status{post} to Post{status(name) required},
   Format{post} to Post{format(name) required}
 }
 relationship ManyToMany {
+  DegaUser{organization(name) required} to Organization{degaUser},
   Post{tag(name)} to Tag{post},
-  Post{category(name)} to Category{post}
+  Post{category(name)} to Category{post},
+  Post{degaUser(displayName) required} to DegaUser{post}
 }
 
 dto Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with mapstruct

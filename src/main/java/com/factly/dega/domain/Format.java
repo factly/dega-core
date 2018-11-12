@@ -37,6 +37,10 @@ public class Format implements Serializable {
     @Field("description")
     private String description;
 
+    @NotNull
+    @Field("slug")
+    private String slug;
+
     @DBRef
     @Field("post")
     private Set<Post> posts = new HashSet<>();
@@ -101,6 +105,19 @@ public class Format implements Serializable {
         this.description = description;
     }
 
+    public String getSlug() {
+        return slug;
+    }
+
+    public Format slug(String slug) {
+        this.slug = slug;
+        return this;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
     public Set<Post> getPosts() {
         return posts;
     }
@@ -155,6 +172,7 @@ public class Format implements Serializable {
             ", isDefault='" + isIsDefault() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", description='" + getDescription() + "'" +
+            ", slug='" + getSlug() + "'" +
             "}";
     }
 }

@@ -104,6 +104,7 @@ class StatusGatlingTest extends Simulation {
                 , "name":"SAMPLE_TEXT"
                 , "clientId":"SAMPLE_TEXT"
                 , "isDefault":null
+                , "slug":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_status_url"))).exitHereIfFailed
