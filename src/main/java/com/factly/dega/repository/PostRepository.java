@@ -29,4 +29,5 @@ public interface PostRepository extends MongoRepository<Post, String> {
     Page<Post> findByClientId(String clientId, Pageable pageable);
 
     Optional<Post> findByClientIdAndSlug(String clientId, String slug);
+
 }

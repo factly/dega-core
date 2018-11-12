@@ -111,8 +111,6 @@ public class DegaUserResource {
         jObj.addProperty("username", degaUserDTO.getEmail());
         jObj.addProperty("id", String.valueOf(java.util.UUID.randomUUID()));
 
-        // TODO: Add these attributes in dega user
-
         return jObj;
     }
 
