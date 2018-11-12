@@ -1,8 +1,9 @@
 [
 { 
-    "_id" : ObjectId("5bded7cabea132818c6d9084"), 
-    "name" : "cat 1", 
-    "slug" : "cat1", 
+    "_id" : ObjectId("5be8da2febcaa1724eab05ae"), 
+    "name" : "Category 1", 
+    "description" : "Sample description of Category 1", 
+    "slug" : "category-1", 
     "client_id" : "factly", 
     "posts" : [
 
@@ -10,9 +11,10 @@
     "_class" : "com.factly.dega.domain.Category"
 },
 { 
-    "_id" : ObjectId("5bdee695bea13207545667e0"), 
-    "name" : "cat 2", 
-    "slug" : "cat2", 
+    "_id" : ObjectId("5be8da4eebcaa1724eab05b2"), 
+    "name" : "Category 2", 
+    "description" : "Sample description of Category 2", 
+    "slug" : "category-2", 
     "client_id" : "factly", 
     "posts" : [
 
@@ -20,20 +22,22 @@
     "_class" : "com.factly.dega.domain.Category"
 },
 { 
-    "_id" : ObjectId("5bdef86fbea1321071bbae19"), 
-    "name" : "cat 3", 
-    "slug" : "cat3", 
-    "client_id" : "newslaundry", 
+    "_id" : ObjectId("5be8dab8ebcaa1724eab05b8"), 
+    "name" : "Category 1", 
+    "description" : "Sample description of Category 1", 
+    "slug" : "category-1", 
+    "client_id" : "factlyhindi", 
     "posts" : [
 
     ], 
     "_class" : "com.factly.dega.domain.Category"
 },
 { 
-    "_id" : ObjectId("5be31501ebcaa1385d21efb7"), 
-    "name" : "cat 3", 
-    "slug" : "cat3", 
-    "client_id" : "1234", 
+    "_id" : ObjectId("5be8dad9ebcaa1724eab05bc"), 
+    "name" : "Category 2", 
+    "description" : "Sample description of Category 2", 
+    "slug" : "category-2", 
+    "client_id" : "factlyhindi", 
     "posts" : [
 
     ], 
