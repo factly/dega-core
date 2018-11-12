@@ -69,4 +69,13 @@ public interface PostService {
      */
     Page<PostDTO> findByClientId(String clientId, Pageable pageable);
 
+    /**
+     * Get the post by clientId and slug.
+     *
+     * @param clientId the clientId of the postDTO
+     * @param slug the slug of the PostDTO
+     * @return Optional<PostDTO> post by clientId and slug
+     */
+    Optional<PostDTO> findByClientIdAndSlug(String clientId, String slug);
+
 }

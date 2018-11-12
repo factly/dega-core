@@ -128,4 +128,17 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByClientId(clientId, pageable).map(postMapper::toDto);
     }
 
+    /**
+     * Get the post by clientId and slug.
+     *
+     * @param clientId the clientId of the postDTO
+     * @param slug the slug of the PostDTO
+     * @return Optional<PostDTO> post by clientId and slug
+     */
+    @Override
+    public Optional<PostDTO> findByClientIdAndSlug(String clientId, String slug) {
+        log.debug("Request to get post  by clienId : {} and slug : {}", clientId, slug);
+        return postRepository.findByClientIdAndSlug(clientId, slug)
+            .map(postMapper::toDto);
+    }
 }
