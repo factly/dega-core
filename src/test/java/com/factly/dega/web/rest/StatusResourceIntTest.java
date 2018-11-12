@@ -55,6 +55,9 @@ public class StatusResourceIntTest {
     private static final Boolean DEFAULT_IS_DEFAULT = false;
     private static final Boolean UPDATED_IS_DEFAULT = true;
 
+    private static final String DEFAULT_SLUG = "AAAAAAAAAA";
+    private static final String UPDATED_SLUG = "BBBBBBBBBB";
+
     @Autowired
     private StatusRepository statusRepository;
 
@@ -106,7 +109,8 @@ public class StatusResourceIntTest {
         Status status = new Status()
             .name(DEFAULT_NAME)
             .clientId(DEFAULT_CLIENT_ID)
-            .isDefault(DEFAULT_IS_DEFAULT);
+            .isDefault(DEFAULT_IS_DEFAULT)
+            .slug(DEFAULT_SLUG);
         return status;
     }
 
@@ -134,6 +138,7 @@ public class StatusResourceIntTest {
         assertThat(testStatus.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testStatus.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testStatus.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
+        assertThat(testStatus.getSlug()).isEqualTo(DEFAULT_SLUG);
 
         // Validate the Status in Elasticsearch
         verify(mockStatusSearchRepository, times(1)).save(testStatus);
@@ -198,6 +203,24 @@ public class StatusResourceIntTest {
     }
 
     @Test
+    public void checkSlugIsRequired() throws Exception {
+        int databaseSizeBeforeTest = statusRepository.findAll().size();
+        // set the field null
+        status.setSlug(null);
+
+        // Create the Status, which fails.
+        StatusDTO statusDTO = statusMapper.toDto(status);
+
+        restStatusMockMvc.perform(post("/api/statuses")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(statusDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Status> statusList = statusRepository.findAll();
+        assertThat(statusList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllStatuses() throws Exception {
         // Initialize the database
         statusRepository.save(status);
@@ -209,7 +232,8 @@ public class StatusResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(status.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())));
+            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
     }
     
     @Test
@@ -224,7 +248,8 @@ public class StatusResourceIntTest {
             .andExpect(jsonPath("$.id").value(status.getId()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
-            .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()));
+            .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()))
+            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()));
     }
 
     @Test
@@ -246,7 +271,8 @@ public class StatusResourceIntTest {
         updatedStatus
             .name(UPDATED_NAME)
             .clientId(UPDATED_CLIENT_ID)
-            .isDefault(UPDATED_IS_DEFAULT);
+            .isDefault(UPDATED_IS_DEFAULT)
+            .slug(UPDATED_SLUG);
         StatusDTO statusDTO = statusMapper.toDto(updatedStatus);
 
         restStatusMockMvc.perform(put("/api/statuses")
@@ -261,6 +287,7 @@ public class StatusResourceIntTest {
         assertThat(testStatus.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testStatus.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testStatus.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
+        assertThat(testStatus.getSlug()).isEqualTo(UPDATED_SLUG);
 
         // Validate the Status in Elasticsearch
         verify(mockStatusSearchRepository, times(1)).save(testStatus);
@@ -320,7 +347,8 @@ public class StatusResourceIntTest {
             .andExpect(jsonPath("$.[*].id").value(hasItem(status.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())));
+            .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
     }
 
     @Test

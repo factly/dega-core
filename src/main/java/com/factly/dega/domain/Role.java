@@ -35,6 +35,10 @@ public class Role implements Serializable {
     @Field("is_default")
     private Boolean isDefault;
 
+    @NotNull
+    @Field("slug")
+    private String slug;
+
     @DBRef
     @Field("degaUser")
     private Set<DegaUser> degaUsers = new HashSet<>();
@@ -84,6 +88,19 @@ public class Role implements Serializable {
 
     public void setIsDefault(Boolean isDefault) {
         this.isDefault = isDefault;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public Role slug(String slug) {
+        this.slug = slug;
+        return this;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public Set<DegaUser> getDegaUsers() {
@@ -139,6 +156,7 @@ public class Role implements Serializable {
             ", name='" + getName() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", isDefault='" + isIsDefault() + "'" +
+            ", slug='" + getSlug() + "'" +
             "}";
     }
 }

@@ -20,6 +20,9 @@ public class FormatDTO implements Serializable {
 
     private String description;
 
+    @NotNull
+    private String slug;
+
     public String getId() {
         return id;
     }
@@ -60,6 +63,14 @@ public class FormatDTO implements Serializable {
         this.description = description;
     }
 
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -89,6 +100,7 @@ public class FormatDTO implements Serializable {
             ", isDefault='" + isIsDefault() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", description='" + getDescription() + "'" +
+            ", slug='" + getSlug() + "'" +
             "}";
     }
 }
