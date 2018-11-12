@@ -1,17 +1,65 @@
 [
 { 
-    "_id" : ObjectId("5be0a6a6bea132948585fc38"), 
-    "name" : "admin", 
-    "client_id" : "1234", 
+    "_id" : ObjectId("5be8d213ebcaa16e7e1d8eed"), 
+    "name" : "Super Admin", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "super-admin", 
     "degaUser" : [
 
     ], 
     "_class" : "com.factly.dega.domain.Role"
 },
 { 
-    "_id" : ObjectId("5be0a7f5bea132948585fc3c"), 
-    "name" : "role 2", 
-    "client_id" : "1234", 
+    "_id" : ObjectId("5be8d22bebcaa16e7e1d8ef1"), 
+    "name" : "Administrator", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "administrator", 
+    "degaUser" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Role"
+},
+{ 
+    "_id" : ObjectId("5be8d23febcaa16e7e1d8ef4"), 
+    "name" : "Editor", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "editor", 
+    "degaUser" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Role"
+},
+{ 
+    "_id" : ObjectId("5be8d29cebcaa16e7e1d8ef7"), 
+    "name" : "Author", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "author", 
+    "degaUser" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Role"
+},
+{ 
+    "_id" : ObjectId("5be8d2acebcaa16e7e1d8efa"), 
+    "name" : "Contributor", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "contributor", 
+    "degaUser" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Role"
+},
+{ 
+    "_id" : ObjectId("5be8d2bfebcaa16e7e1d8efd"), 
+    "name" : "Subscriber", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "subscriber", 
     "degaUser" : [
 
     ], 

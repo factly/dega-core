@@ -1,19 +1,76 @@
 [
 { 
-    "_id" : ObjectId("5bded84dbea132818c6d908c"), 
-    "name" : "status 1", 
-    "client_id" : "1234", 
+    "_id" : ObjectId("5be8d89debcaa1724eab0597"), 
+    "name" : "Publish", 
+    "client_id" : "All", 
     "is_default" : true, 
+    "slug" : "publish", 
     "post" : [
 
     ], 
     "_class" : "com.factly.dega.domain.Status"
 },
 { 
-    "_id" : ObjectId("5be0ac93bea13298572265c8"), 
-    "name" : "status 2", 
-    "client_id" : "1234", 
-    "is_default" : false, 
+    "_id" : ObjectId("5be8d8aeebcaa1724eab059a"), 
+    "name" : "Future", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "future", 
+    "post" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Status"
+},
+{ 
+    "_id" : ObjectId("5be8d8bfebcaa1724eab059d"), 
+    "name" : "Draft", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "draft", 
+    "post" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Status"
+},
+{ 
+    "_id" : ObjectId("5be8d8d4ebcaa1724eab05a0"), 
+    "name" : "Pending", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "pending", 
+    "post" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Status"
+},
+{ 
+    "_id" : ObjectId("5be8d8e7ebcaa1724eab05a3"), 
+    "name" : "Private", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "private", 
+    "post" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Status"
+},
+{ 
+    "_id" : ObjectId("5be8d8faebcaa1724eab05a6"), 
+    "name" : "Trash", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "trash", 
+    "post" : [
+
+    ], 
+    "_class" : "com.factly.dega.domain.Status"
+},
+{ 
+    "_id" : ObjectId("5be8d919ebcaa1724eab05a9"), 
+    "name" : "Auto-Draft", 
+    "client_id" : "All", 
+    "is_default" : true, 
+    "slug" : "auto-draft", 
     "post" : [
 
     ], 

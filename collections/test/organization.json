@@ -1,30 +1,38 @@
 [
 { 
-    "_id" : ObjectId("5be0a5e6bea132948585fc28"), 
-    "name" : "org 1", 
-    "email" : "org1@org.com", 
-    "site_title" : "org 1 title", 
-    "client_id" : "test", 
-    "slug" : "test", 
+    "_id" : ObjectId("5be8cf7febcaa16e7e1d8ed1"), 
+    "name" : "Factly", 
+    "site_title" : "Factly", 
+    "tag_line" : "Making Public Data Meaningful", 
+    "client_id" : "factly", 
+    "slug" : "factly", 
+    "email" : "hi@factly.in", 
     "degaUsers" : [
 
     ], 
     "degaUserDefault" : [
+
+    ], 
+    "degaUserCurrent" : [
 
     ], 
     "_class" : "com.factly.dega.domain.Organization"
 },
 { 
-    "_id" : ObjectId("5be0a613bea132948585fc31"), 
-    "name" : "org 2", 
-    "email" : "org2@org.com", 
-    "site_title" : "org 2 site title", 
-    "client_id" : "test1", 
-    "slug" : "test", 
+    "_id" : ObjectId("5be8d06debcaa16e7e1d8eda"), 
+    "name" : "Factly Hindi", 
+    "site_title" : "Factly Hindi", 
+    "tag_line" : "Making Public Data Meaningful", 
+    "client_id" : "factlyhindi", 
+    "slug" : "factly-hindi", 
+    "email" : "hi@factly.in", 
     "degaUsers" : [
 
     ], 
     "degaUserDefault" : [
+
+    ], 
+    "degaUserCurrent" : [
 
     ], 
     "_class" : "com.factly.dega.domain.Organization"
