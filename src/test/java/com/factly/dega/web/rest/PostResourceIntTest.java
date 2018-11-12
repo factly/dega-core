@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
@@ -109,7 +110,7 @@ public class PostResourceIntTest {
 
     @Autowired
     private PostMapper postMapper;
-    
+
 
     @Mock
     private PostService postServiceMock;
@@ -396,11 +397,21 @@ public class PostResourceIntTest {
 
     @Test
     public void getAllPosts() throws Exception {
+        List<Post> post1 = new ArrayList<>();
+        post1.add(post);
+        PostResource postResource = new PostResource(postServiceMock);
+        this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+
+        when(postServiceMock.findByClientId(any(), any())).thenReturn(new PageImpl(post1));
         // Initialize the database
         postRepository.save(post);
 
         // Get all the postList
-        restPostMockMvc.perform(get("/api/posts?sort=id,desc"))
+        restPostMockMvc.perform(get("/api/posts?sort=id,desc").requestAttr("ClientID", "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId())))
@@ -420,7 +431,7 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.[*].featuredMedia").value(hasItem(DEFAULT_FEATURED_MEDIA.toString())))
             .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())));
     }
-    
+
     public void getAllPostsWithEagerRelationshipsIsEnabled() throws Exception {
         PostResource postResource = new PostResource(postServiceMock);
         when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));

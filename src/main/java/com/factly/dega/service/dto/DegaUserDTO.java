@@ -45,7 +45,6 @@ public class DegaUserDTO implements Serializable {
     private Boolean emailVerified;
 
     @NotNull
-    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
     private String email;
 
     private String roleId;

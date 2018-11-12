@@ -2,13 +2,13 @@ package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.service.DegaUserService;
-import com.factly.dega.service.dto.UserDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.DegaUserDTO;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import io.github.jhipster.web.util.ResponseUtil;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,15 +22,11 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.util.List;
 import java.util.Optional;
-
-import com.google.gson.*;
-import java.lang.reflect.Type;
 
 /**
  * REST controller for managing DegaUser.
@@ -64,7 +60,7 @@ public class DegaUserResource {
      */
     @PostMapping("/dega-users")
     @Timed
-    public ResponseEntity<DegaUserDTO> createDegaUser(@Valid @RequestBody DegaUserDTO degaUserDTO, HttpServletRequest request) throws URISyntaxException, IOException {
+    public ResponseEntity<DegaUserDTO> createDegaUser(@Valid @RequestBody DegaUserDTO degaUserDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save DegaUser : {}", degaUserDTO);
         if (degaUserDTO.getId() != null) {
             throw new BadRequestAlertException("A new degaUser cannot already have an ID", ENTITY_NAME, "idexists");
@@ -73,16 +69,17 @@ public class DegaUserResource {
 
         // create new user in keycloak
         OAuth2Authentication auth = (OAuth2Authentication) request.getUserPrincipal();
-        String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
+        if (auth != null) {
+            String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
+            JsonObject jObj = transformDTO(degaUserDTO);
 
-        JsonObject jObj = transformDTO(degaUserDTO);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.add("Authorization", token);
-        String jsonAsString = jObj.toString();
-        HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
-        restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            httpHeaders.add("Authorization", token);
+            String jsonAsString = jObj.toString();
+            HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
+            restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
+        }
 
         return ResponseEntity.created(new URI("/api/dega-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -99,6 +96,8 @@ public class DegaUserResource {
         jObj.remove("roleId");
         jObj.remove("organizations");
         jObj.remove("organizationDefaultId");
+        jObj.remove("organizationCurrentId");
+        jObj.remove("organizationCurrentName");
         jObj.remove("roleName");
         jObj.remove("description");
         jObj.remove("profilePicture");
@@ -113,11 +112,13 @@ public class DegaUserResource {
         jObj.addProperty("id", String.valueOf(java.util.UUID.randomUUID()));
 
         // TODO: Add these attributes in dega user
-        jObj.addProperty("enabled", degaUserDTO.isIsActive());
-        jObj.addProperty("emailVerified", true);
+
+        // jObj.addProperty("enabled", degaUserDTO.isEnabled());
+        // jObj.addProperty("emailVerified", true);
 
         return jObj;
     }
+
     /**
      * PUT  /dega-users : Updates an existing degaUser.
      *

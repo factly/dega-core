@@ -81,6 +81,10 @@ jhipster:
             enabled: true
             report-frequency: 60 # in seconds
 
+keycloak:
+    api:
+        uri: http://localhost:9080/auth/admin/realms/jhipster/users
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class

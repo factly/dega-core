@@ -96,7 +96,6 @@ public class OrganizationDTO implements Serializable {
     private String slug;
 
     @NotNull
-    @Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")
     private String email;
 
     public String getId() {

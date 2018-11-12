@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
@@ -29,6 +30,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -105,13 +107,21 @@ public class DegaUserResourceIntTest {
 
     @Autowired
     private DegaUserMapper degaUserMapper;
-    
+
 
     @Mock
     private DegaUserService degaUserServiceMock;
 
     @Autowired
     private DegaUserService degaUserService;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
+    private String keycloakServerURI = "http://localhost:9080/auth/admin/realms/jhipster/users";
+
+    @Mock
+    private RestTemplate restTemplateMock;
 
     /**
      * This repository is mocked in the com.factly.dega.repository.search test package.
@@ -137,7 +147,7 @@ public class DegaUserResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final DegaUserResource degaUserResource = new DegaUserResource(degaUserService);
+        final DegaUserResource degaUserResource = new DegaUserResource(degaUserService, restTemplate, keycloakServerURI);
         this.restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -195,6 +205,8 @@ public class DegaUserResourceIntTest {
 
         // Create the DegaUser
         DegaUserDTO degaUserDTO = degaUserMapper.toDto(degaUser);
+        when(restTemplateMock.postForObject(keycloakServerURI, Any.class, String.class)).thenReturn("");
+
         restDegaUserMockMvc.perform(post("/api/dega-users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(degaUserDTO)))
@@ -344,10 +356,12 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.[*].emailVerified").value(hasItem(DEFAULT_EMAIL_VERIFIED.booleanValue())))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())));
     }
-    
+
+    @Test
     public void getAllDegaUsersWithEagerRelationshipsIsEnabled() throws Exception {
-        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock);
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakServerURI);
         when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+        when(restTemplateMock.postForObject(keycloakServerURI, Any.class, String.class)).thenReturn("");
 
         MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -361,8 +375,10 @@ public class DegaUserResourceIntTest {
         verify(degaUserServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
+    @Test
     public void getAllDegaUsersWithEagerRelationshipsIsNotEnabled() throws Exception {
-        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock);
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakServerURI);
+        when(restTemplateMock.postForObject(keycloakServerURI, Any.class, String.class)).thenReturn("");
             when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
