@@ -17,7 +17,6 @@ public class PostDTO implements Serializable {
     @NotNull
     private String title;
 
-    @NotNull
     private String clientId;
 
     @NotNull
@@ -25,16 +24,12 @@ public class PostDTO implements Serializable {
 
     private String excerpt;
 
-    @NotNull
     private ZonedDateTime publishedDate;
 
-    @NotNull
     private ZonedDateTime publishedDateGMT;
 
-    @NotNull
     private ZonedDateTime lastUpdatedDate;
 
-    @NotNull
     private ZonedDateTime lastUpdatedDateGMT;
 
     private Boolean featured;
