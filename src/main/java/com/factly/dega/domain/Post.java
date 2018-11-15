@@ -40,19 +40,15 @@ public class Post implements Serializable {
     @Field("excerpt")
     private String excerpt;
 
-    @NotNull
     @Field("published_date")
     private ZonedDateTime publishedDate;
 
-    @NotNull
     @Field("published_date_gmt")
     private ZonedDateTime publishedDateGMT;
 
-    @NotNull
     @Field("last_updated_date")
     private ZonedDateTime lastUpdatedDate;
 
-    @NotNull
     @Field("last_updated_date_gmt")
     private ZonedDateTime lastUpdatedDateGMT;
 

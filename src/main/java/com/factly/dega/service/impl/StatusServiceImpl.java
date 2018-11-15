@@ -82,6 +82,19 @@ public class StatusServiceImpl implements StatusService {
     }
 
     /**
+     * Get one status by name.
+     *
+     * @param name the name of the entity
+     * @return the entity
+     */
+    @Override
+    public Optional<StatusDTO> findOneByName(String name) {
+        log.debug("Request to get Status : {}", name);
+        return statusRepository.findByName(name)
+            .map(statusMapper::toDto);
+    }
+
+    /**
      * Delete the status by id.
      *
      * @param id the id of the entity

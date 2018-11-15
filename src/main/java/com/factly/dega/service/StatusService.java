@@ -38,6 +38,14 @@ public interface StatusService {
     Optional<StatusDTO> findOne(String id);
 
     /**
+     * Get the "name" status.
+     *
+     * @param name the name of the entity
+     * @return the entity
+     */
+    Optional<StatusDTO> findOneByName(String name);
+
+    /**
      * Delete the "id" status.
      *
      * @param id the id of the entity
@@ -48,7 +56,7 @@ public interface StatusService {
      * Search for the status corresponding to the query.
      *
      * @param query the query of the search
-     * 
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */

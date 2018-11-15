@@ -9,6 +9,7 @@ import com.factly.dega.domain.DegaUser;
 import com.factly.dega.repository.PostRepository;
 import com.factly.dega.repository.search.PostSearchRepository;
 import com.factly.dega.service.PostService;
+import com.factly.dega.service.StatusService;
 import com.factly.dega.service.dto.PostDTO;
 import com.factly.dega.service.mapper.PostMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
@@ -118,6 +119,12 @@ public class PostResourceIntTest {
     @Autowired
     private PostService postService;
 
+    @Mock
+    private StatusService statusServiceMock;
+
+    @Autowired
+    private StatusService statusService;
+
     /**
      * This repository is mocked in the com.factly.dega.repository.search test package.
      *
@@ -142,7 +149,7 @@ public class PostResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PostResource postResource = new PostResource(postService);
+        final PostResource postResource = new PostResource(postService, statusService);
         this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -399,7 +406,7 @@ public class PostResourceIntTest {
     public void getAllPosts() throws Exception {
         List<Post> post1 = new ArrayList<>();
         post1.add(post);
-        PostResource postResource = new PostResource(postServiceMock);
+        PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
         this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -433,7 +440,7 @@ public class PostResourceIntTest {
     }
 
     public void getAllPostsWithEagerRelationshipsIsEnabled() throws Exception {
-        PostResource postResource = new PostResource(postServiceMock);
+        PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
         when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
@@ -449,7 +456,7 @@ public class PostResourceIntTest {
     }
 
     public void getAllPostsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        PostResource postResource = new PostResource(postServiceMock);
+        PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
             when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
