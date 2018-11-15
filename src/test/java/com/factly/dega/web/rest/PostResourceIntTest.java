@@ -222,8 +222,8 @@ public class PostResourceIntTest {
         assertThat(testPost.getExcerpt()).isEqualTo(DEFAULT_EXCERPT);
         assertThat(testPost.getPublishedDate()).isEqualTo(DEFAULT_PUBLISHED_DATE);
         assertThat(testPost.getPublishedDateGMT()).isEqualTo(DEFAULT_PUBLISHED_DATE_GMT);
-        assertThat(testPost.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
-        assertThat(testPost.getLastUpdatedDateGMT()).isEqualTo(DEFAULT_LAST_UPDATED_DATE_GMT);
+        assertThat(testPost.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
+        assertThat(testPost.getLastUpdatedDateGMT().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE_GMT.toLocalDate());
         assertThat(testPost.isFeatured()).isEqualTo(DEFAULT_FEATURED);
         assertThat(testPost.isSticky()).isEqualTo(DEFAULT_STICKY);
         assertThat(testPost.getUpdates()).isEqualTo(DEFAULT_UPDATES);
@@ -277,7 +277,7 @@ public class PostResourceIntTest {
     }
 
     @Test
-    public void checkClientIdIsRequired() throws Exception {
+    public void checkClientIdIsNotRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setClientId(null);
@@ -288,10 +288,10 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -313,7 +313,7 @@ public class PostResourceIntTest {
     }
 
     @Test
-    public void checkPublishedDateIsRequired() throws Exception {
+    public void checkPublishedDateIsNotRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setPublishedDate(null);
@@ -324,14 +324,14 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
-    public void checkPublishedDateGMTIsRequired() throws Exception {
+    public void checkPublishedDateGMTIsNotRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setPublishedDateGMT(null);
@@ -342,14 +342,14 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
-    public void checkLastUpdatedDateIsRequired() throws Exception {
+    public void checkLastUpdatedDateIsNotRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setLastUpdatedDate(null);
@@ -360,10 +360,10 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -378,10 +378,10 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -404,8 +404,10 @@ public class PostResourceIntTest {
 
     @Test
     public void getAllPosts() throws Exception {
-        List<Post> post1 = new ArrayList<>();
-        post1.add(post);
+        post.setId("existing_id");
+        PostDTO postDTO = postMapper.toDto(post);
+        List<PostDTO> post1 = new ArrayList<>();
+        post1.add(postDTO);
         PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
         this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

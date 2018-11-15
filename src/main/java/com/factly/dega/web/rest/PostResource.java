@@ -72,7 +72,7 @@ public class PostResource {
         postDTO.setLastUpdatedDate(ZonedDateTime.now());
         postDTO.setLastUpdatedDateGMT(ZonedDateTime.now());
         Optional<StatusDTO> status = statusService.findOneByName("Draft");
-        if (status.get() != null) {
+        if (status.isPresent() && status.get() != null) {
             postDTO.setStatusId(status.get().getId());
         }
         Object obj = request.getAttribute("ClientID");
