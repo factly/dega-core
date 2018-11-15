@@ -224,13 +224,17 @@ public class PostResource {
     /**
      * GET  /posts/:clientId/:slug : get the post.
      *
-     * @param clientId the clientId of the postDTO
      * @param slug the slug of the PostDTO
      * @return Optional<PostDTO> post by clientId and slug
      */
-    @GetMapping("/posts/{clientId}/{slug}")
+    @GetMapping("/postsslug/{slug}")
     @Timed
-    public Optional<PostDTO> getSlug(@PathVariable String clientId, @PathVariable String slug) {
+    public Optional<PostDTO> getSlug(@PathVariable String slug, HttpServletRequest request) {
+        Object obj = request.getAttribute("ClientID");
+        String clientId = null;
+        if (obj != null) {
+            clientId = (String) obj;
+        }
         log.debug("REST request to get post by clienId : {} and slug : {}", clientId, slug);
         Optional<PostDTO> postDTO = postService.findByClientIdAndSlug(clientId, slug);
         return postDTO;
