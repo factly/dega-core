@@ -1,5 +1,3 @@
-
-
 db.createCollection('dega_user');
 db.dega_user.createIndex({ email: 1 }, { unique: true });
 db.dega_user.createIndex({ slug: 1 }, { unique: true });
