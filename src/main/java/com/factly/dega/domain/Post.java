@@ -29,7 +29,6 @@ public class Post implements Serializable {
     @Field("title")
     private String title;
 
-    @NotNull
     @Field("client_id")
     private String clientId;
 
