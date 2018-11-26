@@ -25,10 +25,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
 
+import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -60,6 +65,9 @@ public class FormatResourceIntTest {
 
     private static final String DEFAULT_SLUG = "AAAAAAAAAA";
     private static final String UPDATED_SLUG = "BBBBBBBBBB";
+
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     @Autowired
     private FormatRepository formatRepository;
@@ -114,7 +122,8 @@ public class FormatResourceIntTest {
             .isDefault(DEFAULT_IS_DEFAULT)
             .clientId(DEFAULT_CLIENT_ID)
             .description(DEFAULT_DESCRIPTION)
-            .slug(DEFAULT_SLUG);
+            .slug(DEFAULT_SLUG)
+            .createdDate(DEFAULT_CREATED_DATE);
         return format;
     }
 
@@ -144,6 +153,7 @@ public class FormatResourceIntTest {
         assertThat(testFormat.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testFormat.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testFormat.getSlug()).isEqualTo(DEFAULT_SLUG);
+        assertThat(testFormat.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
 
         // Validate the Format in Elasticsearch
         verify(mockFormatSearchRepository, times(1)).save(testFormat);
@@ -208,6 +218,24 @@ public class FormatResourceIntTest {
     }
 
     @Test
+    public void checkCreatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = formatRepository.findAll().size();
+        // set the field null
+        format.setCreatedDate(null);
+
+        // Create the Format, which fails.
+        FormatDTO formatDTO = formatMapper.toDto(format);
+
+        restFormatMockMvc.perform(post("/api/formats")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(formatDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Format> formatList = formatRepository.findAll();
+        assertThat(formatList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllFormats() throws Exception {
         // Initialize the database
         formatRepository.save(format);
@@ -221,7 +249,8 @@ public class FormatResourceIntTest {
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
     
     @Test
@@ -238,7 +267,8 @@ public class FormatResourceIntTest {
             .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()))
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
-            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()));
+            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
     }
 
     @Test
@@ -262,7 +292,8 @@ public class FormatResourceIntTest {
             .isDefault(UPDATED_IS_DEFAULT)
             .clientId(UPDATED_CLIENT_ID)
             .description(UPDATED_DESCRIPTION)
-            .slug(UPDATED_SLUG);
+            .slug(UPDATED_SLUG)
+            .createdDate(UPDATED_CREATED_DATE);
         FormatDTO formatDTO = formatMapper.toDto(updatedFormat);
 
         restFormatMockMvc.perform(put("/api/formats")
@@ -279,6 +310,7 @@ public class FormatResourceIntTest {
         assertThat(testFormat.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testFormat.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testFormat.getSlug()).isEqualTo(UPDATED_SLUG);
+        assertThat(testFormat.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
 
         // Validate the Format in Elasticsearch
         verify(mockFormatSearchRepository, times(1)).save(testFormat);
@@ -340,7 +372,8 @@ public class FormatResourceIntTest {
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
-            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
 
     @Test
