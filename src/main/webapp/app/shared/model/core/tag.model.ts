@@ -1,20 +1,24 @@
-
+import { Moment } from 'moment';
+import { IPost } from 'app/shared/model/core/post.model';
 
 export interface ITag {
-    id?: string;
-    name?: string;
-    slug?: string;
-    description?: string;
-    meta?: string;
+  id?: string;
+  name?: string;
+  slug?: string;
+  description?: string;
+  clientId?: string;
+  createdDate?: Moment;
+  posts?: IPost[];
 }
 
 export class Tag implements ITag {
-    constructor(
-        public id?: string,
-        public name?: string,
-        public slug?: string,
-        public description?: string,
-        public meta?: string,
-    ) {
-    }
+  constructor(
+    public id?: string,
+    public name?: string,
+    public slug?: string,
+    public description?: string,
+    public clientId?: string,
+    public createdDate?: Moment,
+    public posts?: IPost[]
+  ) {}
 }

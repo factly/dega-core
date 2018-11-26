@@ -33,7 +33,8 @@
             <th jhiSortBy="name"><span jhiTranslate="coreApp.coreTag.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="slug"><span jhiTranslate="coreApp.coreTag.slug">Slug</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="description"><span jhiTranslate="coreApp.coreTag.description">Description</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="meta"><span jhiTranslate="coreApp.coreTag.meta">Meta</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="clientId"><span jhiTranslate="coreApp.coreTag.clientId">Client Id</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="createdDate"><span jhiTranslate="coreApp.coreTag.createdDate">Created Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -43,7 +44,8 @@
                 <td>{{tag.name}}</td>
                 <td>{{tag.slug}}</td>
                 <td>{{tag.description}}</td>
-                <td>{{tag.meta}}</td>
+                <td>{{tag.clientId}}</td>
+                <td>{{tag.createdDate | date:'medium'}}</td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"
