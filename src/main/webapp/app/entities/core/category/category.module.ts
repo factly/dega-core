@@ -3,38 +3,27 @@ import { RouterModule } from '@angular/router';
 
 import { CoreSharedModule } from 'app/shared';
 import {
+  CategoryComponent,
+  CategoryDetailComponent,
+  CategoryUpdateComponent,
+  CategoryDeletePopupComponent,
+  CategoryDeleteDialogComponent,
+  categoryRoute,
+  categoryPopupRoute
+} from './';
+
+const ENTITY_STATES = [...categoryRoute, ...categoryPopupRoute];
+
+@NgModule({
+  imports: [CoreSharedModule, RouterModule.forChild(ENTITY_STATES)],
+  declarations: [
     CategoryComponent,
     CategoryDetailComponent,
     CategoryUpdateComponent,
-    CategoryDeletePopupComponent,
     CategoryDeleteDialogComponent,
-    categoryRoute,
-    categoryPopupRoute
-} from './';
-
-const ENTITY_STATES = [
-    ...categoryRoute,
-    ...categoryPopupRoute,
-];
-
-@NgModule({
-    imports: [
-        CoreSharedModule,
-        RouterModule.forChild(ENTITY_STATES)
-    ],
-    declarations: [
-        CategoryComponent,
-        CategoryDetailComponent,
-        CategoryUpdateComponent,
-        CategoryDeleteDialogComponent,
-        CategoryDeletePopupComponent,
-    ],
-    entryComponents: [
-        CategoryComponent,
-        CategoryUpdateComponent,
-        CategoryDeleteDialogComponent,
-        CategoryDeletePopupComponent,
-    ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    CategoryDeletePopupComponent
+  ],
+  entryComponents: [CategoryComponent, CategoryUpdateComponent, CategoryDeleteDialogComponent, CategoryDeletePopupComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class CoreCategoryModule {}

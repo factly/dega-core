@@ -13,88 +13,86 @@ import { CategoryUpdateComponent } from './category-update.component';
 import { CategoryDeletePopupComponent } from './category-delete-dialog.component';
 import { ICategory } from 'app/shared/model/core/category.model';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class CategoryResolve implements Resolve<ICategory> {
+  constructor(private service: CategoryService) {}
 
-    constructor(private service: CategoryService) {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Category> {
+    const id = route.params['id'] ? route.params['id'] : null;
+    if (id) {
+      return this.service.find(id).pipe(
+        filter((response: HttpResponse<Category>) => response.ok),
+        map((category: HttpResponse<Category>) => category.body)
+      );
     }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Category> {
-        const id = route.params['id'] ? route.params['id'] : null;
-        if (id) {
-            return this.service.find(id).pipe(
-                filter((response: HttpResponse<Category>) => response.ok),
-                map((category: HttpResponse<Category>) => category.body)
-            );
-        }
-        return of(new Category());
-    }
+    return of(new Category());
+  }
 }
 
-
 export const categoryRoute: Routes = [
-    {
-        path: 'category',
-        component: CategoryComponent,
-        resolve: {
-            'pagingParams': JhiResolvePagingParams
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            defaultSort: 'id,asc',
-            pageTitle: 'coreApp.coreCategory.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }, {
-        path: 'category/:id/view',
-        component: CategoryDetailComponent,
-        resolve: {
-            category: CategoryResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreCategory.home.title'
-        },
-        canActivate: [UserRouteAccessService]
+  {
+    path: 'category',
+    component: CategoryComponent,
+    resolve: {
+      pagingParams: JhiResolvePagingParams
     },
-    {
-        path: 'category/new',
-        component: CategoryUpdateComponent,
-        resolve: {
-            category: CategoryResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreCategory.home.title'
-        },
-        canActivate: [UserRouteAccessService]
+    data: {
+      authorities: ['ROLE_USER'],
+      defaultSort: 'id,asc',
+      pageTitle: 'coreApp.coreCategory.home.title'
     },
-    {
-        path: 'category/:id/edit',
-        component: CategoryUpdateComponent,
-        resolve: {
-            category: CategoryResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreCategory.home.title'
-        },
-        canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'category/:id/view',
+    component: CategoryDetailComponent,
+    resolve: {
+      category: CategoryResolve
     },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreCategory.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'category/new',
+    component: CategoryUpdateComponent,
+    resolve: {
+      category: CategoryResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreCategory.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'category/:id/edit',
+    component: CategoryUpdateComponent,
+    resolve: {
+      category: CategoryResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreCategory.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  }
 ];
 
 export const categoryPopupRoute: Routes = [
-    {
-        path: 'category/:id/delete',
-        component: CategoryDeletePopupComponent,
-        resolve: {
-            category: CategoryResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreCategory.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    }
+  {
+    path: 'category/:id/delete',
+    component: CategoryDeletePopupComponent,
+    resolve: {
+      category: CategoryResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreCategory.home.title'
+    },
+    canActivate: [UserRouteAccessService],
+    outlet: 'popup'
+  }
 ];
