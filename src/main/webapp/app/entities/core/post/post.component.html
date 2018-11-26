@@ -35,9 +35,7 @@
             <th jhiSortBy="content"><span jhiTranslate="coreApp.corePost.content">Content</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="excerpt"><span jhiTranslate="coreApp.corePost.excerpt">Excerpt</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="publishedDate"><span jhiTranslate="coreApp.corePost.publishedDate">Published Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="publishedDateGMT"><span jhiTranslate="coreApp.corePost.publishedDateGMT">Published Date GMT</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="lastUpdatedDate"><span jhiTranslate="coreApp.corePost.lastUpdatedDate">Last Updated Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="lastUpdatedDateGMT"><span jhiTranslate="coreApp.corePost.lastUpdatedDateGMT">Last Updated Date GMT</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="featured"><span jhiTranslate="coreApp.corePost.featured">Featured</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="sticky"><span jhiTranslate="coreApp.corePost.sticky">Sticky</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="updates"><span jhiTranslate="coreApp.corePost.updates">Updates</span> <fa-icon [icon]="'sort'"></fa-icon></th>
@@ -45,6 +43,7 @@
             <th jhiSortBy="password"><span jhiTranslate="coreApp.corePost.password">Password</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="featuredMedia"><span jhiTranslate="coreApp.corePost.featuredMedia">Featured Media</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="subTitle"><span jhiTranslate="coreApp.corePost.subTitle">Sub Title</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="createdDate"><span jhiTranslate="coreApp.corePost.createdDate">Created Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="statusName"><span jhiTranslate="coreApp.corePost.status">Status</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="formatName"><span jhiTranslate="coreApp.corePost.format">Format</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
@@ -58,9 +57,7 @@
                 <td>{{post.content}}</td>
                 <td>{{post.excerpt}}</td>
                 <td>{{post.publishedDate | date:'medium'}}</td>
-                <td>{{post.publishedDateGMT | date:'medium'}}</td>
                 <td>{{post.lastUpdatedDate | date:'medium'}}</td>
-                <td>{{post.lastUpdatedDateGMT | date:'medium'}}</td>
                 <td>{{post.featured}}</td>
                 <td>{{post.sticky}}</td>
                 <td>{{post.updates}}</td>
@@ -68,6 +65,7 @@
                 <td>{{post.password}}</td>
                 <td>{{post.featuredMedia}}</td>
                 <td>{{post.subTitle}}</td>
+                <td>{{post.createdDate | date:'medium'}}</td>
                 <td>
                     <div *ngIf="post.statusId">
                         <a [routerLink]="['../status', post.statusId , 'view' ]" >{{post.statusName}}</a>

@@ -75,7 +75,7 @@ public class PostServiceImpl implements PostService {
     public Page<PostDTO> findAllWithEagerRelationships(Pageable pageable) {
         return postRepository.findAllWithEagerRelationships(pageable).map(postMapper::toDto);
     }
-
+    
 
     /**
      * Get one post by id.
@@ -113,32 +113,6 @@ public class PostServiceImpl implements PostService {
     public Page<PostDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of Posts for query {}", query);
         return postSearchRepository.search(queryStringQuery(query), pageable)
-            .map(postMapper::toDto);
-    }
-
-    /**
-     * Get one post by email id.
-     *
-     * @param clientId the client id of the entity
-     * @return the entity
-     */
-    @Override
-    public Page<PostDTO> findByClientId(String clientId, Pageable pageable) {
-        log.debug("Request to get Post : {}", clientId);
-        return postRepository.findByClientId(clientId, pageable).map(postMapper::toDto);
-    }
-
-    /**
-     * Get the post by clientId and slug.
-     *
-     * @param clientId the clientId of the postDTO
-     * @param slug the slug of the PostDTO
-     * @return Optional<PostDTO> post by clientId and slug
-     */
-    @Override
-    public Optional<PostDTO> findByClientIdAndSlug(String clientId, String slug) {
-        log.debug("Request to get post  by clienId : {} and slug : {}", clientId, slug);
-        return postRepository.findByClientIdAndSlug(clientId, slug)
             .map(postMapper::toDto);
     }
 }

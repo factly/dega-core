@@ -65,23 +65,6 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="coreApp.corePost.publishedDateGMT" for="field_publishedDateGMT">Published Date GMT</label>
-                    <div class="d-flex">
-                        <input id="field_publishedDateGMT" type="datetime-local" class="form-control" name="publishedDateGMT" [(ngModel)]="publishedDateGMT"
-                        required/>
-                    </div>
-                    <div [hidden]="!(editForm.controls.publishedDateGMT?.dirty && editForm.controls.publishedDateGMT?.invalid)">
-                        <small class="form-text text-danger"
-                        [hidden]="!editForm.controls.publishedDateGMT?.errors?.required" jhiTranslate="entity.validation.required">
-                        This field is required.
-                        </small>
-                        <small class="form-text text-danger"
-                            [hidden]="!editForm.controls.publishedDateGMT?.errors?.ZonedDateTimelocal" jhiTranslate="entity.validation.ZonedDateTimelocal">
-                            This field should be a date and time.
-                        </small>
-                    </div>
-                </div>
-                <div class="form-group">
                     <label class="form-control-label" jhiTranslate="coreApp.corePost.lastUpdatedDate" for="field_lastUpdatedDate">Last Updated Date</label>
                     <div class="d-flex">
                         <input id="field_lastUpdatedDate" type="datetime-local" class="form-control" name="lastUpdatedDate" [(ngModel)]="lastUpdatedDate"
@@ -94,23 +77,6 @@
                         </small>
                         <small class="form-text text-danger"
                             [hidden]="!editForm.controls.lastUpdatedDate?.errors?.ZonedDateTimelocal" jhiTranslate="entity.validation.ZonedDateTimelocal">
-                            This field should be a date and time.
-                        </small>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="coreApp.corePost.lastUpdatedDateGMT" for="field_lastUpdatedDateGMT">Last Updated Date GMT</label>
-                    <div class="d-flex">
-                        <input id="field_lastUpdatedDateGMT" type="datetime-local" class="form-control" name="lastUpdatedDateGMT" [(ngModel)]="lastUpdatedDateGMT"
-                        required/>
-                    </div>
-                    <div [hidden]="!(editForm.controls.lastUpdatedDateGMT?.dirty && editForm.controls.lastUpdatedDateGMT?.invalid)">
-                        <small class="form-text text-danger"
-                        [hidden]="!editForm.controls.lastUpdatedDateGMT?.errors?.required" jhiTranslate="entity.validation.required">
-                        This field is required.
-                        </small>
-                        <small class="form-text text-danger"
-                            [hidden]="!editForm.controls.lastUpdatedDateGMT?.errors?.ZonedDateTimelocal" jhiTranslate="entity.validation.ZonedDateTimelocal">
                             This field should be a date and time.
                         </small>
                     </div>
@@ -155,6 +121,23 @@
                     <label class="form-control-label" jhiTranslate="coreApp.corePost.subTitle" for="field_subTitle">Sub Title</label>
                     <input type="text" class="form-control" name="subTitle" id="field_subTitle"
                         [(ngModel)]="post.subTitle" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.corePost.createdDate" for="field_createdDate">Created Date</label>
+                    <div class="d-flex">
+                        <input id="field_createdDate" type="datetime-local" class="form-control" name="createdDate" [(ngModel)]="createdDate"
+                        required/>
+                    </div>
+                    <div [hidden]="!(editForm.controls.createdDate?.dirty && editForm.controls.createdDate?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.createdDate?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.createdDate?.errors?.ZonedDateTimelocal" jhiTranslate="entity.validation.ZonedDateTimelocal">
+                            This field should be a date and time.
+                        </small>
+                    </div>
                 </div>
 
                 <div class="form-group">

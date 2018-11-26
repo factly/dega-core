@@ -29,6 +29,7 @@ public class Post implements Serializable {
     @Field("title")
     private String title;
 
+    @NotNull
     @Field("client_id")
     private String clientId;
 
@@ -39,17 +40,13 @@ public class Post implements Serializable {
     @Field("excerpt")
     private String excerpt;
 
+    @NotNull
     @Field("published_date")
     private ZonedDateTime publishedDate;
 
-    @Field("published_date_gmt")
-    private ZonedDateTime publishedDateGMT;
-
+    @NotNull
     @Field("last_updated_date")
     private ZonedDateTime lastUpdatedDate;
-
-    @Field("last_updated_date_gmt")
-    private ZonedDateTime lastUpdatedDateGMT;
 
     @Field("featured")
     private Boolean featured;
@@ -72,6 +69,10 @@ public class Post implements Serializable {
 
     @Field("sub_title")
     private String subTitle;
+
+    @NotNull
+    @Field("created_date")
+    private ZonedDateTime createdDate;
 
     @DBRef
     @Field("tags")
@@ -169,19 +170,6 @@ public class Post implements Serializable {
         this.publishedDate = publishedDate;
     }
 
-    public ZonedDateTime getPublishedDateGMT() {
-        return publishedDateGMT;
-    }
-
-    public Post publishedDateGMT(ZonedDateTime publishedDateGMT) {
-        this.publishedDateGMT = publishedDateGMT;
-        return this;
-    }
-
-    public void setPublishedDateGMT(ZonedDateTime publishedDateGMT) {
-        this.publishedDateGMT = publishedDateGMT;
-    }
-
     public ZonedDateTime getLastUpdatedDate() {
         return lastUpdatedDate;
     }
@@ -193,19 +181,6 @@ public class Post implements Serializable {
 
     public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
-    }
-
-    public ZonedDateTime getLastUpdatedDateGMT() {
-        return lastUpdatedDateGMT;
-    }
-
-    public Post lastUpdatedDateGMT(ZonedDateTime lastUpdatedDateGMT) {
-        this.lastUpdatedDateGMT = lastUpdatedDateGMT;
-        return this;
-    }
-
-    public void setLastUpdatedDateGMT(ZonedDateTime lastUpdatedDateGMT) {
-        this.lastUpdatedDateGMT = lastUpdatedDateGMT;
     }
 
     public Boolean isFeatured() {
@@ -297,6 +272,19 @@ public class Post implements Serializable {
 
     public void setSubTitle(String subTitle) {
         this.subTitle = subTitle;
+    }
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public Post createdDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+        return this;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
     public Set<Tag> getTags() {
@@ -430,9 +418,7 @@ public class Post implements Serializable {
             ", content='" + getContent() + "'" +
             ", excerpt='" + getExcerpt() + "'" +
             ", publishedDate='" + getPublishedDate() + "'" +
-            ", publishedDateGMT='" + getPublishedDateGMT() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
-            ", lastUpdatedDateGMT='" + getLastUpdatedDateGMT() + "'" +
             ", featured='" + isFeatured() + "'" +
             ", sticky='" + isSticky() + "'" +
             ", updates='" + getUpdates() + "'" +
@@ -440,6 +426,7 @@ public class Post implements Serializable {
             ", password='" + getPassword() + "'" +
             ", featuredMedia='" + getFeaturedMedia() + "'" +
             ", subTitle='" + getSubTitle() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
             "}";
     }
 }

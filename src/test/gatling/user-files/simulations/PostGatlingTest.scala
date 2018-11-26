@@ -106,9 +106,7 @@ class PostGatlingTest extends Simulation {
                 , "content":"SAMPLE_TEXT"
                 , "excerpt":"SAMPLE_TEXT"
                 , "publishedDate":"2020-01-01T00:00:00.000Z"
-                , "publishedDateGMT":"2020-01-01T00:00:00.000Z"
                 , "lastUpdatedDate":"2020-01-01T00:00:00.000Z"
-                , "lastUpdatedDateGMT":"2020-01-01T00:00:00.000Z"
                 , "featured":null
                 , "sticky":null
                 , "updates":"SAMPLE_TEXT"
@@ -116,6 +114,7 @@ class PostGatlingTest extends Simulation {
                 , "password":"SAMPLE_TEXT"
                 , "featuredMedia":"SAMPLE_TEXT"
                 , "subTitle":"SAMPLE_TEXT"
+                , "createdDate":"2020-01-01T00:00:00.000Z"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_post_url"))).exitHereIfFailed

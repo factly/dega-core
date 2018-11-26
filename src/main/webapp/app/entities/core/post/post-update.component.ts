@@ -37,9 +37,8 @@ export class PostUpdateComponent implements OnInit {
 
   degausers: IDegaUser[];
   publishedDate: string;
-  publishedDateGMT: string;
   lastUpdatedDate: string;
-  lastUpdatedDateGMT: string;
+  createdDate: string;
 
   constructor(
     private jhiAlertService: JhiAlertService,
@@ -57,9 +56,8 @@ export class PostUpdateComponent implements OnInit {
     this.activatedRoute.data.subscribe(({ post }) => {
       this.post = post;
       this.publishedDate = this.post.publishedDate != null ? this.post.publishedDate.format(DATE_TIME_FORMAT) : null;
-      this.publishedDateGMT = this.post.publishedDateGMT != null ? this.post.publishedDateGMT.format(DATE_TIME_FORMAT) : null;
       this.lastUpdatedDate = this.post.lastUpdatedDate != null ? this.post.lastUpdatedDate.format(DATE_TIME_FORMAT) : null;
-      this.lastUpdatedDateGMT = this.post.lastUpdatedDateGMT != null ? this.post.lastUpdatedDateGMT.format(DATE_TIME_FORMAT) : null;
+      this.createdDate = this.post.createdDate != null ? this.post.createdDate.format(DATE_TIME_FORMAT) : null;
     });
     this.tagService.query().subscribe(
       (res: HttpResponse<ITag[]>) => {
@@ -100,9 +98,8 @@ export class PostUpdateComponent implements OnInit {
   save() {
     this.isSaving = true;
     this.post.publishedDate = this.publishedDate != null ? moment(this.publishedDate, DATE_TIME_FORMAT) : null;
-    this.post.publishedDateGMT = this.publishedDateGMT != null ? moment(this.publishedDateGMT, DATE_TIME_FORMAT) : null;
     this.post.lastUpdatedDate = this.lastUpdatedDate != null ? moment(this.lastUpdatedDate, DATE_TIME_FORMAT) : null;
-    this.post.lastUpdatedDateGMT = this.lastUpdatedDateGMT != null ? moment(this.lastUpdatedDateGMT, DATE_TIME_FORMAT) : null;
+    this.post.createdDate = this.createdDate != null ? moment(this.createdDate, DATE_TIME_FORMAT) : null;
     if (this.post.id !== undefined) {
       this.subscribeToSaveResponse(this.postService.update(this.post));
     } else {
