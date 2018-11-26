@@ -25,10 +25,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
 
+import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -166,8 +171,11 @@ public class OrganizationResourceIntTest {
     private static final String DEFAULT_SLUG = "AAAAAAAAAA";
     private static final String UPDATED_SLUG = "BBBBBBBBBB";
 
-    private static final String DEFAULT_EMAIL = "'Y@6.jwXiUAEZJGNjtJzsAdxHrVSSYvpe'";
-    private static final String UPDATED_EMAIL = "'_@dC.OK'";
+    private static final String DEFAULT_EMAIL = "'GA@i.PmXB'";
+    private static final String UPDATED_EMAIL = "'Go@is.BLXVQGIOQpzctmZPrlJusJJQuffig'";
+
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     @Autowired
     private OrganizationRepository organizationRepository;
@@ -258,7 +266,8 @@ public class OrganizationResourceIntTest {
             .timeZone(DEFAULT_TIME_ZONE)
             .clientId(DEFAULT_CLIENT_ID)
             .slug(DEFAULT_SLUG)
-            .email(DEFAULT_EMAIL);
+            .email(DEFAULT_EMAIL)
+            .createdDate(DEFAULT_CREATED_DATE);
         return organization;
     }
 
@@ -324,6 +333,7 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testOrganization.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testOrganization.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testOrganization.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -442,6 +452,24 @@ public class OrganizationResourceIntTest {
     }
 
     @Test
+    public void checkCreatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = organizationRepository.findAll().size();
+        // set the field null
+        organization.setCreatedDate(null);
+
+        // Create the Organization, which fails.
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        restOrganizationMockMvc.perform(post("/api/organizations")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllOrganizations() throws Exception {
         // Initialize the database
         organizationRepository.save(organization);
@@ -491,7 +519,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].timeZone").value(hasItem(DEFAULT_TIME_ZONE.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())));
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
     
     @Test
@@ -544,7 +573,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.timeZone").value(DEFAULT_TIME_ZONE.toString()))
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
-            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()));
+            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
     }
 
     @Test
@@ -604,7 +634,8 @@ public class OrganizationResourceIntTest {
             .timeZone(UPDATED_TIME_ZONE)
             .clientId(UPDATED_CLIENT_ID)
             .slug(UPDATED_SLUG)
-            .email(UPDATED_EMAIL);
+            .email(UPDATED_EMAIL)
+            .createdDate(UPDATED_CREATED_DATE);
         OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
 
         restOrganizationMockMvc.perform(put("/api/organizations")
@@ -657,6 +688,7 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testOrganization.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testOrganization.getEmail()).isEqualTo(UPDATED_EMAIL);
+        assertThat(testOrganization.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -754,7 +786,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].timeZone").value(hasItem(DEFAULT_TIME_ZONE.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())));
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
 
     @Test

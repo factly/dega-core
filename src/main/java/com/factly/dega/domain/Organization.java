@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -149,8 +150,13 @@ public class Organization implements Serializable {
     private String slug;
 
     @NotNull
+    @Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")
     @Field("email")
     private String email;
+
+    @NotNull
+    @Field("created_date")
+    private ZonedDateTime createdDate;
 
     @DBRef
     @Field("degaUsers")
@@ -705,6 +711,19 @@ public class Organization implements Serializable {
         this.email = email;
     }
 
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public Organization createdDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+        return this;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public Set<DegaUser> getDegaUsers() {
         return degaUsers;
     }
@@ -846,6 +865,7 @@ public class Organization implements Serializable {
             ", clientId='" + getClientId() + "'" +
             ", slug='" + getSlug() + "'" +
             ", email='" + getEmail() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
             "}";
     }
 }
