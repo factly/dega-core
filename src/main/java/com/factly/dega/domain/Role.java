@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Objects;
@@ -38,6 +39,10 @@ public class Role implements Serializable {
     @NotNull
     @Field("slug")
     private String slug;
+
+    @NotNull
+    @Field("created_date")
+    private ZonedDateTime createdDate;
 
     @DBRef
     @Field("degaUser")
@@ -103,6 +108,19 @@ public class Role implements Serializable {
         this.slug = slug;
     }
 
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public Role createdDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+        return this;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public Set<DegaUser> getDegaUsers() {
         return degaUsers;
     }
@@ -157,6 +175,7 @@ public class Role implements Serializable {
             ", clientId='" + getClientId() + "'" +
             ", isDefault='" + isIsDefault() + "'" +
             ", slug='" + getSlug() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
             "}";
     }
 }
