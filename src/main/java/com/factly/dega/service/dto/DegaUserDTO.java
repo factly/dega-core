@@ -1,5 +1,6 @@
 package com.factly.dega.service.dto;
 
+import java.time.ZonedDateTime;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -45,7 +46,11 @@ public class DegaUserDTO implements Serializable {
     private Boolean emailVerified;
 
     @NotNull
+    @Pattern(regexp = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
     private String email;
+
+    @NotNull
+    private ZonedDateTime createdDate;
 
     private String roleId;
 
@@ -189,6 +194,14 @@ public class DegaUserDTO implements Serializable {
         this.email = email;
     }
 
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public String getRoleId() {
         return roleId;
     }
@@ -285,6 +298,7 @@ public class DegaUserDTO implements Serializable {
             ", enabled='" + isEnabled() + "'" +
             ", emailVerified='" + isEmailVerified() + "'" +
             ", email='" + getEmail() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
             ", role=" + getRoleId() +
             ", role='" + getRoleName() + "'" +
             ", organizationDefault=" + getOrganizationDefaultId() +

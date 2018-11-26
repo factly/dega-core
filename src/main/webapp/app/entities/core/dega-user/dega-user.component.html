@@ -45,6 +45,7 @@
             <th jhiSortBy="enabled"><span jhiTranslate="coreApp.coreDegaUser.enabled">Enabled</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="emailVerified"><span jhiTranslate="coreApp.coreDegaUser.emailVerified">Email Verified</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="email"><span jhiTranslate="coreApp.coreDegaUser.email">Email</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="createdDate"><span jhiTranslate="coreApp.coreDegaUser.createdDate">Created Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="roleName"><span jhiTranslate="coreApp.coreDegaUser.role">Role</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="organizationDefaultName"><span jhiTranslate="coreApp.coreDegaUser.organizationDefault">Organization Default</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="organizationCurrentName"><span jhiTranslate="coreApp.coreDegaUser.organizationCurrent">Organization Current</span> <fa-icon [icon]="'sort'"></fa-icon></th>
@@ -69,6 +70,7 @@
                 <td>{{degaUser.enabled}}</td>
                 <td>{{degaUser.emailVerified}}</td>
                 <td>{{degaUser.email}}</td>
+                <td>{{degaUser.createdDate | date:'medium'}}</td>
                 <td>
                     <div *ngIf="degaUser.roleId">
                         <a [routerLink]="['../role', degaUser.roleId , 'view' ]" >{{degaUser.roleName}}</a>

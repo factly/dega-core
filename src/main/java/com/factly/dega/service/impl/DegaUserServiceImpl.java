@@ -75,7 +75,7 @@ public class DegaUserServiceImpl implements DegaUserService {
     public Page<DegaUserDTO> findAllWithEagerRelationships(Pageable pageable) {
         return degaUserRepository.findAllWithEagerRelationships(pageable).map(degaUserMapper::toDto);
     }
-
+    
 
     /**
      * Get one degaUser by id.
@@ -113,19 +113,6 @@ public class DegaUserServiceImpl implements DegaUserService {
     public Page<DegaUserDTO> search(String query, Pageable pageable) {
         log.debug("Request to search for a page of DegaUsers for query {}", query);
         return degaUserSearchRepository.search(queryStringQuery(query), pageable)
-            .map(degaUserMapper::toDto);
-    }
-
-    /**
-     * Get one degaUser by emailId.
-     *
-     * @param emailId the id of the entity
-     * @return the entity
-     */
-    @Override
-    public Optional<DegaUserDTO> findByEmailId(String emailId) {
-        log.debug("Request to get DegaUser : {}", emailId);
-        return degaUserRepository.findByEmailId(emailId)
             .map(degaUserMapper::toDto);
     }
 }
