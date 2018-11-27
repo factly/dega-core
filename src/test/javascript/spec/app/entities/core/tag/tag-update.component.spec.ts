@@ -9,58 +9,58 @@ import { TagService } from 'app/entities/core/tag/tag.service';
 import { Tag } from 'app/shared/model/core/tag.model';
 
 describe('Component Tests', () => {
+  describe('Tag Management Update Component', () => {
+    let comp: TagUpdateComponent;
+    let fixture: ComponentFixture<TagUpdateComponent>;
+    let service: TagService;
 
-    describe('Tag Management Update Component', () => {
-        let comp: TagUpdateComponent;
-        let fixture: ComponentFixture<TagUpdateComponent>;
-        let service: TagService;
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [CoreTestModule],
+        declarations: [TagUpdateComponent]
+      })
+        .overrideTemplate(TagUpdateComponent, '')
+        .compileComponents();
 
-        beforeEach(() => {
-            TestBed.configureTestingModule({
-                imports: [CoreTestModule],
-                declarations: [TagUpdateComponent]
-            })
-            .overrideTemplate(TagUpdateComponent, '')
-            .compileComponents();
-
-            fixture = TestBed.createComponent(TagUpdateComponent);
-            comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(TagService);
-        });
-
-        describe('save', () => {
-            it('Should call update service on save for existing entity',
-                fakeAsync(() => {
-                    // GIVEN
-                    const entity = new Tag('123');
-                    spyOn(service, 'update').and.returnValue(of(new HttpResponse({body: entity})));
-                    comp.tag = entity;
-                    // WHEN
-                    comp.save();
-                    tick(); // simulate async
-
-                    // THEN
-                    expect(service.update).toHaveBeenCalledWith(entity);
-                    expect(comp.isSaving).toEqual(false);
-                })
-            );
-
-            it('Should call create service on save for new entity',
-                fakeAsync(() => {
-                    // GIVEN
-                    const entity = new Tag();
-                    spyOn(service, 'create').and.returnValue(of(new HttpResponse({body: entity})));
-                    comp.tag = entity;
-                    // WHEN
-                    comp.save();
-                    tick(); // simulate async
-
-                    // THEN
-                    expect(service.create).toHaveBeenCalledWith(entity);
-                    expect(comp.isSaving).toEqual(false);
-                })
-            );
-        });
+      fixture = TestBed.createComponent(TagUpdateComponent);
+      comp = fixture.componentInstance;
+      service = fixture.debugElement.injector.get(TagService);
     });
 
+    describe('save', () => {
+      it(
+        'Should call update service on save for existing entity',
+        fakeAsync(() => {
+          // GIVEN
+          const entity = new Tag('123');
+          spyOn(service, 'update').and.returnValue(of(new HttpResponse({ body: entity })));
+          comp.tag = entity;
+          // WHEN
+          comp.save();
+          tick(); // simulate async
+
+          // THEN
+          expect(service.update).toHaveBeenCalledWith(entity);
+          expect(comp.isSaving).toEqual(false);
+        })
+      );
+
+      it(
+        'Should call create service on save for new entity',
+        fakeAsync(() => {
+          // GIVEN
+          const entity = new Tag();
+          spyOn(service, 'create').and.returnValue(of(new HttpResponse({ body: entity })));
+          comp.tag = entity;
+          // WHEN
+          comp.save();
+          tick(); // simulate async
+
+          // THEN
+          expect(service.create).toHaveBeenCalledWith(entity);
+          expect(comp.isSaving).toEqual(false);
+        })
+      );
+    });
+  });
 });

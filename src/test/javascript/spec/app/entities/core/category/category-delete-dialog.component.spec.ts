@@ -9,47 +9,44 @@ import { CategoryDeleteDialogComponent } from 'app/entities/core/category/catego
 import { CategoryService } from 'app/entities/core/category/category.service';
 
 describe('Component Tests', () => {
+  describe('Category Management Delete Component', () => {
+    let comp: CategoryDeleteDialogComponent;
+    let fixture: ComponentFixture<CategoryDeleteDialogComponent>;
+    let service: CategoryService;
+    let mockEventManager: any;
+    let mockActiveModal: any;
 
-    describe('Category Management Delete Component', () => {
-        let comp: CategoryDeleteDialogComponent;
-        let fixture: ComponentFixture<CategoryDeleteDialogComponent>;
-        let service: CategoryService;
-        let mockEventManager: any;
-        let mockActiveModal: any;
-
-        beforeEach(() => {
-            TestBed.configureTestingModule({
-                imports: [CoreTestModule],
-                declarations: [CategoryDeleteDialogComponent]
-            })
-            .overrideTemplate(CategoryDeleteDialogComponent, '')
-            .compileComponents();
-            fixture = TestBed.createComponent(CategoryDeleteDialogComponent);
-            comp = fixture.componentInstance;
-            service = fixture.debugElement.injector.get(CategoryService);
-            mockEventManager = fixture.debugElement.injector.get(JhiEventManager);
-            mockActiveModal = fixture.debugElement.injector.get(NgbActiveModal);
-        });
-
-        describe('confirmDelete', () => {
-            it('Should call delete service on confirmDelete',
-                inject([],
-                    fakeAsync(() => {
-                        // GIVEN
-                        spyOn(service, 'delete').and.returnValue(of({}));
-
-                        // WHEN
-                        comp.confirmDelete('123');
-                        tick();
-
-                        // THEN
-                        expect(service.delete).toHaveBeenCalledWith('123');
-                        expect(mockActiveModal.dismissSpy).toHaveBeenCalled();
-                        expect(mockEventManager.broadcastSpy).toHaveBeenCalled();
-                    })
-                )
-            );
-        });
+    beforeEach(() => {
+      TestBed.configureTestingModule({
+        imports: [CoreTestModule],
+        declarations: [CategoryDeleteDialogComponent]
+      })
+        .overrideTemplate(CategoryDeleteDialogComponent, '')
+        .compileComponents();
+      fixture = TestBed.createComponent(CategoryDeleteDialogComponent);
+      comp = fixture.componentInstance;
+      service = fixture.debugElement.injector.get(CategoryService);
+      mockEventManager = fixture.debugElement.injector.get(JhiEventManager);
+      mockActiveModal = fixture.debugElement.injector.get(NgbActiveModal);
     });
 
+    describe('confirmDelete', () => {
+      it('Should call delete service on confirmDelete', inject(
+        [],
+        fakeAsync(() => {
+          // GIVEN
+          spyOn(service, 'delete').and.returnValue(of({}));
+
+          // WHEN
+          comp.confirmDelete('123');
+          tick();
+
+          // THEN
+          expect(service.delete).toHaveBeenCalledWith('123');
+          expect(mockActiveModal.dismissSpy).toHaveBeenCalled();
+          expect(mockEventManager.broadcastSpy).toHaveBeenCalled();
+        })
+      ));
+    });
+  });
 });

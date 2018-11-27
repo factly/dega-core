@@ -25,10 +25,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
 
+import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -57,6 +62,9 @@ public class StatusResourceIntTest {
 
     private static final String DEFAULT_SLUG = "AAAAAAAAAA";
     private static final String UPDATED_SLUG = "BBBBBBBBBB";
+
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     @Autowired
     private StatusRepository statusRepository;
@@ -110,7 +118,8 @@ public class StatusResourceIntTest {
             .name(DEFAULT_NAME)
             .clientId(DEFAULT_CLIENT_ID)
             .isDefault(DEFAULT_IS_DEFAULT)
-            .slug(DEFAULT_SLUG);
+            .slug(DEFAULT_SLUG)
+            .createdDate(DEFAULT_CREATED_DATE);
         return status;
     }
 
@@ -139,6 +148,7 @@ public class StatusResourceIntTest {
         assertThat(testStatus.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testStatus.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
         assertThat(testStatus.getSlug()).isEqualTo(DEFAULT_SLUG);
+        assertThat(testStatus.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
 
         // Validate the Status in Elasticsearch
         verify(mockStatusSearchRepository, times(1)).save(testStatus);
@@ -221,6 +231,24 @@ public class StatusResourceIntTest {
     }
 
     @Test
+    public void checkCreatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = statusRepository.findAll().size();
+        // set the field null
+        status.setCreatedDate(null);
+
+        // Create the Status, which fails.
+        StatusDTO statusDTO = statusMapper.toDto(status);
+
+        restStatusMockMvc.perform(post("/api/statuses")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(statusDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Status> statusList = statusRepository.findAll();
+        assertThat(statusList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllStatuses() throws Exception {
         // Initialize the database
         statusRepository.save(status);
@@ -233,7 +261,8 @@ public class StatusResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
-            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
     
     @Test
@@ -249,7 +278,8 @@ public class StatusResourceIntTest {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
             .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()))
-            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()));
+            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
     }
 
     @Test
@@ -272,7 +302,8 @@ public class StatusResourceIntTest {
             .name(UPDATED_NAME)
             .clientId(UPDATED_CLIENT_ID)
             .isDefault(UPDATED_IS_DEFAULT)
-            .slug(UPDATED_SLUG);
+            .slug(UPDATED_SLUG)
+            .createdDate(UPDATED_CREATED_DATE);
         StatusDTO statusDTO = statusMapper.toDto(updatedStatus);
 
         restStatusMockMvc.perform(put("/api/statuses")
@@ -288,6 +319,7 @@ public class StatusResourceIntTest {
         assertThat(testStatus.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testStatus.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
         assertThat(testStatus.getSlug()).isEqualTo(UPDATED_SLUG);
+        assertThat(testStatus.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
 
         // Validate the Status in Elasticsearch
         verify(mockStatusSearchRepository, times(1)).save(testStatus);
@@ -348,7 +380,8 @@ public class StatusResourceIntTest {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
-            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
 
     @Test

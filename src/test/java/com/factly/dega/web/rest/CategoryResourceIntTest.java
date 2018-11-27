@@ -25,10 +25,15 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
 
+import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -60,6 +65,9 @@ public class CategoryResourceIntTest {
 
     private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
     private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
+
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -114,7 +122,8 @@ public class CategoryResourceIntTest {
             .description(DEFAULT_DESCRIPTION)
             .slug(DEFAULT_SLUG)
             .parent(DEFAULT_PARENT)
-            .clientId(DEFAULT_CLIENT_ID);
+            .clientId(DEFAULT_CLIENT_ID)
+            .createdDate(DEFAULT_CREATED_DATE);
         return category;
     }
 
@@ -144,6 +153,7 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testCategory.getParent()).isEqualTo(DEFAULT_PARENT);
         assertThat(testCategory.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
+        assertThat(testCategory.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
 
         // Validate the Category in Elasticsearch
         verify(mockCategorySearchRepository, times(1)).save(testCategory);
@@ -226,6 +236,24 @@ public class CategoryResourceIntTest {
     }
 
     @Test
+    public void checkCreatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = categoryRepository.findAll().size();
+        // set the field null
+        category.setCreatedDate(null);
+
+        // Create the Category, which fails.
+        CategoryDTO categoryDTO = categoryMapper.toDto(category);
+
+        restCategoryMockMvc.perform(post("/api/categories")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(categoryDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Category> categoryList = categoryRepository.findAll();
+        assertThat(categoryList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllCategories() throws Exception {
         // Initialize the database
         categoryRepository.save(category);
@@ -239,7 +267,8 @@ public class CategoryResourceIntTest {
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].parent").value(hasItem(DEFAULT_PARENT.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
     
     @Test
@@ -256,7 +285,8 @@ public class CategoryResourceIntTest {
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.parent").value(DEFAULT_PARENT.toString()))
-            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()));
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
     }
 
     @Test
@@ -280,7 +310,8 @@ public class CategoryResourceIntTest {
             .description(UPDATED_DESCRIPTION)
             .slug(UPDATED_SLUG)
             .parent(UPDATED_PARENT)
-            .clientId(UPDATED_CLIENT_ID);
+            .clientId(UPDATED_CLIENT_ID)
+            .createdDate(UPDATED_CREATED_DATE);
         CategoryDTO categoryDTO = categoryMapper.toDto(updatedCategory);
 
         restCategoryMockMvc.perform(put("/api/categories")
@@ -297,6 +328,7 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testCategory.getParent()).isEqualTo(UPDATED_PARENT);
         assertThat(testCategory.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testCategory.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
 
         // Validate the Category in Elasticsearch
         verify(mockCategorySearchRepository, times(1)).save(testCategory);
@@ -358,7 +390,8 @@ public class CategoryResourceIntTest {
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].parent").value(hasItem(DEFAULT_PARENT.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
 
     @Test

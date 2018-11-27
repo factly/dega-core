@@ -51,6 +51,12 @@ public class MediaDTO implements Serializable {
     @NotNull
     private String slug;
 
+    @NotNull
+    private String clientId;
+
+    @NotNull
+    private ZonedDateTime createdDate;
+
     public String getId() {
         return id;
     }
@@ -179,6 +185,22 @@ public class MediaDTO implements Serializable {
         this.slug = slug;
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -219,6 +241,8 @@ public class MediaDTO implements Serializable {
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             ", lastUpdatedDateGMT='" + getLastUpdatedDateGMT() + "'" +
             ", slug='" + getSlug() + "'" +
+            ", clientId='" + getClientId() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
             "}";
     }
 }

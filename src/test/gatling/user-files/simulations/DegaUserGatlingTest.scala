@@ -116,6 +116,7 @@ class DegaUserGatlingTest extends Simulation {
                 , "enabled":null
                 , "emailVerified":null
                 , "email":"SAMPLE_TEXT"
+                , "createdDate":"2020-01-01T00:00:00.000Z"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_degaUser_url"))).exitHereIfFailed

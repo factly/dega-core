@@ -17,6 +17,7 @@ public class PostDTO implements Serializable {
     @NotNull
     private String title;
 
+    @NotNull
     private String clientId;
 
     @NotNull
@@ -24,13 +25,11 @@ public class PostDTO implements Serializable {
 
     private String excerpt;
 
+    @NotNull
     private ZonedDateTime publishedDate;
 
-    private ZonedDateTime publishedDateGMT;
-
+    @NotNull
     private ZonedDateTime lastUpdatedDate;
-
-    private ZonedDateTime lastUpdatedDateGMT;
 
     private Boolean featured;
 
@@ -46,6 +45,9 @@ public class PostDTO implements Serializable {
     private String featuredMedia;
 
     private String subTitle;
+
+    @NotNull
+    private ZonedDateTime createdDate;
 
     private Set<TagDTO> tags = new HashSet<>();
 
@@ -109,28 +111,12 @@ public class PostDTO implements Serializable {
         this.publishedDate = publishedDate;
     }
 
-    public ZonedDateTime getPublishedDateGMT() {
-        return publishedDateGMT;
-    }
-
-    public void setPublishedDateGMT(ZonedDateTime publishedDateGMT) {
-        this.publishedDateGMT = publishedDateGMT;
-    }
-
     public ZonedDateTime getLastUpdatedDate() {
         return lastUpdatedDate;
     }
 
     public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
-    }
-
-    public ZonedDateTime getLastUpdatedDateGMT() {
-        return lastUpdatedDateGMT;
-    }
-
-    public void setLastUpdatedDateGMT(ZonedDateTime lastUpdatedDateGMT) {
-        this.lastUpdatedDateGMT = lastUpdatedDateGMT;
     }
 
     public Boolean isFeatured() {
@@ -187,6 +173,14 @@ public class PostDTO implements Serializable {
 
     public void setSubTitle(String subTitle) {
         this.subTitle = subTitle;
+    }
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
     }
 
     public Set<TagDTO> getTags() {
@@ -275,9 +269,7 @@ public class PostDTO implements Serializable {
             ", content='" + getContent() + "'" +
             ", excerpt='" + getExcerpt() + "'" +
             ", publishedDate='" + getPublishedDate() + "'" +
-            ", publishedDateGMT='" + getPublishedDateGMT() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
-            ", lastUpdatedDateGMT='" + getLastUpdatedDateGMT() + "'" +
             ", featured='" + isFeatured() + "'" +
             ", sticky='" + isSticky() + "'" +
             ", updates='" + getUpdates() + "'" +
@@ -285,6 +277,7 @@ public class PostDTO implements Serializable {
             ", password='" + getPassword() + "'" +
             ", featuredMedia='" + getFeaturedMedia() + "'" +
             ", subTitle='" + getSubTitle() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
             ", status=" + getStatusId() +
             ", status='" + getStatusName() + "'" +
             ", format=" + getFormatId() +

@@ -27,4 +27,5 @@ public interface DegaUserRepository extends MongoRepository<DegaUser, String> {
 
     @Query("{'email': ?0}")
     Optional<DegaUser> findByEmailId(String emailId);
+
 }

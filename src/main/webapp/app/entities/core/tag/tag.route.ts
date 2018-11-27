@@ -13,88 +13,86 @@ import { TagUpdateComponent } from './tag-update.component';
 import { TagDeletePopupComponent } from './tag-delete-dialog.component';
 import { ITag } from 'app/shared/model/core/tag.model';
 
-@Injectable({providedIn: 'root'})
+@Injectable({ providedIn: 'root' })
 export class TagResolve implements Resolve<ITag> {
+  constructor(private service: TagService) {}
 
-    constructor(private service: TagService) {
+  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Tag> {
+    const id = route.params['id'] ? route.params['id'] : null;
+    if (id) {
+      return this.service.find(id).pipe(
+        filter((response: HttpResponse<Tag>) => response.ok),
+        map((tag: HttpResponse<Tag>) => tag.body)
+      );
     }
-
-    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Tag> {
-        const id = route.params['id'] ? route.params['id'] : null;
-        if (id) {
-            return this.service.find(id).pipe(
-                filter((response: HttpResponse<Tag>) => response.ok),
-                map((tag: HttpResponse<Tag>) => tag.body)
-            );
-        }
-        return of(new Tag());
-    }
+    return of(new Tag());
+  }
 }
 
-
 export const tagRoute: Routes = [
-    {
-        path: 'tag',
-        component: TagComponent,
-        resolve: {
-            'pagingParams': JhiResolvePagingParams
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            defaultSort: 'id,asc',
-            pageTitle: 'coreApp.coreTag.home.title'
-        },
-        canActivate: [UserRouteAccessService]
-    }, {
-        path: 'tag/:id/view',
-        component: TagDetailComponent,
-        resolve: {
-            tag: TagResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreTag.home.title'
-        },
-        canActivate: [UserRouteAccessService]
+  {
+    path: 'tag',
+    component: TagComponent,
+    resolve: {
+      pagingParams: JhiResolvePagingParams
     },
-    {
-        path: 'tag/new',
-        component: TagUpdateComponent,
-        resolve: {
-            tag: TagResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreTag.home.title'
-        },
-        canActivate: [UserRouteAccessService]
+    data: {
+      authorities: ['ROLE_USER'],
+      defaultSort: 'id,asc',
+      pageTitle: 'coreApp.coreTag.home.title'
     },
-    {
-        path: 'tag/:id/edit',
-        component: TagUpdateComponent,
-        resolve: {
-            tag: TagResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreTag.home.title'
-        },
-        canActivate: [UserRouteAccessService]
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'tag/:id/view',
+    component: TagDetailComponent,
+    resolve: {
+      tag: TagResolve
     },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreTag.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'tag/new',
+    component: TagUpdateComponent,
+    resolve: {
+      tag: TagResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreTag.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  },
+  {
+    path: 'tag/:id/edit',
+    component: TagUpdateComponent,
+    resolve: {
+      tag: TagResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreTag.home.title'
+    },
+    canActivate: [UserRouteAccessService]
+  }
 ];
 
 export const tagPopupRoute: Routes = [
-    {
-        path: 'tag/:id/delete',
-        component: TagDeletePopupComponent,
-        resolve: {
-            tag: TagResolve
-        },
-        data: {
-            authorities: ['ROLE_USER'],
-            pageTitle: 'coreApp.coreTag.home.title'
-        },
-        canActivate: [UserRouteAccessService],
-        outlet: 'popup'
-    }
+  {
+    path: 'tag/:id/delete',
+    component: TagDeletePopupComponent,
+    resolve: {
+      tag: TagResolve
+    },
+    data: {
+      authorities: ['ROLE_USER'],
+      pageTitle: 'coreApp.coreTag.home.title'
+    },
+    canActivate: [UserRouteAccessService],
+    outlet: 'popup'
+  }
 ];

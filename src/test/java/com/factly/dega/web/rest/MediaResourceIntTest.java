@@ -96,6 +96,12 @@ public class MediaResourceIntTest {
     private static final String DEFAULT_SLUG = "AAAAAAAAAA";
     private static final String UPDATED_SLUG = "BBBBBBBBBB";
 
+    private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
+    private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
+
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
     @Autowired
     private MediaRepository mediaRepository;
 
@@ -159,7 +165,9 @@ public class MediaResourceIntTest {
             .publishedDateGMT(DEFAULT_PUBLISHED_DATE_GMT)
             .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE)
             .lastUpdatedDateGMT(DEFAULT_LAST_UPDATED_DATE_GMT)
-            .slug(DEFAULT_SLUG);
+            .slug(DEFAULT_SLUG)
+            .clientId(DEFAULT_CLIENT_ID)
+            .createdDate(DEFAULT_CREATED_DATE);
         return media;
     }
 
@@ -199,6 +207,8 @@ public class MediaResourceIntTest {
         assertThat(testMedia.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
         assertThat(testMedia.getLastUpdatedDateGMT()).isEqualTo(DEFAULT_LAST_UPDATED_DATE_GMT);
         assertThat(testMedia.getSlug()).isEqualTo(DEFAULT_SLUG);
+        assertThat(testMedia.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
+        assertThat(testMedia.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
 
         // Validate the Media in Elasticsearch
         verify(mockMediaSearchRepository, times(1)).save(testMedia);
@@ -389,6 +399,42 @@ public class MediaResourceIntTest {
     }
 
     @Test
+    public void checkClientIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = mediaRepository.findAll().size();
+        // set the field null
+        media.setClientId(null);
+
+        // Create the Media, which fails.
+        MediaDTO mediaDTO = mediaMapper.toDto(media);
+
+        restMediaMockMvc.perform(post("/api/media")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(mediaDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Media> mediaList = mediaRepository.findAll();
+        assertThat(mediaList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    public void checkCreatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = mediaRepository.findAll().size();
+        // set the field null
+        media.setCreatedDate(null);
+
+        // Create the Media, which fails.
+        MediaDTO mediaDTO = mediaMapper.toDto(media);
+
+        restMediaMockMvc.perform(post("/api/media")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(mediaDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Media> mediaList = mediaRepository.findAll();
+        assertThat(mediaList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllMedia() throws Exception {
         // Initialize the database
         mediaRepository.save(media);
@@ -412,7 +458,9 @@ public class MediaResourceIntTest {
             .andExpect(jsonPath("$.[*].publishedDateGMT").value(hasItem(sameInstant(DEFAULT_PUBLISHED_DATE_GMT))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
             .andExpect(jsonPath("$.[*].lastUpdatedDateGMT").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE_GMT))))
-            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
     
     @Test
@@ -439,7 +487,9 @@ public class MediaResourceIntTest {
             .andExpect(jsonPath("$.publishedDateGMT").value(sameInstant(DEFAULT_PUBLISHED_DATE_GMT)))
             .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)))
             .andExpect(jsonPath("$.lastUpdatedDateGMT").value(sameInstant(DEFAULT_LAST_UPDATED_DATE_GMT)))
-            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()));
+            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
     }
 
     @Test
@@ -473,7 +523,9 @@ public class MediaResourceIntTest {
             .publishedDateGMT(UPDATED_PUBLISHED_DATE_GMT)
             .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE)
             .lastUpdatedDateGMT(UPDATED_LAST_UPDATED_DATE_GMT)
-            .slug(UPDATED_SLUG);
+            .slug(UPDATED_SLUG)
+            .clientId(UPDATED_CLIENT_ID)
+            .createdDate(UPDATED_CREATED_DATE);
         MediaDTO mediaDTO = mediaMapper.toDto(updatedMedia);
 
         restMediaMockMvc.perform(put("/api/media")
@@ -500,6 +552,8 @@ public class MediaResourceIntTest {
         assertThat(testMedia.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
         assertThat(testMedia.getLastUpdatedDateGMT()).isEqualTo(UPDATED_LAST_UPDATED_DATE_GMT);
         assertThat(testMedia.getSlug()).isEqualTo(UPDATED_SLUG);
+        assertThat(testMedia.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testMedia.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
 
         // Validate the Media in Elasticsearch
         verify(mockMediaSearchRepository, times(1)).save(testMedia);
@@ -571,7 +625,9 @@ public class MediaResourceIntTest {
             .andExpect(jsonPath("$.[*].publishedDateGMT").value(hasItem(sameInstant(DEFAULT_PUBLISHED_DATE_GMT))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
             .andExpect(jsonPath("$.[*].lastUpdatedDateGMT").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE_GMT))))
-            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())));
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
 
     @Test

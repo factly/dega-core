@@ -58,6 +58,7 @@ public interface DegaUserService {
      * @param pageable the pagination information
      * @return the list of entities
      */
+
     Page<DegaUserDTO> search(String query, Pageable pageable);
 
     /**

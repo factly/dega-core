@@ -76,6 +76,14 @@ public class Media implements Serializable {
     @Field("slug")
     private String slug;
 
+    @NotNull
+    @Field("client_id")
+    private String clientId;
+
+    @NotNull
+    @Field("created_date")
+    private ZonedDateTime createdDate;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -279,6 +287,32 @@ public class Media implements Serializable {
     public void setSlug(String slug) {
         this.slug = slug;
     }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public Media clientId(String clientId) {
+        this.clientId = clientId;
+        return this;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public Media createdDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+        return this;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -320,6 +354,8 @@ public class Media implements Serializable {
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             ", lastUpdatedDateGMT='" + getLastUpdatedDateGMT() + "'" +
             ", slug='" + getSlug() + "'" +
+            ", clientId='" + getClientId() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
             "}";
     }
 }

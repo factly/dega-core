@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
@@ -30,13 +29,17 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.client.RestTemplate;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 
+import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -99,6 +102,9 @@ public class DegaUserResourceIntTest {
     private static final String DEFAULT_EMAIL = "Pj@K5.hN";
     private static final String UPDATED_EMAIL = "5.@3.LtJ";
 
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
     @Autowired
     private DegaUserRepository degaUserRepository;
 
@@ -107,21 +113,13 @@ public class DegaUserResourceIntTest {
 
     @Autowired
     private DegaUserMapper degaUserMapper;
-
+    
 
     @Mock
     private DegaUserService degaUserServiceMock;
 
     @Autowired
     private DegaUserService degaUserService;
-
-    @Autowired
-    private RestTemplate restTemplate;
-
-    private String keycloakServerURI = "http://localhost:9080/auth/admin/realms/jhipster/users";
-
-    @Mock
-    private RestTemplate restTemplateMock;
 
     /**
      * This repository is mocked in the com.factly.dega.repository.search test package.
@@ -147,7 +145,7 @@ public class DegaUserResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final DegaUserResource degaUserResource = new DegaUserResource(degaUserService, restTemplate, keycloakServerURI);
+        final DegaUserResource degaUserResource = new DegaUserResource(degaUserService);
         this.restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -177,7 +175,8 @@ public class DegaUserResourceIntTest {
             .slug(DEFAULT_SLUG)
             .enabled(DEFAULT_ENABLED)
             .emailVerified(DEFAULT_EMAIL_VERIFIED)
-            .email(DEFAULT_EMAIL);
+            .email(DEFAULT_EMAIL)
+            .createdDate(DEFAULT_CREATED_DATE);
         // Add required entity
         Role role = RoleResourceIntTest.createEntity();
         role.setId("fixed-id-for-tests");
@@ -205,8 +204,6 @@ public class DegaUserResourceIntTest {
 
         // Create the DegaUser
         DegaUserDTO degaUserDTO = degaUserMapper.toDto(degaUser);
-        when(restTemplateMock.postForObject(keycloakServerURI, Any.class, String.class)).thenReturn("");
-
         restDegaUserMockMvc.perform(post("/api/dega-users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(degaUserDTO)))
@@ -231,6 +228,7 @@ public class DegaUserResourceIntTest {
         assertThat(testDegaUser.isEnabled()).isEqualTo(DEFAULT_ENABLED);
         assertThat(testDegaUser.isEmailVerified()).isEqualTo(DEFAULT_EMAIL_VERIFIED);
         assertThat(testDegaUser.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testDegaUser.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
 
         // Validate the DegaUser in Elasticsearch
         verify(mockDegaUserSearchRepository, times(1)).save(testDegaUser);
@@ -331,6 +329,24 @@ public class DegaUserResourceIntTest {
     }
 
     @Test
+    public void checkCreatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = degaUserRepository.findAll().size();
+        // set the field null
+        degaUser.setCreatedDate(null);
+
+        // Create the DegaUser, which fails.
+        DegaUserDTO degaUserDTO = degaUserMapper.toDto(degaUser);
+
+        restDegaUserMockMvc.perform(post("/api/dega-users")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(degaUserDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<DegaUser> degaUserList = degaUserRepository.findAll();
+        assertThat(degaUserList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllDegaUsers() throws Exception {
         // Initialize the database
         degaUserRepository.save(degaUser);
@@ -354,14 +370,13 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].enabled").value(hasItem(DEFAULT_ENABLED.booleanValue())))
             .andExpect(jsonPath("$.[*].emailVerified").value(hasItem(DEFAULT_EMAIL_VERIFIED.booleanValue())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())));
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
-
-    @Test
+    
     public void getAllDegaUsersWithEagerRelationshipsIsEnabled() throws Exception {
-        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakServerURI);
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock);
         when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
-        when(restTemplateMock.postForObject(keycloakServerURI, Any.class, String.class)).thenReturn("");
 
         MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -375,10 +390,8 @@ public class DegaUserResourceIntTest {
         verify(degaUserServiceMock, times(1)).findAllWithEagerRelationships(any());
     }
 
-    @Test
     public void getAllDegaUsersWithEagerRelationshipsIsNotEnabled() throws Exception {
-        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakServerURI);
-        when(restTemplateMock.postForObject(keycloakServerURI, Any.class, String.class)).thenReturn("");
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock);
             when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -416,7 +429,8 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.enabled").value(DEFAULT_ENABLED.booleanValue()))
             .andExpect(jsonPath("$.emailVerified").value(DEFAULT_EMAIL_VERIFIED.booleanValue()))
-            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()));
+            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
     }
 
     @Test
@@ -450,7 +464,8 @@ public class DegaUserResourceIntTest {
             .slug(UPDATED_SLUG)
             .enabled(UPDATED_ENABLED)
             .emailVerified(UPDATED_EMAIL_VERIFIED)
-            .email(UPDATED_EMAIL);
+            .email(UPDATED_EMAIL)
+            .createdDate(UPDATED_CREATED_DATE);
         DegaUserDTO degaUserDTO = degaUserMapper.toDto(updatedDegaUser);
 
         restDegaUserMockMvc.perform(put("/api/dega-users")
@@ -477,6 +492,7 @@ public class DegaUserResourceIntTest {
         assertThat(testDegaUser.isEnabled()).isEqualTo(UPDATED_ENABLED);
         assertThat(testDegaUser.isEmailVerified()).isEqualTo(UPDATED_EMAIL_VERIFIED);
         assertThat(testDegaUser.getEmail()).isEqualTo(UPDATED_EMAIL);
+        assertThat(testDegaUser.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
 
         // Validate the DegaUser in Elasticsearch
         verify(mockDegaUserSearchRepository, times(1)).save(testDegaUser);
@@ -548,7 +564,8 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].enabled").value(hasItem(DEFAULT_ENABLED.booleanValue())))
             .andExpect(jsonPath("$.[*].emailVerified").value(hasItem(DEFAULT_EMAIL_VERIFIED.booleanValue())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())));
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
 
     @Test

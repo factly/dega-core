@@ -9,7 +9,6 @@ import com.factly.dega.domain.DegaUser;
 import com.factly.dega.repository.PostRepository;
 import com.factly.dega.repository.search.PostSearchRepository;
 import com.factly.dega.service.PostService;
-import com.factly.dega.service.StatusService;
 import com.factly.dega.service.dto.PostDTO;
 import com.factly.dega.service.mapper.PostMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
@@ -19,7 +18,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageImpl;
@@ -73,14 +71,8 @@ public class PostResourceIntTest {
     private static final ZonedDateTime DEFAULT_PUBLISHED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_PUBLISHED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
-    private static final ZonedDateTime DEFAULT_PUBLISHED_DATE_GMT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_PUBLISHED_DATE_GMT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
     private static final ZonedDateTime DEFAULT_LAST_UPDATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_LAST_UPDATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
-
-    private static final ZonedDateTime DEFAULT_LAST_UPDATED_DATE_GMT = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
-    private static final ZonedDateTime UPDATED_LAST_UPDATED_DATE_GMT = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     private static final Boolean DEFAULT_FEATURED = false;
     private static final Boolean UPDATED_FEATURED = true;
@@ -103,6 +95,9 @@ public class PostResourceIntTest {
     private static final String DEFAULT_SUB_TITLE = "AAAAAAAAAA";
     private static final String UPDATED_SUB_TITLE = "BBBBBBBBBB";
 
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
     @Autowired
     private PostRepository postRepository;
 
@@ -111,19 +106,13 @@ public class PostResourceIntTest {
 
     @Autowired
     private PostMapper postMapper;
-
+    
 
     @Mock
     private PostService postServiceMock;
 
     @Autowired
     private PostService postService;
-
-    @Mock
-    private StatusService statusServiceMock;
-
-    @Autowired
-    private StatusService statusService;
 
     /**
      * This repository is mocked in the com.factly.dega.repository.search test package.
@@ -149,7 +138,7 @@ public class PostResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PostResource postResource = new PostResource(postService, statusService);
+        final PostResource postResource = new PostResource(postService);
         this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -170,16 +159,15 @@ public class PostResourceIntTest {
             .content(DEFAULT_CONTENT)
             .excerpt(DEFAULT_EXCERPT)
             .publishedDate(DEFAULT_PUBLISHED_DATE)
-            .publishedDateGMT(DEFAULT_PUBLISHED_DATE_GMT)
             .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE)
-            .lastUpdatedDateGMT(DEFAULT_LAST_UPDATED_DATE_GMT)
             .featured(DEFAULT_FEATURED)
             .sticky(DEFAULT_STICKY)
             .updates(DEFAULT_UPDATES)
             .slug(DEFAULT_SLUG)
             .password(DEFAULT_PASSWORD)
             .featuredMedia(DEFAULT_FEATURED_MEDIA)
-            .subTitle(DEFAULT_SUB_TITLE);
+            .subTitle(DEFAULT_SUB_TITLE)
+            .createdDate(DEFAULT_CREATED_DATE);
         // Add required entity
         Status status = StatusResourceIntTest.createEntity();
         status.setId("fixed-id-for-tests");
@@ -221,9 +209,7 @@ public class PostResourceIntTest {
         assertThat(testPost.getContent()).isEqualTo(DEFAULT_CONTENT);
         assertThat(testPost.getExcerpt()).isEqualTo(DEFAULT_EXCERPT);
         assertThat(testPost.getPublishedDate()).isEqualTo(DEFAULT_PUBLISHED_DATE);
-        assertThat(testPost.getPublishedDateGMT()).isEqualTo(DEFAULT_PUBLISHED_DATE_GMT);
-        assertThat(testPost.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
-        assertThat(testPost.getLastUpdatedDateGMT().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE_GMT.toLocalDate());
+        assertThat(testPost.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
         assertThat(testPost.isFeatured()).isEqualTo(DEFAULT_FEATURED);
         assertThat(testPost.isSticky()).isEqualTo(DEFAULT_STICKY);
         assertThat(testPost.getUpdates()).isEqualTo(DEFAULT_UPDATES);
@@ -231,6 +217,7 @@ public class PostResourceIntTest {
         assertThat(testPost.getPassword()).isEqualTo(DEFAULT_PASSWORD);
         assertThat(testPost.getFeaturedMedia()).isEqualTo(DEFAULT_FEATURED_MEDIA);
         assertThat(testPost.getSubTitle()).isEqualTo(DEFAULT_SUB_TITLE);
+        assertThat(testPost.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
 
         // Validate the Post in Elasticsearch
         verify(mockPostSearchRepository, times(1)).save(testPost);
@@ -277,7 +264,7 @@ public class PostResourceIntTest {
     }
 
     @Test
-    public void checkClientIdIsNotRequired() throws Exception {
+    public void checkClientIdIsRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setClientId(null);
@@ -288,10 +275,10 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
+        assertThat(postList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
@@ -313,7 +300,7 @@ public class PostResourceIntTest {
     }
 
     @Test
-    public void checkPublishedDateIsNotRequired() throws Exception {
+    public void checkPublishedDateIsRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setPublishedDate(null);
@@ -324,32 +311,14 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
+        assertThat(postList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
-    public void checkPublishedDateGMTIsNotRequired() throws Exception {
-        int databaseSizeBeforeTest = postRepository.findAll().size();
-        // set the field null
-        post.setPublishedDateGMT(null);
-
-        // Create the Post, which fails.
-        PostDTO postDTO = postMapper.toDto(post);
-
-        restPostMockMvc.perform(post("/api/posts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isCreated());
-
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
-    }
-
-    @Test
-    public void checkLastUpdatedDateIsNotRequired() throws Exception {
+    public void checkLastUpdatedDateIsRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setLastUpdatedDate(null);
@@ -360,28 +329,10 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isBadRequest());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
-    }
-
-    @Test
-    public void checkLastUpdatedDateGMTIsRequired() throws Exception {
-        int databaseSizeBeforeTest = postRepository.findAll().size();
-        // set the field null
-        post.setLastUpdatedDateGMT(null);
-
-        // Create the Post, which fails.
-        PostDTO postDTO = postMapper.toDto(post);
-
-        restPostMockMvc.perform(post("/api/posts")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isCreated());
-
-        List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
+        assertThat(postList).hasSize(databaseSizeBeforeTest);
     }
 
     @Test
@@ -403,24 +354,30 @@ public class PostResourceIntTest {
     }
 
     @Test
-    public void getAllPosts() throws Exception {
-        post.setId("existing_id");
-        PostDTO postDTO = postMapper.toDto(post);
-        List<PostDTO> post1 = new ArrayList<>();
-        post1.add(postDTO);
-        PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
-        this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
-            .setCustomArgumentResolvers(pageableArgumentResolver)
-            .setControllerAdvice(exceptionTranslator)
-            .setConversionService(createFormattingConversionService())
-            .setMessageConverters(jacksonMessageConverter).build();
+    public void checkCreatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = postRepository.findAll().size();
+        // set the field null
+        post.setCreatedDate(null);
 
-        when(postServiceMock.findByClientId(any(), any())).thenReturn(new PageImpl(post1));
+        // Create the Post, which fails.
+        PostDTO postDTO = postMapper.toDto(post);
+
+        restPostMockMvc.perform(post("/api/posts")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(postDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Post> postList = postRepository.findAll();
+        assertThat(postList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    public void getAllPosts() throws Exception {
         // Initialize the database
         postRepository.save(post);
 
         // Get all the postList
-        restPostMockMvc.perform(get("/api/posts?sort=id,desc").requestAttr("ClientID", "testClientID"))
+        restPostMockMvc.perform(get("/api/posts?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId())))
@@ -429,20 +386,19 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.[*].content").value(hasItem(DEFAULT_CONTENT.toString())))
             .andExpect(jsonPath("$.[*].excerpt").value(hasItem(DEFAULT_EXCERPT.toString())))
             .andExpect(jsonPath("$.[*].publishedDate").value(hasItem(sameInstant(DEFAULT_PUBLISHED_DATE))))
-            .andExpect(jsonPath("$.[*].publishedDateGMT").value(hasItem(sameInstant(DEFAULT_PUBLISHED_DATE_GMT))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
-            .andExpect(jsonPath("$.[*].lastUpdatedDateGMT").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE_GMT))))
             .andExpect(jsonPath("$.[*].featured").value(hasItem(DEFAULT_FEATURED.booleanValue())))
             .andExpect(jsonPath("$.[*].sticky").value(hasItem(DEFAULT_STICKY.booleanValue())))
             .andExpect(jsonPath("$.[*].updates").value(hasItem(DEFAULT_UPDATES.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].password").value(hasItem(DEFAULT_PASSWORD.toString())))
             .andExpect(jsonPath("$.[*].featuredMedia").value(hasItem(DEFAULT_FEATURED_MEDIA.toString())))
-            .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())));
+            .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
-
+    
     public void getAllPostsWithEagerRelationshipsIsEnabled() throws Exception {
-        PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
+        PostResource postResource = new PostResource(postServiceMock);
         when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
@@ -458,7 +414,7 @@ public class PostResourceIntTest {
     }
 
     public void getAllPostsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
+        PostResource postResource = new PostResource(postServiceMock);
             when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -487,16 +443,15 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.content").value(DEFAULT_CONTENT.toString()))
             .andExpect(jsonPath("$.excerpt").value(DEFAULT_EXCERPT.toString()))
             .andExpect(jsonPath("$.publishedDate").value(sameInstant(DEFAULT_PUBLISHED_DATE)))
-            .andExpect(jsonPath("$.publishedDateGMT").value(sameInstant(DEFAULT_PUBLISHED_DATE_GMT)))
             .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)))
-            .andExpect(jsonPath("$.lastUpdatedDateGMT").value(sameInstant(DEFAULT_LAST_UPDATED_DATE_GMT)))
             .andExpect(jsonPath("$.featured").value(DEFAULT_FEATURED.booleanValue()))
             .andExpect(jsonPath("$.sticky").value(DEFAULT_STICKY.booleanValue()))
             .andExpect(jsonPath("$.updates").value(DEFAULT_UPDATES.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.password").value(DEFAULT_PASSWORD.toString()))
             .andExpect(jsonPath("$.featuredMedia").value(DEFAULT_FEATURED_MEDIA.toString()))
-            .andExpect(jsonPath("$.subTitle").value(DEFAULT_SUB_TITLE.toString()));
+            .andExpect(jsonPath("$.subTitle").value(DEFAULT_SUB_TITLE.toString()))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
     }
 
     @Test
@@ -521,16 +476,15 @@ public class PostResourceIntTest {
             .content(UPDATED_CONTENT)
             .excerpt(UPDATED_EXCERPT)
             .publishedDate(UPDATED_PUBLISHED_DATE)
-            .publishedDateGMT(UPDATED_PUBLISHED_DATE_GMT)
             .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE)
-            .lastUpdatedDateGMT(UPDATED_LAST_UPDATED_DATE_GMT)
             .featured(UPDATED_FEATURED)
             .sticky(UPDATED_STICKY)
             .updates(UPDATED_UPDATES)
             .slug(UPDATED_SLUG)
             .password(UPDATED_PASSWORD)
             .featuredMedia(UPDATED_FEATURED_MEDIA)
-            .subTitle(UPDATED_SUB_TITLE);
+            .subTitle(UPDATED_SUB_TITLE)
+            .createdDate(UPDATED_CREATED_DATE);
         PostDTO postDTO = postMapper.toDto(updatedPost);
 
         restPostMockMvc.perform(put("/api/posts")
@@ -547,9 +501,7 @@ public class PostResourceIntTest {
         assertThat(testPost.getContent()).isEqualTo(UPDATED_CONTENT);
         assertThat(testPost.getExcerpt()).isEqualTo(UPDATED_EXCERPT);
         assertThat(testPost.getPublishedDate()).isEqualTo(UPDATED_PUBLISHED_DATE);
-        assertThat(testPost.getPublishedDateGMT()).isEqualTo(UPDATED_PUBLISHED_DATE_GMT);
         assertThat(testPost.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
-        assertThat(testPost.getLastUpdatedDateGMT()).isEqualTo(UPDATED_LAST_UPDATED_DATE_GMT);
         assertThat(testPost.isFeatured()).isEqualTo(UPDATED_FEATURED);
         assertThat(testPost.isSticky()).isEqualTo(UPDATED_STICKY);
         assertThat(testPost.getUpdates()).isEqualTo(UPDATED_UPDATES);
@@ -557,6 +509,7 @@ public class PostResourceIntTest {
         assertThat(testPost.getPassword()).isEqualTo(UPDATED_PASSWORD);
         assertThat(testPost.getFeaturedMedia()).isEqualTo(UPDATED_FEATURED_MEDIA);
         assertThat(testPost.getSubTitle()).isEqualTo(UPDATED_SUB_TITLE);
+        assertThat(testPost.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
 
         // Validate the Post in Elasticsearch
         verify(mockPostSearchRepository, times(1)).save(testPost);
@@ -619,16 +572,15 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.[*].content").value(hasItem(DEFAULT_CONTENT.toString())))
             .andExpect(jsonPath("$.[*].excerpt").value(hasItem(DEFAULT_EXCERPT.toString())))
             .andExpect(jsonPath("$.[*].publishedDate").value(hasItem(sameInstant(DEFAULT_PUBLISHED_DATE))))
-            .andExpect(jsonPath("$.[*].publishedDateGMT").value(hasItem(sameInstant(DEFAULT_PUBLISHED_DATE_GMT))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
-            .andExpect(jsonPath("$.[*].lastUpdatedDateGMT").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE_GMT))))
             .andExpect(jsonPath("$.[*].featured").value(hasItem(DEFAULT_FEATURED.booleanValue())))
             .andExpect(jsonPath("$.[*].sticky").value(hasItem(DEFAULT_STICKY.booleanValue())))
             .andExpect(jsonPath("$.[*].updates").value(hasItem(DEFAULT_UPDATES.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].password").value(hasItem(DEFAULT_PASSWORD.toString())))
             .andExpect(jsonPath("$.[*].featuredMedia").value(hasItem(DEFAULT_FEATURED_MEDIA.toString())))
-            .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())));
+            .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
 
     @Test

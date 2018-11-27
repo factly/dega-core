@@ -82,21 +82,7 @@
             ]
         },
         {
-            "fieldName": "publishedDateGMT",
-            "fieldType": "ZonedDateTime",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
             "fieldName": "lastUpdatedDate",
-            "fieldType": "ZonedDateTime",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
-            "fieldName": "lastUpdatedDateGMT",
             "fieldType": "ZonedDateTime",
             "fieldValidateRules": [
                 "required"
@@ -132,6 +118,13 @@
         {
             "fieldName": "subTitle",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "createdDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
     "changelogDate": "20180923010443",
