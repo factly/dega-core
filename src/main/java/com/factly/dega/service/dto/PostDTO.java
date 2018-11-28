@@ -17,7 +17,6 @@ public class PostDTO implements Serializable {
     @NotNull
     private String title;
 
-    @NotNull
     private String clientId;
 
     @NotNull
@@ -25,10 +24,8 @@ public class PostDTO implements Serializable {
 
     private String excerpt;
 
-    @NotNull
     private ZonedDateTime publishedDate;
 
-    @NotNull
     private ZonedDateTime lastUpdatedDate;
 
     private Boolean featured;
@@ -37,7 +34,6 @@ public class PostDTO implements Serializable {
 
     private String updates;
 
-    @NotNull
     private String slug;
 
     private String password;
@@ -46,7 +42,6 @@ public class PostDTO implements Serializable {
 
     private String subTitle;
 
-    @NotNull
     private ZonedDateTime createdDate;
 
     private Set<TagDTO> tags = new HashSet<>();

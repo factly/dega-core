@@ -40,7 +40,6 @@ public class Post implements Serializable {
     @Field("excerpt")
     private String excerpt;
 
-    @NotNull
     @Field("published_date")
     private ZonedDateTime publishedDate;
 
@@ -70,7 +69,6 @@ public class Post implements Serializable {
     @Field("sub_title")
     private String subTitle;
 
-    @NotNull
     @Field("created_date")
     private ZonedDateTime createdDate;
 
