@@ -9,6 +9,7 @@ import com.factly.dega.domain.DegaUser;
 import com.factly.dega.repository.PostRepository;
 import com.factly.dega.repository.search.PostSearchRepository;
 import com.factly.dega.service.PostService;
+import com.factly.dega.service.StatusService;
 import com.factly.dega.service.dto.PostDTO;
 import com.factly.dega.service.mapper.PostMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
@@ -106,13 +107,19 @@ public class PostResourceIntTest {
 
     @Autowired
     private PostMapper postMapper;
-    
+
 
     @Mock
     private PostService postServiceMock;
 
     @Autowired
     private PostService postService;
+
+    @Mock
+    private StatusService statusServiceMock;
+
+    @Autowired
+    private StatusService statusService;
 
     /**
      * This repository is mocked in the com.factly.dega.repository.search test package.
@@ -138,7 +145,7 @@ public class PostResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PostResource postResource = new PostResource(postService);
+        final PostResource postResource = new PostResource(postService, statusService);
         this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -209,7 +216,7 @@ public class PostResourceIntTest {
         assertThat(testPost.getContent()).isEqualTo(DEFAULT_CONTENT);
         assertThat(testPost.getExcerpt()).isEqualTo(DEFAULT_EXCERPT);
         assertThat(testPost.getPublishedDate()).isEqualTo(DEFAULT_PUBLISHED_DATE);
-        assertThat(testPost.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testPost.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
         assertThat(testPost.isFeatured()).isEqualTo(DEFAULT_FEATURED);
         assertThat(testPost.isSticky()).isEqualTo(DEFAULT_STICKY);
         assertThat(testPost.getUpdates()).isEqualTo(DEFAULT_UPDATES);
@@ -217,7 +224,7 @@ public class PostResourceIntTest {
         assertThat(testPost.getPassword()).isEqualTo(DEFAULT_PASSWORD);
         assertThat(testPost.getFeaturedMedia()).isEqualTo(DEFAULT_FEATURED_MEDIA);
         assertThat(testPost.getSubTitle()).isEqualTo(DEFAULT_SUB_TITLE);
-        assertThat(testPost.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testPost.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
 
         // Validate the Post in Elasticsearch
         verify(mockPostSearchRepository, times(1)).save(testPost);
@@ -300,7 +307,7 @@ public class PostResourceIntTest {
     }
 
     @Test
-    public void checkPublishedDateIsRequired() throws Exception {
+    public void checkPublishedDateIsNotRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setPublishedDate(null);
@@ -311,14 +318,14 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
-    public void checkLastUpdatedDateIsRequired() throws Exception {
+    public void checkLastUpdatedDateIsNotRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setLastUpdatedDate(null);
@@ -329,10 +336,10 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -354,7 +361,7 @@ public class PostResourceIntTest {
     }
 
     @Test
-    public void checkCreatedDateIsRequired() throws Exception {
+    public void checkCreatedDateIsNotRequired() throws Exception {
         int databaseSizeBeforeTest = postRepository.findAll().size();
         // set the field null
         post.setCreatedDate(null);
@@ -365,10 +372,10 @@ public class PostResourceIntTest {
         restPostMockMvc.perform(post("/api/posts")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(postDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Post> postList = postRepository.findAll();
-        assertThat(postList).hasSize(databaseSizeBeforeTest);
+        assertThat(postList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -396,9 +403,9 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
-    
+
     public void getAllPostsWithEagerRelationshipsIsEnabled() throws Exception {
-        PostResource postResource = new PostResource(postServiceMock);
+        PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
         when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
@@ -414,7 +421,7 @@ public class PostResourceIntTest {
     }
 
     public void getAllPostsWithEagerRelationshipsIsNotEnabled() throws Exception {
-        PostResource postResource = new PostResource(postServiceMock);
+        PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
             when(postServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
@@ -501,7 +508,7 @@ public class PostResourceIntTest {
         assertThat(testPost.getContent()).isEqualTo(UPDATED_CONTENT);
         assertThat(testPost.getExcerpt()).isEqualTo(UPDATED_EXCERPT);
         assertThat(testPost.getPublishedDate()).isEqualTo(UPDATED_PUBLISHED_DATE);
-        assertThat(testPost.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testPost.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
         assertThat(testPost.isFeatured()).isEqualTo(UPDATED_FEATURED);
         assertThat(testPost.isSticky()).isEqualTo(UPDATED_STICKY);
         assertThat(testPost.getUpdates()).isEqualTo(UPDATED_UPDATES);
