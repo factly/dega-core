@@ -380,11 +380,23 @@ public class PostResourceIntTest {
 
     @Test
     public void getAllPosts() throws Exception {
+
+        post.setId("existing_id");
+        PostDTO postDTO = postMapper.toDto(post);
+        List<PostDTO> posts = new ArrayList<>();
+        posts.add(postDTO);
+        PostResource postResource = new PostResource(postServiceMock, statusServiceMock);
+        this.restPostMockMvc = MockMvcBuilders.standaloneSetup(postResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter).build();
+        when(postServiceMock.findByClientId(any(), any())).thenReturn(new PageImpl(posts));
         // Initialize the database
         postRepository.save(post);
 
         // Get all the postList
-        restPostMockMvc.perform(get("/api/posts?sort=id,desc"))
+        restPostMockMvc.perform(get("/api/posts?sort=id,desc").requestAttr("ClientID", "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId())))
