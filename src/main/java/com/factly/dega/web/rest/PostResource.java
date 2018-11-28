@@ -207,7 +207,7 @@ public class PostResource {
      * @param slug the slug of the PostDTO
      * @return Optional<PostDTO> post by clientId and slug
      */
-    @GetMapping("/postsslug/{slug}")
+    @GetMapping("/postbyslug/{slug}")
     @Timed
     public Optional<PostDTO> getPostBySlug(@PathVariable String slug, HttpServletRequest request) {
         Object obj = request.getAttribute("ClientID");
