@@ -66,6 +66,9 @@ public class TagResourceIntTest {
     private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
+    private static final ZonedDateTime DEFAULT_LAST_UPDATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_LAST_UPDATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
     @Autowired
     private TagRepository tagRepository;
 
@@ -119,7 +122,8 @@ public class TagResourceIntTest {
             .slug(DEFAULT_SLUG)
             .description(DEFAULT_DESCRIPTION)
             .clientId(DEFAULT_CLIENT_ID)
-            .createdDate(DEFAULT_CREATED_DATE);
+            .createdDate(DEFAULT_CREATED_DATE)
+            .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE);
         return tag;
     }
 
@@ -149,6 +153,7 @@ public class TagResourceIntTest {
         assertThat(testTag.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testTag.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testTag.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testTag.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
 
         // Validate the Tag in Elasticsearch
         verify(mockTagSearchRepository, times(1)).save(testTag);
@@ -249,6 +254,24 @@ public class TagResourceIntTest {
     }
 
     @Test
+    public void checkLastUpdatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = tagRepository.findAll().size();
+        // set the field null
+        tag.setLastUpdatedDate(null);
+
+        // Create the Tag, which fails.
+        TagDTO tagDTO = tagMapper.toDto(tag);
+
+        restTagMockMvc.perform(post("/api/tags")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(tagDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Tag> tagList = tagRepository.findAll();
+        assertThat(tagList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllTags() throws Exception {
         // Initialize the database
         tagRepository.save(tag);
@@ -262,7 +285,8 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
     
     @Test
@@ -279,7 +303,8 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION.toString()))
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
-            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+            .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)));
     }
 
     @Test
@@ -303,7 +328,8 @@ public class TagResourceIntTest {
             .slug(UPDATED_SLUG)
             .description(UPDATED_DESCRIPTION)
             .clientId(UPDATED_CLIENT_ID)
-            .createdDate(UPDATED_CREATED_DATE);
+            .createdDate(UPDATED_CREATED_DATE)
+            .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE);
         TagDTO tagDTO = tagMapper.toDto(updatedTag);
 
         restTagMockMvc.perform(put("/api/tags")
@@ -320,6 +346,7 @@ public class TagResourceIntTest {
         assertThat(testTag.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testTag.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testTag.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
+        assertThat(testTag.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
 
         // Validate the Tag in Elasticsearch
         verify(mockTagSearchRepository, times(1)).save(testTag);
@@ -381,7 +408,8 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
 
     @Test

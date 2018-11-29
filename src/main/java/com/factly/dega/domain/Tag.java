@@ -44,6 +44,10 @@ public class Tag implements Serializable {
     @Field("created_date")
     private ZonedDateTime createdDate;
 
+    @NotNull
+    @Field("last_updated_date")
+    private ZonedDateTime lastUpdatedDate;
+
     @DBRef
     @Field("posts")
     @JsonIgnore
@@ -123,6 +127,19 @@ public class Tag implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public Tag lastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+        return this;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
     public Set<Post> getPosts() {
         return posts;
     }
@@ -178,6 +195,7 @@ public class Tag implements Serializable {
             ", description='" + getDescription() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }
