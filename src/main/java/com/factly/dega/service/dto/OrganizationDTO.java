@@ -97,10 +97,14 @@ public class OrganizationDTO implements Serializable {
     private String slug;
 
     @NotNull
+    @Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")
     private String email;
 
     @NotNull
     private ZonedDateTime createdDate;
+
+    @NotNull
+    private ZonedDateTime lastUpdatedDate;
 
     public String getId() {
         return id;
@@ -446,6 +450,14 @@ public class OrganizationDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -513,6 +525,7 @@ public class OrganizationDTO implements Serializable {
             ", slug='" + getSlug() + "'" +
             ", email='" + getEmail() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }

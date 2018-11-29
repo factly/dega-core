@@ -150,12 +150,17 @@ public class Organization implements Serializable {
     private String slug;
 
     @NotNull
+    @Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")
     @Field("email")
     private String email;
 
     @NotNull
     @Field("created_date")
     private ZonedDateTime createdDate;
+
+    @NotNull
+    @Field("last_updated_date")
+    private ZonedDateTime lastUpdatedDate;
 
     @DBRef
     @Field("degaUsers")
@@ -723,6 +728,19 @@ public class Organization implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public Organization lastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+        return this;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
     public Set<DegaUser> getDegaUsers() {
         return degaUsers;
     }
@@ -865,6 +883,7 @@ public class Organization implements Serializable {
             ", slug='" + getSlug() + "'" +
             ", email='" + getEmail() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }
