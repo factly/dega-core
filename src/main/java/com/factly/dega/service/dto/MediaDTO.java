@@ -40,13 +40,7 @@ public class MediaDTO implements Serializable {
     private ZonedDateTime publishedDate;
 
     @NotNull
-    private ZonedDateTime publishedDateGMT;
-
-    @NotNull
     private ZonedDateTime lastUpdatedDate;
-
-    @NotNull
-    private ZonedDateTime lastUpdatedDateGMT;
 
     @NotNull
     private String slug;
@@ -153,28 +147,12 @@ public class MediaDTO implements Serializable {
         this.publishedDate = publishedDate;
     }
 
-    public ZonedDateTime getPublishedDateGMT() {
-        return publishedDateGMT;
-    }
-
-    public void setPublishedDateGMT(ZonedDateTime publishedDateGMT) {
-        this.publishedDateGMT = publishedDateGMT;
-    }
-
     public ZonedDateTime getLastUpdatedDate() {
         return lastUpdatedDate;
     }
 
     public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
-    }
-
-    public ZonedDateTime getLastUpdatedDateGMT() {
-        return lastUpdatedDateGMT;
-    }
-
-    public void setLastUpdatedDateGMT(ZonedDateTime lastUpdatedDateGMT) {
-        this.lastUpdatedDateGMT = lastUpdatedDateGMT;
     }
 
     public String getSlug() {
@@ -237,9 +215,7 @@ public class MediaDTO implements Serializable {
             ", description='" + getDescription() + "'" +
             ", uploadedBy='" + getUploadedBy() + "'" +
             ", publishedDate='" + getPublishedDate() + "'" +
-            ", publishedDateGMT='" + getPublishedDateGMT() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
-            ", lastUpdatedDateGMT='" + getLastUpdatedDateGMT() + "'" +
             ", slug='" + getSlug() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +

@@ -63,21 +63,7 @@
             ]
         },
         {
-            "fieldName": "publishedDateGMT",
-            "fieldType": "ZonedDateTime",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
             "fieldName": "lastUpdatedDate",
-            "fieldType": "ZonedDateTime",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
-            "fieldName": "lastUpdatedDateGMT",
             "fieldType": "ZonedDateTime",
             "fieldValidateRules": [
                 "required"
