@@ -66,6 +66,9 @@ public class RoleResourceIntTest {
     private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
+    private static final ZonedDateTime DEFAULT_LAST_UPDATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_LAST_UPDATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
     @Autowired
     private RoleRepository roleRepository;
 
@@ -119,7 +122,8 @@ public class RoleResourceIntTest {
             .clientId(DEFAULT_CLIENT_ID)
             .isDefault(DEFAULT_IS_DEFAULT)
             .slug(DEFAULT_SLUG)
-            .createdDate(DEFAULT_CREATED_DATE);
+            .createdDate(DEFAULT_CREATED_DATE)
+            .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE);
         return role;
     }
 
@@ -149,6 +153,7 @@ public class RoleResourceIntTest {
         assertThat(testRole.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
         assertThat(testRole.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testRole.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testRole.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);
@@ -249,6 +254,24 @@ public class RoleResourceIntTest {
     }
 
     @Test
+    public void checkLastUpdatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = roleRepository.findAll().size();
+        // set the field null
+        role.setLastUpdatedDate(null);
+
+        // Create the Role, which fails.
+        RoleDTO roleDTO = roleMapper.toDto(role);
+
+        restRoleMockMvc.perform(post("/api/roles")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Role> roleList = roleRepository.findAll();
+        assertThat(roleList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllRoles() throws Exception {
         // Initialize the database
         roleRepository.save(role);
@@ -262,7 +285,8 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
     
     @Test
@@ -279,7 +303,8 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
             .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
-            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+            .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)));
     }
 
     @Test
@@ -303,7 +328,8 @@ public class RoleResourceIntTest {
             .clientId(UPDATED_CLIENT_ID)
             .isDefault(UPDATED_IS_DEFAULT)
             .slug(UPDATED_SLUG)
-            .createdDate(UPDATED_CREATED_DATE);
+            .createdDate(UPDATED_CREATED_DATE)
+            .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE);
         RoleDTO roleDTO = roleMapper.toDto(updatedRole);
 
         restRoleMockMvc.perform(put("/api/roles")
@@ -320,6 +346,7 @@ public class RoleResourceIntTest {
         assertThat(testRole.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
         assertThat(testRole.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testRole.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
+        assertThat(testRole.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);
@@ -381,7 +408,8 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
 
     @Test

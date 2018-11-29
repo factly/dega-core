@@ -106,6 +106,7 @@ class RoleGatlingTest extends Simulation {
                 , "isDefault":null
                 , "slug":"SAMPLE_TEXT"
                 , "createdDate":"2020-01-01T00:00:00.000Z"
+                , "lastUpdatedDate":"2020-01-01T00:00:00.000Z"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_role_url"))).exitHereIfFailed
