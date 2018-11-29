@@ -47,6 +47,10 @@ public class Category implements Serializable {
     @Field("created_date")
     private ZonedDateTime createdDate;
 
+    @NotNull
+    @Field("last_updated_date")
+    private ZonedDateTime lastUpdatedDate;
+
     @DBRef
     @Field("posts")
     @JsonIgnore
@@ -139,6 +143,19 @@ public class Category implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public Category lastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+        return this;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
     public Set<Post> getPosts() {
         return posts;
     }
@@ -195,6 +212,7 @@ public class Category implements Serializable {
             ", parent='" + getParent() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }
