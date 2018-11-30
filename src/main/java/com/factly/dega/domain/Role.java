@@ -44,6 +44,10 @@ public class Role implements Serializable {
     @Field("created_date")
     private ZonedDateTime createdDate;
 
+    @NotNull
+    @Field("last_updated_date")
+    private ZonedDateTime lastUpdatedDate;
+
     @DBRef
     @Field("degaUser")
     private Set<DegaUser> degaUsers = new HashSet<>();
@@ -121,6 +125,19 @@ public class Role implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public Role lastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+        return this;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
     public Set<DegaUser> getDegaUsers() {
         return degaUsers;
     }
@@ -176,6 +193,7 @@ public class Role implements Serializable {
             ", isDefault='" + isIsDefault() + "'" +
             ", slug='" + getSlug() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }

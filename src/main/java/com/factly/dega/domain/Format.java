@@ -46,6 +46,10 @@ public class Format implements Serializable {
     @Field("created_date")
     private ZonedDateTime createdDate;
 
+    @NotNull
+    @Field("last_updated_date")
+    private ZonedDateTime lastUpdatedDate;
+
     @DBRef
     @Field("post")
     private Set<Post> posts = new HashSet<>();
@@ -136,6 +140,19 @@ public class Format implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public Format lastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+        return this;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
     public Set<Post> getPosts() {
         return posts;
     }
@@ -192,6 +209,7 @@ public class Format implements Serializable {
             ", description='" + getDescription() + "'" +
             ", slug='" + getSlug() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }

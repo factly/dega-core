@@ -171,11 +171,14 @@ public class OrganizationResourceIntTest {
     private static final String DEFAULT_SLUG = "AAAAAAAAAA";
     private static final String UPDATED_SLUG = "BBBBBBBBBB";
 
-    private static final String DEFAULT_EMAIL = "'GA@i.PmXB'";
-    private static final String UPDATED_EMAIL = "'Go@is.BLXVQGIOQpzctmZPrlJusJJQuffig'";
+    private static final String DEFAULT_EMAIL = "'9J@k.aigzweazmUStGihIpV'";
+    private static final String UPDATED_EMAIL = "'w.@O.qVa'";
 
     private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
+    private static final ZonedDateTime DEFAULT_LAST_UPDATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_LAST_UPDATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
     @Autowired
     private OrganizationRepository organizationRepository;
@@ -267,7 +270,8 @@ public class OrganizationResourceIntTest {
             .clientId(DEFAULT_CLIENT_ID)
             .slug(DEFAULT_SLUG)
             .email(DEFAULT_EMAIL)
-            .createdDate(DEFAULT_CREATED_DATE);
+            .createdDate(DEFAULT_CREATED_DATE)
+            .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE);
         return organization;
     }
 
@@ -334,6 +338,7 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testOrganization.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testOrganization.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testOrganization.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -470,6 +475,24 @@ public class OrganizationResourceIntTest {
     }
 
     @Test
+    public void checkLastUpdatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = organizationRepository.findAll().size();
+        // set the field null
+        organization.setLastUpdatedDate(null);
+
+        // Create the Organization, which fails.
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        restOrganizationMockMvc.perform(post("/api/organizations")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllOrganizations() throws Exception {
         // Initialize the database
         organizationRepository.save(organization);
@@ -520,7 +543,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
     
     @Test
@@ -574,7 +598,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
-            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+            .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)));
     }
 
     @Test
@@ -635,7 +660,8 @@ public class OrganizationResourceIntTest {
             .clientId(UPDATED_CLIENT_ID)
             .slug(UPDATED_SLUG)
             .email(UPDATED_EMAIL)
-            .createdDate(UPDATED_CREATED_DATE);
+            .createdDate(UPDATED_CREATED_DATE)
+            .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE);
         OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
 
         restOrganizationMockMvc.perform(put("/api/organizations")
@@ -689,6 +715,7 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testOrganization.getEmail()).isEqualTo(UPDATED_EMAIL);
         assertThat(testOrganization.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
+        assertThat(testOrganization.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -787,7 +814,8 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
 
     @Test

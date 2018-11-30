@@ -27,6 +27,9 @@ public class FormatDTO implements Serializable {
     @NotNull
     private ZonedDateTime createdDate;
 
+    @NotNull
+    private ZonedDateTime lastUpdatedDate;
+
     public String getId() {
         return id;
     }
@@ -83,6 +86,14 @@ public class FormatDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -114,6 +125,7 @@ public class FormatDTO implements Serializable {
             ", description='" + getDescription() + "'" +
             ", slug='" + getSlug() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }

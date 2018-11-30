@@ -28,6 +28,9 @@ public class CategoryDTO implements Serializable {
     @NotNull
     private ZonedDateTime createdDate;
 
+    @NotNull
+    private ZonedDateTime lastUpdatedDate;
+
     public String getId() {
         return id;
     }
@@ -84,6 +87,14 @@ public class CategoryDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -115,6 +126,7 @@ public class CategoryDTO implements Serializable {
             ", parent='" + getParent() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }

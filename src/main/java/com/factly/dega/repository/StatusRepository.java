@@ -16,5 +16,4 @@ import org.springframework.stereotype.Repository;
 public interface StatusRepository extends MongoRepository<Status, String> {
 
     Optional<Status> findByName(String name);
-
 }

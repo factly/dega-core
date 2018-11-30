@@ -61,16 +61,8 @@ public class Media implements Serializable {
     private ZonedDateTime publishedDate;
 
     @NotNull
-    @Field("published_date_gmt")
-    private ZonedDateTime publishedDateGMT;
-
-    @NotNull
     @Field("last_updated_date")
     private ZonedDateTime lastUpdatedDate;
-
-    @NotNull
-    @Field("last_updated_date_gmt")
-    private ZonedDateTime lastUpdatedDateGMT;
 
     @NotNull
     @Field("slug")
@@ -236,19 +228,6 @@ public class Media implements Serializable {
         this.publishedDate = publishedDate;
     }
 
-    public ZonedDateTime getPublishedDateGMT() {
-        return publishedDateGMT;
-    }
-
-    public Media publishedDateGMT(ZonedDateTime publishedDateGMT) {
-        this.publishedDateGMT = publishedDateGMT;
-        return this;
-    }
-
-    public void setPublishedDateGMT(ZonedDateTime publishedDateGMT) {
-        this.publishedDateGMT = publishedDateGMT;
-    }
-
     public ZonedDateTime getLastUpdatedDate() {
         return lastUpdatedDate;
     }
@@ -260,19 +239,6 @@ public class Media implements Serializable {
 
     public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
         this.lastUpdatedDate = lastUpdatedDate;
-    }
-
-    public ZonedDateTime getLastUpdatedDateGMT() {
-        return lastUpdatedDateGMT;
-    }
-
-    public Media lastUpdatedDateGMT(ZonedDateTime lastUpdatedDateGMT) {
-        this.lastUpdatedDateGMT = lastUpdatedDateGMT;
-        return this;
-    }
-
-    public void setLastUpdatedDateGMT(ZonedDateTime lastUpdatedDateGMT) {
-        this.lastUpdatedDateGMT = lastUpdatedDateGMT;
     }
 
     public String getSlug() {
@@ -350,9 +316,7 @@ public class Media implements Serializable {
             ", description='" + getDescription() + "'" +
             ", uploadedBy='" + getUploadedBy() + "'" +
             ", publishedDate='" + getPublishedDate() + "'" +
-            ", publishedDateGMT='" + getPublishedDateGMT() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
-            ", lastUpdatedDateGMT='" + getLastUpdatedDateGMT() + "'" +
             ", slug='" + getSlug() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +

@@ -26,6 +26,9 @@ public class StatusDTO implements Serializable {
     @NotNull
     private ZonedDateTime createdDate;
 
+    @NotNull
+    private ZonedDateTime lastUpdatedDate;
+
     public String getId() {
         return id;
     }
@@ -74,6 +77,14 @@ public class StatusDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -104,6 +115,7 @@ public class StatusDTO implements Serializable {
             ", isDefault='" + isIsDefault() + "'" +
             ", slug='" + getSlug() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }
