@@ -1,5 +1,6 @@
 package com.factly.dega.service;
 
+import java.util.Optional;./gradlew clean
 import com.factly.dega.service.dto.StatusDTO;
 
 import org.springframework.data.domain.Page;
@@ -36,6 +37,14 @@ public interface StatusService {
      * @return the entity
      */
     Optional<StatusDTO> findOne(String id);
+
+    /**
+     * Get the "name" status.
+     *
+     * @param name the name of the entity
+     * @return the entity
+     */
+    Optional<StatusDTO> findOneByName(String name);
 
     /**
      * Delete the "id" status.

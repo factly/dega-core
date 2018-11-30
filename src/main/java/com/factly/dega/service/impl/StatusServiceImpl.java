@@ -1,5 +1,6 @@
 package com.factly.dega.service.impl;
 
+import java.util.Optional;
 import com.factly.dega.service.StatusService;
 import com.factly.dega.domain.Status;
 import com.factly.dega.repository.StatusRepository;
@@ -78,6 +79,19 @@ public class StatusServiceImpl implements StatusService {
     public Optional<StatusDTO> findOne(String id) {
         log.debug("Request to get Status : {}", id);
         return statusRepository.findById(id)
+            .map(statusMapper::toDto);
+    }
+
+    /**
+     * Get one status by name.
+     *
+     * @param name the name of the entity
+     * @return the entity
+     */
+    @Override
+    public Optional<StatusDTO> findOneByName(String name) {
+        log.debug("Request to get Status : {}", name);
+        return statusRepository.findByName(name)
             .map(statusMapper::toDto);
     }
 
