@@ -157,8 +157,8 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testCategory.getParent()).isEqualTo(DEFAULT_PARENT);
         assertThat(testCategory.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
-        assertThat(testCategory.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
-        assertThat(testCategory.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testCategory.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testCategory.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Category in Elasticsearch
         verify(mockCategorySearchRepository, times(1)).save(testCategory);
@@ -252,10 +252,10 @@ public class CategoryResourceIntTest {
         restCategoryMockMvc.perform(post("/api/categories")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(categoryDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Category> categoryList = categoryRepository.findAll();
-        assertThat(categoryList).hasSize(databaseSizeBeforeTest);
+        assertThat(categoryList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -270,10 +270,10 @@ public class CategoryResourceIntTest {
         restCategoryMockMvc.perform(post("/api/categories")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(categoryDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Category> categoryList = categoryRepository.findAll();
-        assertThat(categoryList).hasSize(databaseSizeBeforeTest);
+        assertThat(categoryList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -354,8 +354,8 @@ public class CategoryResourceIntTest {
         assertThat(testCategory.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testCategory.getParent()).isEqualTo(UPDATED_PARENT);
         assertThat(testCategory.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
-        assertThat(testCategory.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
-        assertThat(testCategory.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testCategory.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testCategory.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Category in Elasticsearch
         verify(mockCategorySearchRepository, times(1)).save(testCategory);

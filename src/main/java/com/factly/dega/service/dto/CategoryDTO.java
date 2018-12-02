@@ -22,13 +22,10 @@ public class CategoryDTO implements Serializable {
 
     private String parent;
 
-    @NotNull
     private String clientId;
 
-    @NotNull
     private ZonedDateTime createdDate;
 
-    @NotNull
     private ZonedDateTime lastUpdatedDate;
 
     public String getId() {
