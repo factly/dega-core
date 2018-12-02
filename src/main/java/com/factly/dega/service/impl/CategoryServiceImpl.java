@@ -108,7 +108,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     /**
-     * Get the post by clientId and slug.
+     * Get the category by clientId and slug.
      *
      * @param clientId the clientId of the CategoryDTO
      * @param slug the slug of the CategoryDTO

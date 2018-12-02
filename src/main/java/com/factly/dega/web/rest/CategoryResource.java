@@ -155,14 +155,15 @@ public class CategoryResource {
     }
 
     /**
-     * GET  /posts/:clientId/:slug : get the post.
+     * GET  /categorybyslug/:slug : get the category.
      *
-     * @param slug the slug of the PostDTO
-     * @return Optional<PostDTO> post by clientId and slug
+     * @param slug the slug of the CategoryDTO
+     * @param request
+     * @return Optional<CategoryDTO> category by clientId and slug
      */
     @GetMapping("/categorybyslug/{slug}")
     @Timed
-    public Optional<CategoryDTO> getPostBySlug(@PathVariable String slug, HttpServletRequest request) {
+    public Optional<CategoryDTO> getCategoryBySlug(@PathVariable String slug, HttpServletRequest request) {
         Object obj = request.getAttribute("ClientID");
         String clientId = null;
         if (obj != null) {
