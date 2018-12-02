@@ -106,4 +106,18 @@ public class RoleServiceImpl implements RoleService {
         return roleSearchRepository.search(queryStringQuery(query), pageable)
             .map(roleMapper::toDto);
     }
+
+    /**
+     * Get the role by clientId and slug.
+     *
+     * @param clientId the clientId of the RoleDTO
+     * @param slug the slug of the RoleDTO
+     * @return Optional<RoleDTO> roledto by clientId and slug
+     */
+    @Override
+    public Optional<RoleDTO> findByClientIdAndSlug(String clientId, String slug) {
+        log.debug("Request to get post  by clienId : {} and slug : {}", clientId, slug);
+        return roleRepository.findByClientIdAndSlug(clientId, slug)
+            .map(roleMapper::toDto);
+    }
 }

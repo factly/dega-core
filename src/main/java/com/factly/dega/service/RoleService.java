@@ -53,4 +53,13 @@ public interface RoleService {
      * @return the list of entities
      */
     Page<RoleDTO> search(String query, Pageable pageable);
+
+    /**
+     * Get the role by clientId and slug.
+     *
+     * @param clientId the clientId of the RoleDTO
+     * @param slug the slug of the RoleDTO
+     * @return Optional<RoleDTO> post by clientId and slug
+     */
+    Optional<RoleDTO> findByClientIdAndSlug(String clientId, String slug);
 }

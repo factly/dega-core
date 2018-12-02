@@ -16,10 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -52,11 +54,17 @@ public class RoleResource {
      */
     @PostMapping("/roles")
     @Timed
-    public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
+    public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody RoleDTO roleDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Role : {}", roleDTO);
         if (roleDTO.getId() != null) {
             throw new BadRequestAlertException("A new role cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Object obj = request.getAttribute("ClientID");
+        if (obj != null) {
+            roleDTO.setClientId((String) obj);
+        }
+        roleDTO.setCreatedDate(ZonedDateTime.now());
+        roleDTO.setLastUpdatedDate(ZonedDateTime.now());
         RoleDTO result = roleService.save(roleDTO);
         return ResponseEntity.created(new URI("/api/roles/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -79,6 +87,7 @@ public class RoleResource {
         if (roleDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        roleDTO.setLastUpdatedDate(ZonedDateTime.now());
         RoleDTO result = roleService.save(roleDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, roleDTO.getId().toString()))
@@ -144,5 +153,25 @@ public class RoleResource {
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/roles");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
+
+    /**
+     * GET  /rolebyslug/:slug : get the role.
+     *
+     * @param slug the slug of the RoleDTO
+     * @return Optional<RoleDTO> role by clientId and slug
+     */
+    @GetMapping("/rolebyslug/{slug}")
+    @Timed
+    public Optional<RoleDTO> getRoleBySlug(@PathVariable String slug, HttpServletRequest request) {
+        Object obj = request.getAttribute("ClientID");
+        String clientId = null;
+        if (obj != null) {
+            clientId = (String) obj;
+        }
+        log.debug("REST request to get Role by clienId : {} and slug : {}", clientId, slug);
+        Optional<RoleDTO> roleDTO = roleService.findByClientIdAndSlug(clientId, slug);
+        return roleDTO;
+    }
+
 
 }
