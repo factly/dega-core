@@ -152,8 +152,8 @@ public class StatusResourceIntTest {
         assertThat(testStatus.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testStatus.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
         assertThat(testStatus.getSlug()).isEqualTo(DEFAULT_SLUG);
-        assertThat(testStatus.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
-        assertThat(testStatus.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testStatus.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testStatus.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Status in Elasticsearch
         verify(mockStatusSearchRepository, times(1)).save(testStatus);
@@ -247,10 +247,10 @@ public class StatusResourceIntTest {
         restStatusMockMvc.perform(post("/api/statuses")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(statusDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Status> statusList = statusRepository.findAll();
-        assertThat(statusList).hasSize(databaseSizeBeforeTest);
+        assertThat(statusList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -265,10 +265,10 @@ public class StatusResourceIntTest {
         restStatusMockMvc.perform(post("/api/statuses")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(statusDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Status> statusList = statusRepository.findAll();
-        assertThat(statusList).hasSize(databaseSizeBeforeTest);
+        assertThat(statusList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -345,8 +345,8 @@ public class StatusResourceIntTest {
         assertThat(testStatus.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testStatus.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
         assertThat(testStatus.getSlug()).isEqualTo(UPDATED_SLUG);
-        assertThat(testStatus.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
-        assertThat(testStatus.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testStatus.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testStatus.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Status in Elasticsearch
         verify(mockStatusSearchRepository, times(1)).save(testStatus);

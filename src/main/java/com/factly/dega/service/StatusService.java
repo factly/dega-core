@@ -62,4 +62,13 @@ public interface StatusService {
      * @return the list of entities
      */
     Page<StatusDTO> search(String query, Pageable pageable);
+
+    /**
+     * Get the status by clientId and slug.
+     *
+     * @param clientId the clientId of the StatusDTO
+     * @param slug the slug of the StatusDTO
+     * @return Optional<StatusDTO> post by clientId and slug
+     */
+    Optional<StatusDTO> findByClientIdAndSlug(String clientId, String slug);
 }
