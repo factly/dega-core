@@ -337,8 +337,8 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testOrganization.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testOrganization.getEmail()).isEqualTo(DEFAULT_EMAIL);
-        assertThat(testOrganization.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
-        assertThat(testOrganization.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testOrganization.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testOrganization.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -468,10 +468,10 @@ public class OrganizationResourceIntTest {
         restOrganizationMockMvc.perform(post("/api/organizations")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Organization> organizationList = organizationRepository.findAll();
-        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -486,10 +486,10 @@ public class OrganizationResourceIntTest {
         restOrganizationMockMvc.perform(post("/api/organizations")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Organization> organizationList = organizationRepository.findAll();
-        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -714,8 +714,8 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testOrganization.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testOrganization.getEmail()).isEqualTo(UPDATED_EMAIL);
-        assertThat(testOrganization.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
-        assertThat(testOrganization.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testOrganization.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testOrganization.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);

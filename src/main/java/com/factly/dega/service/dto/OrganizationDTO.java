@@ -90,7 +90,6 @@ public class OrganizationDTO implements Serializable {
 
     private String timeZone;
 
-    @NotNull
     private String clientId;
 
     @NotNull
@@ -100,10 +99,8 @@ public class OrganizationDTO implements Serializable {
     /*@Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")*/
     private String email;
 
-    @NotNull
     private ZonedDateTime createdDate;
 
-    @NotNull
     private ZonedDateTime lastUpdatedDate;
 
     public String getId() {
