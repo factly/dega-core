@@ -16,10 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -52,11 +54,17 @@ public class MediaResource {
      */
     @PostMapping("/media")
     @Timed
-    public ResponseEntity<MediaDTO> createMedia(@Valid @RequestBody MediaDTO mediaDTO) throws URISyntaxException {
+    public ResponseEntity<MediaDTO> createMedia(@Valid @RequestBody MediaDTO mediaDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Media : {}", mediaDTO);
         if (mediaDTO.getId() != null) {
             throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Object obj = request.getAttribute("ClientID");
+        if (obj != null) {
+            mediaDTO.setClientId((String) obj);
+        }
+        mediaDTO.setCreatedDate(ZonedDateTime.now());
+        mediaDTO.setLastUpdatedDate(ZonedDateTime.now());
         MediaDTO result = mediaService.save(mediaDTO);
         return ResponseEntity.created(new URI("/api/media/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -79,6 +87,7 @@ public class MediaResource {
         if (mediaDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        mediaDTO.setLastUpdatedDate(ZonedDateTime.now());
         MediaDTO result = mediaService.save(mediaDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, mediaDTO.getId().toString()))
@@ -143,6 +152,25 @@ public class MediaResource {
         Page<MediaDTO> page = mediaService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/media");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /mediabyslug/:slug : get the media.
+     *
+     * @param slug the slug of the MediaDTO
+     * @return Optional<MediaDTO> media by clientId and slug
+     */
+    @GetMapping("/mediabyslug/{slug}")
+    @Timed
+    public Optional<MediaDTO> getMediaBySlug(@PathVariable String slug, HttpServletRequest request) {
+        Object obj = request.getAttribute("ClientID");
+        String clientId = null;
+        if (obj != null) {
+            clientId = (String) obj;
+        }
+        log.debug("REST request to get media by clienId : {} and slug : {}", clientId, slug);
+        Optional<MediaDTO> mediaDTO = mediaService.findByClientIdAndSlug(clientId, slug);
+        return mediaDTO;
     }
 
 }
