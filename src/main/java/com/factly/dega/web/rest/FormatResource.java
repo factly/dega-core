@@ -16,10 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -52,11 +54,17 @@ public class FormatResource {
      */
     @PostMapping("/formats")
     @Timed
-    public ResponseEntity<FormatDTO> createFormat(@Valid @RequestBody FormatDTO formatDTO) throws URISyntaxException {
+    public ResponseEntity<FormatDTO> createFormat(@Valid @RequestBody FormatDTO formatDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Format : {}", formatDTO);
         if (formatDTO.getId() != null) {
             throw new BadRequestAlertException("A new format cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Object obj = request.getAttribute("ClientID");
+        if (obj != null) {
+            formatDTO.setClientId((String) obj);
+        }
+        formatDTO.setCreatedDate(ZonedDateTime.now());
+        formatDTO.setLastUpdatedDate(ZonedDateTime.now());
         FormatDTO result = formatService.save(formatDTO);
         return ResponseEntity.created(new URI("/api/formats/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -79,6 +87,7 @@ public class FormatResource {
         if (formatDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        formatDTO.setLastUpdatedDate(ZonedDateTime.now());
         FormatDTO result = formatService.save(formatDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, formatDTO.getId().toString()))
@@ -143,6 +152,26 @@ public class FormatResource {
         Page<FormatDTO> page = formatService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/formats");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /formatbyslug/:slug : get the format.
+     *
+     * @param slug the slug of the FormatDTO
+     * @param request
+     * @return Optional<FormatDTO> format by clientId and slug
+     */
+    @GetMapping("/formatbyslug/{slug}")
+    @Timed
+    public Optional<FormatDTO> getFormatBySlug(@PathVariable String slug, HttpServletRequest request) {
+        Object obj = request.getAttribute("ClientID");
+        String clientId = null;
+        if (obj != null) {
+            clientId = (String) obj;
+        }
+        log.debug("REST request to get Format by clienId : {} and slug : {}", clientId, slug);
+        Optional<FormatDTO> formatDTO = formatService.findByClientIdAndSlug(clientId, slug);
+        return formatDTO;
     }
 
 }

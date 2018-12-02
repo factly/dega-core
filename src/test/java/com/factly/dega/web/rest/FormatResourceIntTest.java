@@ -157,8 +157,8 @@ public class FormatResourceIntTest {
         assertThat(testFormat.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testFormat.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testFormat.getSlug()).isEqualTo(DEFAULT_SLUG);
-        assertThat(testFormat.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
-        assertThat(testFormat.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testFormat.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testFormat.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Format in Elasticsearch
         verify(mockFormatSearchRepository, times(1)).save(testFormat);
@@ -234,10 +234,10 @@ public class FormatResourceIntTest {
         restFormatMockMvc.perform(post("/api/formats")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(formatDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Format> formatList = formatRepository.findAll();
-        assertThat(formatList).hasSize(databaseSizeBeforeTest);
+        assertThat(formatList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -252,10 +252,10 @@ public class FormatResourceIntTest {
         restFormatMockMvc.perform(post("/api/formats")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(formatDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Format> formatList = formatRepository.findAll();
-        assertThat(formatList).hasSize(databaseSizeBeforeTest);
+        assertThat(formatList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -336,8 +336,8 @@ public class FormatResourceIntTest {
         assertThat(testFormat.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testFormat.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testFormat.getSlug()).isEqualTo(UPDATED_SLUG);
-        assertThat(testFormat.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
-        assertThat(testFormat.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testFormat.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testFormat.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Format in Elasticsearch
         verify(mockFormatSearchRepository, times(1)).save(testFormat);
