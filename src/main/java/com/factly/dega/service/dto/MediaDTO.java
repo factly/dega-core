@@ -39,16 +39,13 @@ public class MediaDTO implements Serializable {
     @NotNull
     private ZonedDateTime publishedDate;
 
-    @NotNull
     private ZonedDateTime lastUpdatedDate;
 
     @NotNull
     private String slug;
 
-    @NotNull
     private String clientId;
 
-    @NotNull
     private ZonedDateTime createdDate;
 
     public String getId() {

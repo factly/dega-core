@@ -195,10 +195,10 @@ public class MediaResourceIntTest {
         assertThat(testMedia.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testMedia.getUploadedBy()).isEqualTo(DEFAULT_UPLOADED_BY);
         assertThat(testMedia.getPublishedDate()).isEqualTo(DEFAULT_PUBLISHED_DATE);
-        assertThat(testMedia.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testMedia.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
         assertThat(testMedia.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testMedia.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
-        assertThat(testMedia.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testMedia.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
 
         // Validate the Media in Elasticsearch
         verify(mockMediaSearchRepository, times(1)).save(testMedia);
@@ -328,10 +328,10 @@ public class MediaResourceIntTest {
         restMediaMockMvc.perform(post("/api/media")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(mediaDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Media> mediaList = mediaRepository.findAll();
-        assertThat(mediaList).hasSize(databaseSizeBeforeTest);
+        assertThat(mediaList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -382,10 +382,10 @@ public class MediaResourceIntTest {
         restMediaMockMvc.perform(post("/api/media")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(mediaDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Media> mediaList = mediaRepository.findAll();
-        assertThat(mediaList).hasSize(databaseSizeBeforeTest);
+        assertThat(mediaList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -496,7 +496,7 @@ public class MediaResourceIntTest {
         assertThat(testMedia.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testMedia.getUploadedBy()).isEqualTo(UPDATED_UPLOADED_BY);
         assertThat(testMedia.getPublishedDate()).isEqualTo(UPDATED_PUBLISHED_DATE);
-        assertThat(testMedia.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testMedia.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
         assertThat(testMedia.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testMedia.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testMedia.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);

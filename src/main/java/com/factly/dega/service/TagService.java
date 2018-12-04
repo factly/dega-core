@@ -53,4 +53,13 @@ public interface TagService {
      * @return the list of entities
      */
     Page<TagDTO> search(String query, Pageable pageable);
+
+    /**
+     * Get the tag by clientId and slug.
+     *
+     * @param clientId the clientId of the TagDTO
+     * @param slug the slug of the TagDTO
+     * @return Optional<TagDTO> post by clientId and slug
+     */
+    Optional<TagDTO> findByClientIdAndSlug(String clientId, String slug);
 }

@@ -15,7 +15,6 @@ public class StatusDTO implements Serializable {
     @NotNull
     private String name;
 
-    @NotNull
     private String clientId;
 
     private Boolean isDefault;
@@ -23,10 +22,8 @@ public class StatusDTO implements Serializable {
     @NotNull
     private String slug;
 
-    @NotNull
     private ZonedDateTime createdDate;
 
-    @NotNull
     private ZonedDateTime lastUpdatedDate;
 
     public String getId() {

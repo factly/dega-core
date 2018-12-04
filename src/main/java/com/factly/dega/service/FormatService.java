@@ -53,4 +53,13 @@ public interface FormatService {
      * @return the list of entities
      */
     Page<FormatDTO> search(String query, Pageable pageable);
+
+    /**
+     * Get the format by clientId and slug.
+     *
+     * @param clientId the clientId of the FormatDTO
+     * @param slug the slug of the FormatDTO
+     * @return Optional<FormatDTO> post by clientId and slug
+     */
+    Optional<FormatDTO> findByClientIdAndSlug(String clientId, String slug);
 }

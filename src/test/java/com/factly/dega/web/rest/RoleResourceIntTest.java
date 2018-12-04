@@ -152,8 +152,8 @@ public class RoleResourceIntTest {
         assertThat(testRole.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testRole.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
         assertThat(testRole.getSlug()).isEqualTo(DEFAULT_SLUG);
-        assertThat(testRole.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
-        assertThat(testRole.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testRole.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testRole.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);
@@ -247,10 +247,10 @@ public class RoleResourceIntTest {
         restRoleMockMvc.perform(post("/api/roles")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Role> roleList = roleRepository.findAll();
-        assertThat(roleList).hasSize(databaseSizeBeforeTest);
+        assertThat(roleList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -265,10 +265,10 @@ public class RoleResourceIntTest {
         restRoleMockMvc.perform(post("/api/roles")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Role> roleList = roleRepository.findAll();
-        assertThat(roleList).hasSize(databaseSizeBeforeTest);
+        assertThat(roleList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -345,8 +345,8 @@ public class RoleResourceIntTest {
         assertThat(testRole.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testRole.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
         assertThat(testRole.getSlug()).isEqualTo(UPDATED_SLUG);
-        assertThat(testRole.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
-        assertThat(testRole.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testRole.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testRole.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);

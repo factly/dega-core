@@ -16,10 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -52,11 +54,17 @@ public class OrganizationResource {
      */
     @PostMapping("/organizations")
     @Timed
-    public ResponseEntity<OrganizationDTO> createOrganization(@Valid @RequestBody OrganizationDTO organizationDTO) throws URISyntaxException {
+    public ResponseEntity<OrganizationDTO> createOrganization(@Valid @RequestBody OrganizationDTO organizationDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Organization : {}", organizationDTO);
         if (organizationDTO.getId() != null) {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Object obj = request.getAttribute("ClientID");
+        if (obj != null) {
+            organizationDTO.setClientId((String) obj);
+        }
+        organizationDTO.setCreatedDate(ZonedDateTime.now());
+        organizationDTO.setLastUpdatedDate(ZonedDateTime.now());
         OrganizationDTO result = organizationService.save(organizationDTO);
         return ResponseEntity.created(new URI("/api/organizations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -79,6 +87,7 @@ public class OrganizationResource {
         if (organizationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        organizationDTO.setLastUpdatedDate(ZonedDateTime.now());
         OrganizationDTO result = organizationService.save(organizationDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizationDTO.getId().toString()))
@@ -143,6 +152,25 @@ public class OrganizationResource {
         Page<OrganizationDTO> page = organizationService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/organizations");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /organizationbyslug/:slug : get the organization.
+     *
+     * @param slug the slug of the OrganizationDTO
+     * @return Optional<OrganizationDTO> organization by clientId and slug
+     */
+    @GetMapping("/organizationbyslug/{slug}")
+    @Timed
+    public Optional<OrganizationDTO> getOrganizationBySlug(@PathVariable String slug, HttpServletRequest request) {
+        Object obj = request.getAttribute("ClientID");
+        String clientId = null;
+        if (obj != null) {
+            clientId = (String) obj;
+        }
+        log.debug("REST request to get Organization by clienId : {} and slug : {}", clientId, slug);
+        Optional<OrganizationDTO> organizationDTO = organizationService.findByClientIdAndSlug(clientId, slug);
+        return organizationDTO;
     }
 
 }

@@ -20,13 +20,10 @@ public class TagDTO implements Serializable {
 
     private String description;
 
-    @NotNull
     private String clientId;
 
-    @NotNull
     private ZonedDateTime createdDate;
 
-    @NotNull
     private ZonedDateTime lastUpdatedDate;
 
     public String getId() {

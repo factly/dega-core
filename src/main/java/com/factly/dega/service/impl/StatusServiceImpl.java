@@ -120,4 +120,18 @@ public class StatusServiceImpl implements StatusService {
         return statusSearchRepository.search(queryStringQuery(query), pageable)
             .map(statusMapper::toDto);
     }
+
+    /**
+     * Get the status by clientId and slug.
+     *
+     * @param clientId the clientId of the StatusDTO
+     * @param slug the slug of the StatusDTO
+     * @return Optional<StatusDTO> status by clientId and slug
+     */
+    @Override
+    public Optional<StatusDTO> findByClientIdAndSlug(String clientId, String slug) {
+        log.debug("Request to get post  by clienId : {} and slug : {}", clientId, slug);
+        return statusRepository.findByClientIdAndSlug(clientId, slug)
+            .map(statusMapper::toDto);
+    }
 }

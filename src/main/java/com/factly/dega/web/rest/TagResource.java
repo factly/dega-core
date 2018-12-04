@@ -16,10 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -52,11 +54,17 @@ public class TagResource {
      */
     @PostMapping("/tags")
     @Timed
-    public ResponseEntity<TagDTO> createTag(@Valid @RequestBody TagDTO tagDTO) throws URISyntaxException {
+    public ResponseEntity<TagDTO> createTag(@Valid @RequestBody TagDTO tagDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Tag : {}", tagDTO);
         if (tagDTO.getId() != null) {
             throw new BadRequestAlertException("A new tag cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Object obj = request.getAttribute("ClientID");
+        if (obj != null) {
+            tagDTO.setClientId((String) obj);
+        }
+        tagDTO.setCreatedDate(ZonedDateTime.now());
+        tagDTO.setLastUpdatedDate(ZonedDateTime.now());
         TagDTO result = tagService.save(tagDTO);
         return ResponseEntity.created(new URI("/api/tags/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -79,6 +87,7 @@ public class TagResource {
         if (tagDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        tagDTO.setLastUpdatedDate(ZonedDateTime.now());
         TagDTO result = tagService.save(tagDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, tagDTO.getId().toString()))
@@ -143,6 +152,25 @@ public class TagResource {
         Page<TagDTO> page = tagService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tags");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /tagbyslug/:slug : get the tag.
+     *
+     * @param slug the slug of the TagDTO
+     * @return Optional<TagDTO> tag by clientId and slug
+     */
+    @GetMapping("/tagbyslug/{slug}")
+    @Timed
+    public Optional<TagDTO> getTagBySlug(@PathVariable String slug, HttpServletRequest request) {
+        Object obj = request.getAttribute("ClientID");
+        String clientId = null;
+        if (obj != null) {
+            clientId = (String) obj;
+        }
+        log.debug("REST request to get Tag by clienId : {} and slug : {}", clientId, slug);
+        Optional<TagDTO> tagDTO = tagService.findByClientIdAndSlug(clientId, slug);
+        return tagDTO;
     }
 
 }

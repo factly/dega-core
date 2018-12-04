@@ -16,10 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -52,11 +54,17 @@ public class StatusResource {
      */
     @PostMapping("/statuses")
     @Timed
-    public ResponseEntity<StatusDTO> createStatus(@Valid @RequestBody StatusDTO statusDTO) throws URISyntaxException {
+    public ResponseEntity<StatusDTO> createStatus(@Valid @RequestBody StatusDTO statusDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Status : {}", statusDTO);
         if (statusDTO.getId() != null) {
             throw new BadRequestAlertException("A new status cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Object obj = request.getAttribute("ClientID");
+        if (obj != null) {
+            statusDTO.setClientId((String) obj);
+        }
+        statusDTO.setCreatedDate(ZonedDateTime.now());
+        statusDTO.setLastUpdatedDate(ZonedDateTime.now());
         StatusDTO result = statusService.save(statusDTO);
         return ResponseEntity.created(new URI("/api/statuses/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -79,6 +87,7 @@ public class StatusResource {
         if (statusDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        statusDTO.setLastUpdatedDate(ZonedDateTime.now());
         StatusDTO result = statusService.save(statusDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, statusDTO.getId().toString()))
@@ -143,6 +152,25 @@ public class StatusResource {
         Page<StatusDTO> page = statusService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/statuses");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /statusbyslug/:slug : get the status.
+     *
+     * @param slug the slug of the StatusDTO
+     * @return Optional<StatusDTO> status by clientId and slug
+     */
+    @GetMapping("/statusbyslug/{slug}")
+    @Timed
+    public Optional<StatusDTO> getStatusBySlug(@PathVariable String slug, HttpServletRequest request) {
+        Object obj = request.getAttribute("ClientID");
+        String clientId = null;
+        if (obj != null) {
+            clientId = (String) obj;
+        }
+        log.debug("REST request to get Status by clienId : {} and slug : {}", clientId, slug);
+        Optional<StatusDTO> statusDTO = statusService.findByClientIdAndSlug(clientId, slug);
+        return statusDTO;
     }
 
 }

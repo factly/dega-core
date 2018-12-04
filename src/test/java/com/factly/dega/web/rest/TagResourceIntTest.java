@@ -152,8 +152,8 @@ public class TagResourceIntTest {
         assertThat(testTag.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testTag.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
         assertThat(testTag.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
-        assertThat(testTag.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
-        assertThat(testTag.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testTag.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testTag.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Tag in Elasticsearch
         verify(mockTagSearchRepository, times(1)).save(testTag);
@@ -247,10 +247,10 @@ public class TagResourceIntTest {
         restTagMockMvc.perform(post("/api/tags")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(tagDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeTest);
+        assertThat(tagList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -265,10 +265,10 @@ public class TagResourceIntTest {
         restTagMockMvc.perform(post("/api/tags")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(tagDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<Tag> tagList = tagRepository.findAll();
-        assertThat(tagList).hasSize(databaseSizeBeforeTest);
+        assertThat(tagList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
@@ -345,8 +345,8 @@ public class TagResourceIntTest {
         assertThat(testTag.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testTag.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testTag.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
-        assertThat(testTag.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
-        assertThat(testTag.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testTag.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testTag.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
         // Validate the Tag in Elasticsearch
         verify(mockTagSearchRepository, times(1)).save(testTag);

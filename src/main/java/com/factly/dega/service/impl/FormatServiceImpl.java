@@ -106,4 +106,18 @@ public class FormatServiceImpl implements FormatService {
         return formatSearchRepository.search(queryStringQuery(query), pageable)
             .map(formatMapper::toDto);
     }
+
+    /**
+     * Get the format by clientId and slug.
+     *
+     * @param clientId the clientId of the FormatDTO
+     * @param slug the slug of the FormatDTO
+     * @return Optional<FormatDTO> post by clientId and slug
+     */
+    @Override
+    public Optional<FormatDTO> findByClientIdAndSlug(String clientId, String slug) {
+        log.debug("Request to get post  by clienId : {} and slug : {}", clientId, slug);
+        return formatRepository.findByClientIdAndSlug(clientId, slug)
+            .map(formatMapper::toDto);
+    }
 }
