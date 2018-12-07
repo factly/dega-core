@@ -2,6 +2,7 @@ package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.service.MediaService;
+import com.factly.dega.service.impl.FileStorageService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
@@ -9,12 +10,15 @@ import com.factly.dega.service.dto.MediaDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -41,6 +45,9 @@ public class MediaResource {
 
     private final MediaService mediaService;
 
+    @Autowired
+    private FileStorageService fileStorageService;
+
     public MediaResource(MediaService mediaService) {
         this.mediaService = mediaService;
     }
@@ -54,8 +61,23 @@ public class MediaResource {
      */
     @PostMapping("/media")
     @Timed
-    public ResponseEntity<MediaDTO> createMedia(@Valid @RequestBody MediaDTO mediaDTO, HttpServletRequest request) throws URISyntaxException {
+    public ResponseEntity<MediaDTO> createMedia(@RequestParam("file") MultipartFile file,
+                                                @Valid @RequestBody MediaDTO mediaDTO,
+                                                HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Media : {}", mediaDTO);
+        String fileName = fileStorageService.storeFile(file);
+        mediaDTO.setName(fileName);
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/downloadFile/")
+            .path(fileName)
+            .toUriString();
+        mediaDTO.setUrl(fileDownloadUri);
+
+        Long fileSize = file.getSize();
+        mediaDTO.setFileSize(fileSize.toString());
+        mediaDTO.setType(file.getContentType());
+
         if (mediaDTO.getId() != null) {
             throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
         }
