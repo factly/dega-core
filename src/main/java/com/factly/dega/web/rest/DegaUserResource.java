@@ -179,7 +179,7 @@ public class DegaUserResource {
     }
 
     /**
-     * GET  /dega-users/email/id/:email : get the "email" degaUser.
+     * GET  /dega-users/email/:email : get the "email" degaUser.
      *
      * @param email the email of the degaUserDTO to retrieve
      * @return the ResponseEntity with status 200 (OK) and with body the degaUserDTO, or with status 404 (Not Found)
