@@ -1,7 +1,7 @@
 package com.factly.dega.service.impl;
 
-import com.factly.dega.config.FileStorageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
@@ -21,9 +21,9 @@ public class FileStorageService {
     private final Path fileStorageLocation;
 
     @Autowired
-    public FileStorageService(FileStorageProperties fileStorageProperties) {
-        this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
-                .toAbsolutePath().normalize();
+    public FileStorageService(@Value("${dega.media.upload-dir}") String uploadDir) {
+        // TODO pull it from yaml config properties
+        this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
 
         try {
             Files.createDirectories(this.fileStorageLocation);
