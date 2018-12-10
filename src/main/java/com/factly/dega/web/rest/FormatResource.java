@@ -1,6 +1,7 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.factly.dega.config.Constants;
 import com.factly.dega.service.FormatService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.HeaderUtil;
@@ -59,7 +60,7 @@ public class FormatResource {
         if (formatDTO.getId() != null) {
             throw new BadRequestAlertException("A new format cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getAttribute("ClientID");
+        Object obj = request.getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             formatDTO.setClientId((String) obj);
         }
@@ -164,7 +165,7 @@ public class FormatResource {
     @GetMapping("/formatbyslug/{slug}")
     @Timed
     public Optional<FormatDTO> getFormatBySlug(@PathVariable String slug, HttpServletRequest request) {
-        Object obj = request.getAttribute("ClientID");
+        Object obj = request.getAttribute(Constants.CLIENT_ID);
         String clientId = null;
         if (obj != null) {
             clientId = (String) obj;

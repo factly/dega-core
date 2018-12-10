@@ -1,5 +1,6 @@
 package com.factly.dega.aop.clientdetails;
 
+import com.factly.dega.config.Constants;
 import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.dto.DegaUserDTO;
 import com.factly.dega.service.dto.OrganizationDTO;
@@ -62,7 +63,7 @@ public class ClientDetailsAspect {
     @Before("applicationPackagePointcut() && springBeanPointcut()")
     public void retrieveClientID(JoinPoint joinPoint) throws Throwable {
         try {
-            if (context != null && context.getAttribute("ClientID") == null) {
+            if (context != null && context.getAttribute(Constants.CLIENT_ID) == null) {
                 OAuth2Authentication auth = (OAuth2Authentication) context.getUserPrincipal();
                 String principal = (String) auth.getPrincipal();
 
@@ -72,7 +73,7 @@ public class ClientDetailsAspect {
 
                     if (tokens.length == 2) {
                         String clientID = tokens[1];
-                        context.setAttribute("ClientID", clientID);
+                        context.setAttribute(Constants.CLIENT_ID, clientID);
                     } else {
                         log.warn("No client found with the principal {}, exiting", principal);
                     }
@@ -91,7 +92,7 @@ public class ClientDetailsAspect {
                             .orElse(null);
                         if (orgDTO != null) {
                             String clientId = orgDTO.getClientId();
-                            context.setAttribute("ClientID", clientId);
+                            context.setAttribute(Constants.CLIENT_ID, clientId);
                         } else {
                             log.warn("No org found with the default org id {}, exiting", user.get().getOrganizationDefaultId());
                         }
