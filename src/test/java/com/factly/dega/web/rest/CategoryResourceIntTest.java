@@ -13,6 +13,7 @@ import com.factly.dega.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +30,7 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -101,6 +103,9 @@ public class CategoryResourceIntTest {
     private MockMvc restCategoryMockMvc;
 
     private Category category;
+
+    @Mock
+    private CategoryService categoryServiceMock;
 
     @Before
     public void setup() {
@@ -278,11 +283,23 @@ public class CategoryResourceIntTest {
 
     @Test
     public void getAllCategories() throws Exception {
+
+        category.setId("existing_id");
+        CategoryDTO categoryDTO = categoryMapper.toDto(category);
+        List<CategoryDTO> categories = new ArrayList<>();
+        categories.add(categoryDTO);
+        CategoryResource postResource = new CategoryResource(categoryServiceMock);
+        this.restCategoryMockMvc = MockMvcBuilders.standaloneSetup(postResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter).build();
+        when(categoryServiceMock.findByClientId(any(), any())).thenReturn(new PageImpl(categories));
         // Initialize the database
         categoryRepository.save(category);
 
         // Get all the categoryList
-        restCategoryMockMvc.perform(get("/api/categories?sort=id,desc"))
+        restCategoryMockMvc.perform(get("/api/categories?sort=id,desc").requestAttr("ClientID", "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId())))

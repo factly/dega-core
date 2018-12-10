@@ -120,4 +120,16 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.findByClientIdAndSlug(clientId, slug)
             .map(categoryMapper::toDto);
     }
+
+    /**
+     * Get all posts by clientId.
+     *
+     * @param clientId the client id of the entity
+     * @return the entity
+     */
+    @Override
+    public Page<CategoryDTO> findByClientId(String clientId, Pageable pageable) {
+        log.debug("Request to get Post : {}", clientId);
+        return categoryRepository.findByClientId(clientId, pageable).map(categoryMapper::toDto);
+    }
 }
