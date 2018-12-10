@@ -6,7 +6,6 @@ import com.factly.dega.domain.Organization;
 import com.factly.dega.repository.OrganizationRepository;
 import com.factly.dega.repository.search.OrganizationSearchRepository;
 import com.factly.dega.service.OrganizationService;
-import com.factly.dega.service.dto.CategoryDTO;
 import com.factly.dega.service.dto.OrganizationDTO;
 import com.factly.dega.service.mapper.OrganizationMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
