@@ -120,4 +120,16 @@ public class TagServiceImpl implements TagService {
         return tagRepository.findByClientIdAndSlug(clientId, slug)
             .map(tagMapper::toDto);
     }
+
+    /**
+     * Get all tags by clientId.
+     *
+     * @param clientId the client id of the entity
+     * @return the entity
+     */
+    @Override
+    public Page<TagDTO> findByClientId(String clientId, Pageable pageable) {
+        log.debug("Request to get Post : {}", clientId);
+        return tagRepository.findByClientId(clientId, pageable).map(tagMapper::toDto);
+    }
 }
