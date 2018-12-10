@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface PostRepository extends MongoRepository<Post, String> {
+public interface PostRepository extends DegaCustomRepository<Post, String> {
     @Query("{}")
     Page<Post> findAllWithEagerRelationships(Pageable pageable);
 
@@ -24,10 +24,5 @@ public interface PostRepository extends MongoRepository<Post, String> {
 
     @Query("{'id': ?0}")
     Optional<Post> findOneWithEagerRelationships(String id);
-
-    @Query("{'clientId': ?0}")
-    Page<Post> findByClientId(String clientId, Pageable pageable);
-
-    Optional<Post> findByClientIdAndSlug(String clientId, String slug);
 
 }
