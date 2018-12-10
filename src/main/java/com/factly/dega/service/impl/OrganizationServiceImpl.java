@@ -121,4 +121,16 @@ public class OrganizationServiceImpl implements OrganizationService {
             .map(organizationMapper::toDto);
     }
 
+    /**
+     * Get all organizations by clientId.
+     *
+     * @param clientId the client id of the entity
+     * @return the entity
+     */
+    @Override
+    public Page<OrganizationDTO> findByClientId(String clientId, Pageable pageable) {
+        log.debug("Request to get Post : {}", clientId);
+        return organizationRepository.findByClientId(clientId, pageable).map(organizationMapper::toDto);
+    }
+
 }

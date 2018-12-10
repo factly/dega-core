@@ -288,8 +288,8 @@ public class CategoryResourceIntTest {
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
         List<CategoryDTO> categories = new ArrayList<>();
         categories.add(categoryDTO);
-        CategoryResource postResource = new CategoryResource(categoryServiceMock);
-        this.restCategoryMockMvc = MockMvcBuilders.standaloneSetup(postResource)
+        CategoryResource categoryResource = new CategoryResource(categoryServiceMock);
+        this.restCategoryMockMvc = MockMvcBuilders.standaloneSetup(categoryResource)
                 .setCustomArgumentResolvers(pageableArgumentResolver)
                 .setControllerAdvice(exceptionTranslator)
                 .setConversionService(createFormattingConversionService())
