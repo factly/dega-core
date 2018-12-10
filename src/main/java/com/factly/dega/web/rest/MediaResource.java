@@ -63,17 +63,45 @@ public class MediaResource {
     /**
      * POST  /media : Create a new media.
      *
+     * @param mediaDTO the mediaDTO to create
+     * @return the ResponseEntity with status 201 (Created) and with body the new mediaDTO, or with status 400 (Bad Request) if the media has already an ID
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @PostMapping("/media")
+    @Timed
+    public ResponseEntity<MediaDTO> createMedia(@Valid @RequestBody MediaDTO mediaDTO, HttpServletRequest request) throws URISyntaxException {
+        log.debug("REST request to save Media : {}", mediaDTO);
+        if (mediaDTO.getId() != null) {
+            throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        if (obj != null) {
+            mediaDTO.setClientId((String) obj);
+        }
+        mediaDTO.setCreatedDate(ZonedDateTime.now());
+        mediaDTO.setLastUpdatedDate(ZonedDateTime.now());
+        MediaDTO result = mediaService.save(mediaDTO);
+        return ResponseEntity.created(new URI("/api/media/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+    /**
+     * POST  /media : Create a new media.
+     *
      * @param file the media to be uploaded
      * @return the ResponseEntity with status 201 (Created) and with body the new mediaDTO, or with status 400 (Bad Request) if the media has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @Timed
-    @RequestMapping(value = "/media", method = RequestMethod.POST, consumes = {"multipart/form-data"})
-    public ResponseEntity<MediaDTO> createMedia(@RequestParam("file") @Valid @NotNull @NotBlank MultipartFile file,
+    @RequestMapping(value = "/media/upload", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    public ResponseEntity<MediaDTO> uploadMedia(@RequestParam("file") @Valid @NotNull @NotBlank MultipartFile file,
                                                 HttpServletRequest request) throws URISyntaxException {
         MediaDTO mediaDTO = new MediaDTO();
         log.debug("REST request to save Media : {}", mediaDTO);
-        String fileName = fileStorageService.storeFile(file);
+        Object client = request.getAttribute(Constants.CLIENT_ID);
+
+        String fileName = fileStorageService.storeFile(file, client);
         mediaDTO.setName(fileName);
 
         // set the default slug by removing all special chars except letters and numbers
@@ -86,7 +114,7 @@ public class MediaResource {
             .toUriString();
         mediaDTO.setUrl(fileDownloadUri);
 
-        Object user = request.getAttribute("UserID");
+        Object user = request.getAttribute(Constants.USER_ID);
         if (user != null) {
             mediaDTO.setUploadedBy((String) user);
         }
@@ -98,9 +126,8 @@ public class MediaResource {
         if (mediaDTO.getId() != null) {
             throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            mediaDTO.setClientId((String) obj);
+        if (client != null) {
+            mediaDTO.setClientId((String) client);
         }
         mediaDTO.setCreatedDate(ZonedDateTime.now());
         mediaDTO.setLastUpdatedDate(ZonedDateTime.now());
@@ -115,9 +142,10 @@ public class MediaResource {
 
 
     @GetMapping("/media/download/{fileName:.+}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
+    public ResponseEntity<Resource> downloadMedia(@PathVariable String fileName, HttpServletRequest request) {
         // Load file as Resource
-        Resource resource = fileStorageService.loadFileAsResource(fileName);
+        Object client = request.getAttribute(Constants.CLIENT_ID);
+        Resource resource = fileStorageService.loadFileAsResource(fileName, client);
 
         // Try to determine file's content type
         String contentType = null;

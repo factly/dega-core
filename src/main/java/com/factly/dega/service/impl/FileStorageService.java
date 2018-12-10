@@ -18,21 +18,28 @@ import java.nio.file.StandardCopyOption;
 @Service
 public class FileStorageService {
 
-    private final Path fileStorageLocation;
+    private final String mediaStorageRootDir;
 
     @Autowired
     public FileStorageService(@Value("${dega.media.upload-dir}") String uploadDir) {
-        // TODO pull it from yaml config properties
-        this.fileStorageLocation = Paths.get(uploadDir).toAbsolutePath().normalize();
+        this.mediaStorageRootDir = uploadDir;
+    }
 
+    private Path createDirs(String clientID) {
+        String clientDir = (mediaStorageRootDir.endsWith("/")) ?
+            mediaStorageRootDir + clientID:
+            mediaStorageRootDir + System.getProperty("file.separator")  + clientID;
+
+        Path clientPath = Paths.get(clientDir).toAbsolutePath().normalize();
         try {
-            Files.createDirectories(this.fileStorageLocation);
+            Files.createDirectories(clientPath);
         } catch (Exception ex) {
             throw new RuntimeException("Could not create the directory where the uploaded files will be stored.", ex);
         }
+        return clientPath;
     }
 
-    public String storeFile(MultipartFile file) {
+    public String storeFile(MultipartFile file, Object client) {
         // Normalize file name
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
@@ -43,7 +50,8 @@ public class FileStorageService {
             }
 
             // Copy file to the target location (Replacing existing file with the same name)
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
+            Path clientPath = createDirs((String) client);
+            Path targetLocation = clientPath.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             return fileName;
@@ -52,9 +60,10 @@ public class FileStorageService {
         }
     }
 
-    public Resource loadFileAsResource(String fileName) {
+    public Resource loadFileAsResource(String fileName, Object client) {
         try {
-            Path filePath = this.fileStorageLocation.resolve(fileName).normalize();
+            Path clientPath = createDirs((String) client);
+            Path filePath = clientPath.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if(resource.exists()) {
                 return resource;

@@ -85,6 +85,9 @@ keycloak:
     api:
         uri: http://localhost:9080/auth/admin/realms/jhipster/users
 
+dega:
+    media:
+        upload-dir: ./uploads
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
