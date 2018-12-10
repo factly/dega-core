@@ -13,9 +13,8 @@ import org.springframework.stereotype.Repository;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface StatusRepository extends MongoRepository<Status, String> {
+public interface StatusRepository extends DegaCustomRepository<Status, String> {
 
     Optional<Status> findByName(String name);
 
-    Optional<Status> findByClientIdAndSlug(String clientId, String slug);
 }

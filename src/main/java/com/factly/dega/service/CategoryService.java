@@ -62,4 +62,13 @@ public interface CategoryService {
      * @return Optional<CategoryDTO> post by clientId and slug
      */
     Optional<CategoryDTO> findByClientIdAndSlug(String clientId, String slug);
+
+    /**
+     * Get all the posts by client id.
+     *
+     * @param clientId the client id
+     * @param pageable the pagination information
+     * @return the list of entities
+    */
+    Page<CategoryDTO> findByClientId(String clientId, Pageable pageable);
 }

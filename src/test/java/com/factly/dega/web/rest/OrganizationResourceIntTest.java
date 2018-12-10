@@ -13,6 +13,7 @@ import com.factly.dega.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +30,7 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -209,6 +211,9 @@ public class OrganizationResourceIntTest {
     private MockMvc restOrganizationMockMvc;
 
     private Organization organization;
+
+    @Mock
+    private OrganizationService organizationServiceMock;
 
     @Before
     public void setup() {
@@ -494,11 +499,23 @@ public class OrganizationResourceIntTest {
 
     @Test
     public void getAllOrganizations() throws Exception {
+
+        organization.setId("existing_id");
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+        List<OrganizationDTO> organizations = new ArrayList<>();
+        organizations.add(organizationDTO);
+        OrganizationResource organizationResource = new OrganizationResource(organizationServiceMock);
+        this.restOrganizationMockMvc = MockMvcBuilders.standaloneSetup(organizationResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter).build();
+        when(organizationServiceMock.findByClientId(any(), any())).thenReturn(new PageImpl(organizations));
         // Initialize the database
         organizationRepository.save(organization);
 
         // Get all the organizationList
-        restOrganizationMockMvc.perform(get("/api/organizations?sort=id,desc"))
+        restOrganizationMockMvc.perform(get("/api/organizations?sort=id,desc").requestAttr("ClientID", "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organization.getId())))

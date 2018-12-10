@@ -62,4 +62,13 @@ public interface MediaService {
      * @return Optional<MediaDTO> post by clientId and slug
      */
     Optional<MediaDTO> findByClientIdAndSlug(String clientId, String slug);
+
+    /**
+     * Get all the Media by client id.
+     *
+     * @param clientId the client id
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<MediaDTO> findByClientId(String clientId, Pageable pageable);
 }

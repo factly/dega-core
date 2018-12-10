@@ -120,4 +120,16 @@ public class MediaServiceImpl implements MediaService {
         return mediaRepository.findByClientIdAndSlug(clientId, slug)
             .map(mediaMapper::toDto);
     }
+
+    /**
+     * Get all media by clientId.
+     *
+     * @param clientId the client id of the entity
+     * @return the entity
+     */
+    @Override
+    public Page<MediaDTO> findByClientId(String clientId, Pageable pageable) {
+        log.debug("Request to get Post : {}", clientId);
+        return mediaRepository.findByClientId(clientId, pageable).map(mediaMapper::toDto);
+    }
 }

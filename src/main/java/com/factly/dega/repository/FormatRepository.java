@@ -12,8 +12,6 @@ import java.util.Optional;
  * Spring Data MongoDB repository for the Format entity.
  */
 @Repository
-public interface FormatRepository extends MongoRepository<Format, String> {
-
-    Optional<Format> findByClientIdAndSlug(String clientId, String slug);
+public interface FormatRepository extends DegaCustomRepository<Format, String> {
 
 }
