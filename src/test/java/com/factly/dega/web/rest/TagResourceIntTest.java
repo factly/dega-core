@@ -13,6 +13,7 @@ import com.factly.dega.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +30,7 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -98,6 +100,9 @@ public class TagResourceIntTest {
     private MockMvc restTagMockMvc;
 
     private Tag tag;
+
+    @Mock
+    private TagService tagServiceMock;
 
     @Before
     public void setup() {
@@ -273,11 +278,23 @@ public class TagResourceIntTest {
 
     @Test
     public void getAllTags() throws Exception {
+
+        tag.setId("existing_id");
+        TagDTO tagDTO = tagMapper.toDto(tag);
+        List<TagDTO> tags = new ArrayList<>();
+        tags.add(tagDTO);
+        TagResource tagResource = new TagResource(tagServiceMock);
+        this.restTagMockMvc = MockMvcBuilders.standaloneSetup(tagResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter).build();
+        when(tagServiceMock.findByClientId(any(), any())).thenReturn(new PageImpl(tags));
         // Initialize the database
         tagRepository.save(tag);
 
         // Get all the tagList
-        restTagMockMvc.perform(get("/api/tags?sort=id,desc"))
+        restTagMockMvc.perform(get("/api/tags?sort=id,desc").requestAttr("ClientID", "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(tag.getId())))

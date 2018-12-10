@@ -178,6 +178,20 @@ public class DegaUserResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    /**
+     * GET  /dega-users/email/:email : get the "email" degaUser.
+     *
+     * @param email the email of the degaUserDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the degaUserDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/dega-users/email/{email}")
+    @Timed
+    public ResponseEntity<DegaUserDTO> getDegaUserByEmail(@PathVariable String email) {
+        log.debug("REST request to get DegaUser by Email : {}", email);
+        Optional<DegaUserDTO> degaUserDTO = degaUserService.findByEmailId(email);
+        return ResponseUtil.wrapOrNotFound(degaUserDTO);
+    }
+
     private JsonObject transformDTO(DegaUserDTO degaUserDTO) {
         JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(degaUserDTO);
         jObj.remove("facebookURL");

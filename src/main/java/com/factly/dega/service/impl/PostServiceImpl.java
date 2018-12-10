@@ -117,7 +117,7 @@ public class PostServiceImpl implements PostService {
     }
 
     /**
-     * Get one post by email id.
+     * Get all posts by clientId.
      *
      * @param clientId the client id of the entity
      * @return the entity

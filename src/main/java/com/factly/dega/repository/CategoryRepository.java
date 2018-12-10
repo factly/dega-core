@@ -13,7 +13,6 @@ import java.util.Optional;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface CategoryRepository extends MongoRepository<Category, String> {
+public interface CategoryRepository extends DegaCustomRepository<Category, String> {
 
-    Optional<Category> findByClientIdAndSlug(String clientId, String slug);
 }

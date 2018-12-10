@@ -1,6 +1,7 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.factly.dega.config.Constants;
 import com.factly.dega.service.MediaService;
 import com.factly.dega.service.impl.FileStorageService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,6 +33,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -95,7 +98,7 @@ public class MediaResource {
         if (mediaDTO.getId() != null) {
             throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getAttribute("ClientID");
+        Object obj = request.getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             mediaDTO.setClientId((String) obj);
         }
@@ -166,9 +169,16 @@ public class MediaResource {
      */
     @GetMapping("/media")
     @Timed
-    public ResponseEntity<List<MediaDTO>> getAllMedia(Pageable pageable) {
+    public ResponseEntity<List<MediaDTO>> getAllMedia(Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to get a page of Media");
-        Page<MediaDTO> page = mediaService.findAll(pageable);
+        Page<MediaDTO> page = new PageImpl<>(new ArrayList<>());
+        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        if (obj != null) {
+            String clientId = (String) obj;
+            page = mediaService.findByClientId(clientId, pageable);
+
+        }
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/media");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -227,7 +237,7 @@ public class MediaResource {
     @GetMapping("/mediabyslug/{slug}")
     @Timed
     public Optional<MediaDTO> getMediaBySlug(@PathVariable String slug, HttpServletRequest request) {
-        Object obj = request.getAttribute("ClientID");
+        Object obj = request.getAttribute(Constants.CLIENT_ID);
         String clientId = null;
         if (obj != null) {
             clientId = (String) obj;

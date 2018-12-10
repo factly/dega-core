@@ -13,6 +13,7 @@ import com.factly.dega.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +30,7 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -125,6 +127,9 @@ public class MediaResourceIntTest {
     private MockMvc restMediaMockMvc;
 
     private Media media;
+
+    @Mock
+    private MediaService mediaServiceMock;
 
     @Before
     public void setup() {
@@ -390,11 +395,23 @@ public class MediaResourceIntTest {
 
     @Test
     public void getAllMedia() throws Exception {
+
+        media.setId("existing_id");
+        MediaDTO mediaDTO = mediaMapper.toDto(media);
+        List<MediaDTO> posts = new ArrayList<>();
+        posts.add(mediaDTO);
+        MediaResource mediaResource = new MediaResource(mediaServiceMock);
+        this.restMediaMockMvc = MockMvcBuilders.standaloneSetup(mediaResource)
+                .setCustomArgumentResolvers(pageableArgumentResolver)
+                .setControllerAdvice(exceptionTranslator)
+                .setConversionService(createFormattingConversionService())
+                .setMessageConverters(jacksonMessageConverter).build();
+        when(mediaServiceMock.findByClientId(any(), any())).thenReturn(new PageImpl(posts));
         // Initialize the database
         mediaRepository.save(media);
 
         // Get all the mediaList
-        restMediaMockMvc.perform(get("/api/media?sort=id,desc"))
+        restMediaMockMvc.perform(get("/api/media?sort=id,desc").requestAttr("ClientID", "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(media.getId())))
