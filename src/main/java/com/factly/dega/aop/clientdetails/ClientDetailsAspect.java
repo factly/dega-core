@@ -66,6 +66,7 @@ public class ClientDetailsAspect {
             if (context != null && context.getAttribute(Constants.CLIENT_ID) == null) {
                 OAuth2Authentication auth = (OAuth2Authentication) context.getUserPrincipal();
                 String principal = (String) auth.getPrincipal();
+                context.setAttribute("UserID", principal);
 
                 if (principal.startsWith("service-account-")) {
                     // Request with API token

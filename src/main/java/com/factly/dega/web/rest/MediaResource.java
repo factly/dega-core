@@ -3,6 +3,7 @@ package com.factly.dega.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.config.Constants;
 import com.factly.dega.service.MediaService;
+import com.factly.dega.service.impl.FileStorageService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
@@ -10,16 +11,24 @@ import com.factly.dega.service.dto.MediaDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -43,6 +52,9 @@ public class MediaResource {
     private static final String ENTITY_NAME = "coreMedia";
 
     private final MediaService mediaService;
+
+    @Autowired
+    private FileStorageService fileStorageService;
 
     public MediaResource(MediaService mediaService) {
         this.mediaService = mediaService;
@@ -72,6 +84,86 @@ public class MediaResource {
         return ResponseEntity.created(new URI("/api/media/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    /**
+     * POST  /media : Create a new media.
+     *
+     * @param file the media to be uploaded
+     * @return the ResponseEntity with status 201 (Created) and with body the new mediaDTO, or with status 400 (Bad Request) if the media has already an ID
+     * @throws URISyntaxException if the Location URI syntax is incorrect
+     */
+    @Timed
+    @RequestMapping(value = "/media/upload", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+    public ResponseEntity<MediaDTO> uploadMedia(@RequestParam("file") @Valid @NotNull @NotBlank MultipartFile file,
+                                                HttpServletRequest request) throws URISyntaxException {
+        MediaDTO mediaDTO = new MediaDTO();
+        log.debug("REST request to save Media : {}", mediaDTO);
+        Object client = request.getAttribute(Constants.CLIENT_ID);
+
+        String fileName = fileStorageService.storeFile(file, client);
+        mediaDTO.setName(fileName);
+
+        // set the default slug by removing all special chars except letters and numbers
+        String slug = fileName.replaceAll("[^a-zA-Z0-9]+","");
+        mediaDTO.setSlug(slug);
+
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+            .path("/api/media/download/")
+            .path(fileName)
+            .toUriString();
+        mediaDTO.setUrl(fileDownloadUri);
+
+        Object user = request.getAttribute(Constants.USER_ID);
+        if (user != null) {
+            mediaDTO.setUploadedBy((String) user);
+        }
+
+        Long fileSize = file.getSize();
+        mediaDTO.setFileSize(fileSize.toString());
+        mediaDTO.setType(file.getContentType());
+
+        if (mediaDTO.getId() != null) {
+            throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (client != null) {
+            mediaDTO.setClientId((String) client);
+        }
+        mediaDTO.setCreatedDate(ZonedDateTime.now());
+        mediaDTO.setLastUpdatedDate(ZonedDateTime.now());
+
+        // set it to current date and guve user an option to edit it later
+        mediaDTO.setPublishedDate(ZonedDateTime.now());
+        MediaDTO result = mediaService.save(mediaDTO);
+        return ResponseEntity.created(new URI("/api/media/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+
+    @GetMapping("/media/download/{fileName:.+}")
+    public ResponseEntity<Resource> downloadMedia(@PathVariable String fileName, HttpServletRequest request) {
+        // Load file as Resource
+        Object client = request.getAttribute(Constants.CLIENT_ID);
+        Resource resource = fileStorageService.loadFileAsResource(fileName, client);
+
+        // Try to determine file's content type
+        String contentType = null;
+        try {
+            contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+        } catch (IOException ex) {
+            log.info("Could not determine file type.");
+        }
+
+        // Fallback to the default content type if type could not be determined
+        if(contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return ResponseEntity.ok()
+            .contentType(MediaType.parseMediaType(contentType))
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+            .body(resource);
     }
 
     /**
