@@ -29,6 +29,7 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -72,6 +73,7 @@ public class DegaUserResource {
         if (degaUserDTO.getId() != null) {
             throw new BadRequestAlertException("A new degaUser cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        degaUserDTO.setCreatedDate(ZonedDateTime.now());
         DegaUserDTO result = degaUserService.save(degaUserDTO);
         OAuth2Authentication auth = (OAuth2Authentication) request.getUserPrincipal();
         if (auth != null) {
