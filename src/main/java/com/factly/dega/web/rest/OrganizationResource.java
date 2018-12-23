@@ -1,7 +1,6 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.factly.dega.config.Constants;
 import com.factly.dega.service.OrganizationService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.HeaderUtil;
@@ -11,7 +10,6 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,12 +22,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Organization.
@@ -61,10 +55,6 @@ public class OrganizationResource {
         log.debug("REST request to save Organization : {}", organizationDTO);
         if (organizationDTO.getId() != null) {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            organizationDTO.setClientId((String) obj);
         }
         organizationDTO.setCreatedDate(ZonedDateTime.now());
         organizationDTO.setLastUpdatedDate(ZonedDateTime.now());
@@ -107,13 +97,7 @@ public class OrganizationResource {
     @Timed
     public ResponseEntity<List<OrganizationDTO>> getAllOrganizations(Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to get a page of Organizations");
-        Page<OrganizationDTO> page = new PageImpl<>(new ArrayList<>());
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            String clientId = (String) obj;
-            page = organizationService.findByClientId(clientId, pageable);
-
-        }
+        Page<OrganizationDTO> page = organizationService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -171,14 +155,9 @@ public class OrganizationResource {
      */
     @GetMapping("/organizationbyslug/{slug}")
     @Timed
-    public Optional<OrganizationDTO> getOrganizationBySlug(@PathVariable String slug, HttpServletRequest request) {
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
-        String clientId = null;
-        if (obj != null) {
-            clientId = (String) obj;
-        }
-        log.debug("REST request to get Organization by clienId : {} and slug : {}", clientId, slug);
-        Optional<OrganizationDTO> organizationDTO = organizationService.findByClientIdAndSlug(clientId, slug);
+    public Optional<OrganizationDTO> getOrganizationBySlug(@PathVariable String slug) {
+        log.debug("REST request to get Organization by slug : {}", slug);
+        Optional<OrganizationDTO> organizationDTO = organizationService.findBySlug(slug);
         return organizationDTO;
     }
 
