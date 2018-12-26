@@ -15,4 +15,6 @@ import java.util.Optional;
 @Repository
 public interface OrganizationRepository extends DegaCustomRepository<Organization, String> {
 
+    Optional<Organization> findBySlug(String slug);
+
 }

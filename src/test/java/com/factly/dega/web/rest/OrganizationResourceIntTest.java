@@ -499,23 +499,11 @@ public class OrganizationResourceIntTest {
 
     @Test
     public void getAllOrganizations() throws Exception {
-
-        organization.setId("existing_id");
-        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
-        List<OrganizationDTO> organizations = new ArrayList<>();
-        organizations.add(organizationDTO);
-        OrganizationResource organizationResource = new OrganizationResource(organizationServiceMock);
-        this.restOrganizationMockMvc = MockMvcBuilders.standaloneSetup(organizationResource)
-                .setCustomArgumentResolvers(pageableArgumentResolver)
-                .setControllerAdvice(exceptionTranslator)
-                .setConversionService(createFormattingConversionService())
-                .setMessageConverters(jacksonMessageConverter).build();
-        when(organizationServiceMock.findByClientId(any(), any())).thenReturn(new PageImpl(organizations));
         // Initialize the database
         organizationRepository.save(organization);
 
         // Get all the organizationList
-        restOrganizationMockMvc.perform(get("/api/organizations?sort=id,desc").requestAttr("ClientID", "testClientID"))
+        restOrganizationMockMvc.perform(get("/api/organizations?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organization.getId())))

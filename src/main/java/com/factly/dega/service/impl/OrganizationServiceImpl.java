@@ -110,27 +110,14 @@ public class OrganizationServiceImpl implements OrganizationService {
     /**
      * Get the organization by clientId and slug.
      *
-     * @param clientId the clientId of the OrganizationDTO
      * @param slug the slug of the OrganizationDTO
      * @return Optional<OrganizationDTO> organization by clientId and slug
      */
     @Override
-    public Optional<OrganizationDTO> findByClientIdAndSlug(String clientId, String slug) {
-        log.debug("Request to get post  by clienId : {} and slug : {}", clientId, slug);
-        return organizationRepository.findByClientIdAndSlug(clientId, slug)
+    public Optional<OrganizationDTO> findBySlug(String slug) {
+        log.debug("Request to get post  by slug : {}", slug);
+        return organizationRepository.findBySlug(slug)
             .map(organizationMapper::toDto);
-    }
-
-    /**
-     * Get all organizations by clientId.
-     *
-     * @param clientId the client id of the entity
-     * @return the entity
-     */
-    @Override
-    public Page<OrganizationDTO> findByClientId(String clientId, Pageable pageable) {
-        log.debug("Request to get Post : {}", clientId);
-        return organizationRepository.findByClientId(clientId, pageable).map(organizationMapper::toDto);
     }
 
 }

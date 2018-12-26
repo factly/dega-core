@@ -48,7 +48,6 @@ public class DegaUserDTO implements Serializable {
     @NotNull
     private String email;
 
-    @NotNull
     private ZonedDateTime createdDate;
 
     private String roleId;
