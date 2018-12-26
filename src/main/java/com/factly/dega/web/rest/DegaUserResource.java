@@ -74,8 +74,9 @@ public class DegaUserResource {
             throw new BadRequestAlertException("A new degaUser cannot already have an ID", ENTITY_NAME, "idexists");
         }
         degaUserDTO.setCreatedDate(ZonedDateTime.now());
-        DegaUserDTO result = degaUserService.save(degaUserDTO);
         OAuth2Authentication auth = (OAuth2Authentication) request.getUserPrincipal();
+
+        // save the user to keycloak
         if (auth != null) {
             String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
             JsonObject jObj = transformDTO(degaUserDTO);
@@ -86,6 +87,9 @@ public class DegaUserResource {
             HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
             restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
         }
+
+        // save the user to mongo database
+        DegaUserDTO result = degaUserService.save(degaUserDTO);
 
         return ResponseEntity.created(new URI("/api/dega-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -212,6 +216,8 @@ public class DegaUserResource {
         jObj.remove("twitterURL");
         jObj.remove("facebookURL");
         jObj.remove("website");
+        jObj.remove("createdDate");
+        jObj.remove("organizationCurrentId");
         jObj.addProperty("username", degaUserDTO.getEmail());
         jObj.addProperty("id", String.valueOf(java.util.UUID.randomUUID()));
         return jObj;
