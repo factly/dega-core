@@ -239,7 +239,7 @@ public class DegaUserResourceIntTest {
         assertThat(testDegaUser.isEnabled()).isEqualTo(DEFAULT_ENABLED);
         assertThat(testDegaUser.isEmailVerified()).isEqualTo(DEFAULT_EMAIL_VERIFIED);
         assertThat(testDegaUser.getEmail()).isEqualTo(DEFAULT_EMAIL);
-        assertThat(testDegaUser.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testDegaUser.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
 
         // Validate the DegaUser in Elasticsearch
         verify(mockDegaUserSearchRepository, times(1)).save(testDegaUser);
@@ -351,10 +351,10 @@ public class DegaUserResourceIntTest {
         restDegaUserMockMvc.perform(post("/api/dega-users")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(degaUserDTO)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isCreated());
 
         List<DegaUser> degaUserList = degaUserRepository.findAll();
-        assertThat(degaUserList).hasSize(databaseSizeBeforeTest);
+        assertThat(degaUserList).hasSize(databaseSizeBeforeTest + 1);
     }
 
     @Test
