@@ -5,6 +5,7 @@ import com.factly.dega.config.Constants;
 import com.factly.dega.service.MediaService;
 import com.factly.dega.service.impl.FileStorageService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.MediaDTO;
@@ -105,8 +106,8 @@ public class MediaResource {
         mediaDTO.setName(fileName);
 
         // set the default slug by removing all special chars except letters and numbers
-        String slug = fileName.replaceAll("[^a-zA-Z0-9]+","");
-        mediaDTO.setSlug(slug);
+        mediaDTO.setSlug(getSlug((String) client, fileName));
+        mediaDTO.setTitle(fileName.substring(0, fileName.lastIndexOf('.')));
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
             .path("/api/media/download/")
@@ -273,6 +274,25 @@ public class MediaResource {
         log.debug("REST request to get media by clienId : {} and slug : {}", clientId, slug);
         Optional<MediaDTO> mediaDTO = mediaService.findByClientIdAndSlug(clientId, slug);
         return mediaDTO;
+    }
+
+    public String getSlug(String clientId, String claim){
+        if(claim != null){
+            int slugExtention = 0;
+            String tempSlug = CommonUtil.removeSpecialCharsFromString(claim);
+            return createSlug(clientId, tempSlug, tempSlug, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+        Optional<MediaDTO> mediaDTO = mediaService.findByClientIdAndSlug(clientId, slug);
+        if(mediaDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(clientId, slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 
 }
