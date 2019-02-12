@@ -162,3 +162,6 @@ jhipster:
 # ===================================================================
 
 # application:
+dega:
+    media:
+        upload-dir: ./uploads
