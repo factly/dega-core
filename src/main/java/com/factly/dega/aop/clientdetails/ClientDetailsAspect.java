@@ -65,8 +65,6 @@ public class ClientDetailsAspect {
         try {
             if (context != null && context.getAttribute(Constants.CLIENT_ID) == null) {
                 OAuth2Authentication auth = (OAuth2Authentication) context.getUserPrincipal();
-
-                // add this check as some routes are disabled from authentications
                 if (auth != null) {
                     String principal = (String) auth.getPrincipal();
                     context.setAttribute("UserID", principal);
