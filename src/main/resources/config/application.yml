@@ -164,4 +164,4 @@ jhipster:
 # application:
 dega:
     media:
-        upload-dir: ./dega-content
+        upload-dir: ./uploads
