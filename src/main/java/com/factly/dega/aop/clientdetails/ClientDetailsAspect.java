@@ -65,37 +65,41 @@ public class ClientDetailsAspect {
         try {
             if (context != null && context.getAttribute(Constants.CLIENT_ID) == null) {
                 OAuth2Authentication auth = (OAuth2Authentication) context.getUserPrincipal();
-                String principal = (String) auth.getPrincipal();
-                context.setAttribute("UserID", principal);
 
-                if (principal.startsWith("service-account-")) {
-                    // Request with API token
-                    String[] tokens = principal.split("service-account-");
+                // add this check as some routes are disabled from authentications
+                if (auth != null) {
+                    String principal = (String) auth.getPrincipal();
+                    context.setAttribute("UserID", principal);
 
-                    if (tokens.length == 2) {
-                        String clientID = tokens[1];
-                        context.setAttribute(Constants.CLIENT_ID, clientID);
-                    } else {
-                        log.warn("No client found with the principal {}, exiting", principal);
-                    }
-                } else {
-                    // request with user login
-                    String userId = principal;
-                    Optional<DegaUserDTO> user = degaUserService.findByEmailId(userId);
-                    log.info("Login userID is {}", userId);
-                    if (user.isPresent()) {
-                        // get the default org dto
-                        OrganizationDTO orgDTO = user.get()
-                            .getOrganizations()
-                            .stream()
-                            .filter(o -> o.getId().equals(user.get().getOrganizationDefaultId()))
-                            .findAny()
-                            .orElse(null);
-                        if (orgDTO != null) {
-                            String clientId = orgDTO.getClientId();
-                            context.setAttribute(Constants.CLIENT_ID, clientId);
+                    if (principal.startsWith("service-account-")) {
+                        // Request with API token
+                        String[] tokens = principal.split("service-account-");
+
+                        if (tokens.length == 2) {
+                            String clientID = tokens[1];
+                            context.setAttribute(Constants.CLIENT_ID, clientID);
                         } else {
-                            log.warn("No org found with the default org id {}, exiting", user.get().getOrganizationDefaultId());
+                            log.warn("No client found with the principal {}, exiting", principal);
+                        }
+                    } else {
+                        // request with user login
+                        String userId = principal;
+                        Optional<DegaUserDTO> user = degaUserService.findByEmailId(userId);
+                        log.info("Login userID is {}", userId);
+                        if (user.isPresent()) {
+                            // get the default org dto
+                            OrganizationDTO orgDTO = user.get()
+                                .getOrganizations()
+                                .stream()
+                                .filter(o -> o.getId().equals(user.get().getOrganizationDefaultId()))
+                                .findAny()
+                                .orElse(null);
+                            if (orgDTO != null) {
+                                String clientId = orgDTO.getClientId();
+                                context.setAttribute(Constants.CLIENT_ID, clientId);
+                            } else {
+                                log.warn("No org found with the default org id {}, exiting", user.get().getOrganizationDefaultId());
+                            }
                         }
                     }
                 }

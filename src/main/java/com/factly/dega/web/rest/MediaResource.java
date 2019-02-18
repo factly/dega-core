@@ -33,10 +33,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -102,15 +102,22 @@ public class MediaResource {
         log.debug("REST request to save Media : {}", mediaDTO);
         Object client = request.getAttribute(Constants.CLIENT_ID);
 
-        String fileName = fileStorageService.storeFile(file, client);
+        Date date = new Date();
+        LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        int year  = localDate.getYear();
+        int month = localDate.getMonthValue();
+        String fileName = fileStorageService.storeFile(file, client, year, month);
         mediaDTO.setName(fileName);
 
         // set the default slug by removing all special chars except letters and numbers
         mediaDTO.setSlug(getSlug((String) client, fileName));
         mediaDTO.setTitle(fileName.substring(0, fileName.lastIndexOf('.')));
 
+        String fileSep = System.getProperty("file.separator");
+        String clientStr = (String) client;
+        String filePath = "api" + fileSep + "dega-content" + fileSep + clientStr + fileSep + year + fileSep + month + fileSep;
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path("/api/media/download/")
+            .path(filePath)
             .path(fileName)
             .toUriString();
         mediaDTO.setUrl(fileDownloadUri);
@@ -142,11 +149,16 @@ public class MediaResource {
     }
 
 
-    @GetMapping("/media/download/{fileName:.+}")
-    public ResponseEntity<Resource> downloadMedia(@PathVariable String fileName, HttpServletRequest request) {
+    @GetMapping("/dega-content/{clientId}/{year}/{month}/{fileName:.+}")
+    public ResponseEntity<Resource> downloadMedia(@PathVariable String clientId,
+                                                  @PathVariable String year,
+                                                  @PathVariable String month,
+                                                  @PathVariable String fileName,
+                                                  HttpServletRequest request) {
         // Load file as Resource
-        Object client = request.getAttribute(Constants.CLIENT_ID);
-        Resource resource = fileStorageService.loadFileAsResource(fileName, client);
+        int yr = Integer.parseInt(year);
+        int mon = Integer.parseInt(month);
+        Resource resource = fileStorageService.loadFileAsResource(fileName, clientId, yr, mon);
 
         // Try to determine file's content type
         String contentType = null;
