@@ -14,9 +14,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Service
 public class FileStorageService {
@@ -28,11 +25,10 @@ public class FileStorageService {
         this.mediaStorageRootDir = uploadDir;
     }
 
-    private Path createDirs(String clientID, int year, int month) {
-        String fileSep = System.getProperty("file.separator");
-        String clientDir = (mediaStorageRootDir.endsWith(fileSep)) ?
-            mediaStorageRootDir + clientID + fileSep + year + fileSep + month :
-            mediaStorageRootDir + fileSep  + clientID + fileSep + year + fileSep + month + fileSep;
+    private Path createDirs(String clientID) {
+        String clientDir = (mediaStorageRootDir.endsWith("/")) ?
+            mediaStorageRootDir + clientID:
+            mediaStorageRootDir + System.getProperty("file.separator")  + clientID;
 
         Path clientPath = Paths.get(clientDir).toAbsolutePath().normalize();
         try {
@@ -43,64 +39,30 @@ public class FileStorageService {
         return clientPath;
     }
 
-    public String storeFile(MultipartFile file, Object client, int year, int month) {
+    public String storeFile(MultipartFile file, Object client) {
         // Normalize file name
-        String name = StringUtils.cleanPath(file.getOriginalFilename());
-        final String cleanFileName = name.replaceAll("\\s+", "-").toLowerCase();
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
         try {
             // Check if the file's name contains invalid characters
-            if(cleanFileName.contains("..")) {
-                throw new RuntimeException("Sorry! Filename contains invalid path sequence " + cleanFileName);
+            if(fileName.contains("..")) {
+                throw new RuntimeException("Sorry! Filename contains invalid path sequence " + fileName);
             }
 
             // Copy file to the target location (Replacing existing file with the same name)
-            Path clientPath = createDirs((String) client, year, month);
-
-            Map<String, Path> fileMap = new HashMap<>();
-            Files.list(clientPath).forEach(p -> {
-                String fName = p.getFileName().toString();
-                fileMap.put(getFileNameWithoutExtension(fName), p);
-            });
-            String ext = getFileNameExtension(cleanFileName);
-            String uniqueFileName = getFileName(fileMap, getFileNameWithoutExtension(cleanFileName));
-            String fileName = uniqueFileName + ext;
-
+            Path clientPath = createDirs((String) client);
             Path targetLocation = clientPath.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
             return fileName;
         } catch (IOException ex) {
-            throw new RuntimeException("Could not store file " + cleanFileName + ". Please try again!", ex);
+            throw new RuntimeException("Could not store file " + fileName + ". Please try again!", ex);
         }
     }
 
-    private String getFileNameWithoutExtension(String fName) {
-        int idx = fName.lastIndexOf(".");
-        if (idx != -1) {
-            return fName.substring(0, idx);
-        }
-        return fName;
-    }
-
-    private String getFileNameExtension(String fName) {
-        int idx = fName.lastIndexOf(".");
-        if (idx != -1) {
-            return fName.substring(idx);
-        }
-        return "";
-    }
-
-    private String getFileName(Map<String, Path> fileMap, String fileName) {
-        if (fileMap.get(fileName) != null) {
-            return getFileName(fileMap, fileName + "-1");
-        }
-        return fileName;
-    }
-
-    public Resource loadFileAsResource(String fileName, Object client, int year, int day) {
+    public Resource loadFileAsResource(String fileName, Object client) {
         try {
-            Path clientPath = createDirs((String) client, year, day);
+            Path clientPath = createDirs((String) client);
             Path filePath = clientPath.resolve(fileName).normalize();
             Resource resource = new UrlResource(filePath.toUri());
             if(resource.exists()) {
