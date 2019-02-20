@@ -122,7 +122,7 @@ public class MediaResource {
             .toUriString();
         mediaDTO.setUrl(fileDownloadUri);
         mediaDTO.setSlug(fileDownloadUri);
-        
+
 
         Object user = request.getAttribute(Constants.USER_ID);
         if (user != null) {
