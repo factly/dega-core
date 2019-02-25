@@ -125,4 +125,4 @@ jhipster:
 # application:
 keycloak:
     api:
-        uri: http://localhost:9080/auth/admin/realms/jhipster/users
+        uri: http://localhost:9080/auth/admin/realms/dega/users
