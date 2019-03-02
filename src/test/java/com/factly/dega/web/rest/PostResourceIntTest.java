@@ -396,7 +396,7 @@ public class PostResourceIntTest {
         postRepository.save(post);
 
         // Get all the postList
-        restPostMockMvc.perform(get("/api/posts?sort=id,desc").requestAttr("ClientID", "testClientID"))
+        restPostMockMvc.perform(get("/api/posts?sort=id,desc").sessionAttr("ClientID", "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(post.getId())))

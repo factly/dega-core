@@ -2,6 +2,7 @@ package com.factly.dega.web.rest;
 
 import com.factly.dega.CoreApp;
 
+import com.factly.dega.config.Constants;
 import com.factly.dega.domain.Media;
 import com.factly.dega.repository.MediaRepository;
 import com.factly.dega.repository.search.MediaSearchRepository;
@@ -103,7 +104,7 @@ public class MediaResourceIntTest {
 
     @Autowired
     private MediaMapper mediaMapper;
-    
+
     @Autowired
     private MediaService mediaService;
 
@@ -411,7 +412,7 @@ public class MediaResourceIntTest {
         mediaRepository.save(media);
 
         // Get all the mediaList
-        restMediaMockMvc.perform(get("/api/media?sort=id,desc").requestAttr("ClientID", "testClientID"))
+        restMediaMockMvc.perform(get("/api/media?sort=id,desc").sessionAttr(Constants.CLIENT_ID, "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(media.getId())))
@@ -431,7 +432,7 @@ public class MediaResourceIntTest {
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
-    
+
     @Test
     public void getMedia() throws Exception {
         // Initialize the database

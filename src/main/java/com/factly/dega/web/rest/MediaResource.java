@@ -75,7 +75,7 @@ public class MediaResource {
         if (mediaDTO.getId() != null) {
             throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             mediaDTO.setClientId((String) obj);
         }
@@ -100,7 +100,7 @@ public class MediaResource {
                                                 HttpServletRequest request) throws URISyntaxException {
         MediaDTO mediaDTO = new MediaDTO();
         log.debug("REST request to save Media : {}", mediaDTO);
-        Object client = request.getAttribute(Constants.CLIENT_ID);
+        Object client = request.getSession().getAttribute(Constants.CLIENT_ID);
 
         Date date = new Date();
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
@@ -122,7 +122,7 @@ public class MediaResource {
             .toUriString();
         mediaDTO.setUrl(fileDownloadUri);
 
-        Object user = request.getAttribute(Constants.USER_ID);
+        Object user = request.getSession().getAttribute(Constants.USER_ID);
         if (user != null) {
             mediaDTO.setUploadedBy((String) user);
         }
@@ -182,7 +182,7 @@ public class MediaResource {
     public ResponseEntity<List<MediaDTO>> getAllMedia(Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to get a page of Media");
         Page<MediaDTO> page = new PageImpl<>(new ArrayList<>());
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             String clientId = (String) obj;
             page = mediaService.findByClientId(clientId, pageable);
@@ -247,7 +247,7 @@ public class MediaResource {
     @GetMapping("/mediabyslug/{slug}")
     @Timed
     public Optional<MediaDTO> getMediaBySlug(@PathVariable String slug, HttpServletRequest request) {
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         String clientId = null;
         if (obj != null) {
             clientId = (String) obj;

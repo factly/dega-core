@@ -46,7 +46,8 @@ public class FileStorageService {
     public String storeFile(MultipartFile file, Object client, int year, int month) {
         // Normalize file name
         String name = StringUtils.cleanPath(file.getOriginalFilename());
-        final String cleanFileName = name.replaceAll("\\s+", "-").toLowerCase();
+        // remove all chars except a-z, 0-9
+        final String cleanFileName = name.replaceAll("[^A-Za-z0-9]","").toLowerCase();
 
         try {
             // Check if the file's name contains invalid characters

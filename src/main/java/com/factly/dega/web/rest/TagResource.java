@@ -62,7 +62,7 @@ public class TagResource {
         if (tagDTO.getId() != null) {
             throw new BadRequestAlertException("A new tag cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             tagDTO.setClientId((String) obj);
         }
@@ -108,7 +108,7 @@ public class TagResource {
     public ResponseEntity<List<TagDTO>> getAllTags(Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to get a page of Tags");
         Page<TagDTO> page = new PageImpl<>(new ArrayList<>());
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             String clientId = (String) obj;
             page = tagService.findByClientId(clientId, pageable);
@@ -173,7 +173,7 @@ public class TagResource {
     @GetMapping("/tagbyslug/{slug}")
     @Timed
     public Optional<TagDTO> getTagBySlug(@PathVariable String slug, HttpServletRequest request) {
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         String clientId = null;
         if (obj != null) {
             clientId = (String) obj;

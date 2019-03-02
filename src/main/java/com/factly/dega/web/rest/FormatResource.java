@@ -60,7 +60,7 @@ public class FormatResource {
         if (formatDTO.getId() != null) {
             throw new BadRequestAlertException("A new format cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             formatDTO.setClientId((String) obj);
         }
@@ -165,7 +165,7 @@ public class FormatResource {
     @GetMapping("/formatbyslug/{slug}")
     @Timed
     public Optional<FormatDTO> getFormatBySlug(@PathVariable String slug, HttpServletRequest request) {
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         String clientId = null;
         if (obj != null) {
             clientId = (String) obj;

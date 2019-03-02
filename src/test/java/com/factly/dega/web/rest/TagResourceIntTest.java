@@ -76,7 +76,7 @@ public class TagResourceIntTest {
 
     @Autowired
     private TagMapper tagMapper;
-    
+
     @Autowired
     private TagService tagService;
 
@@ -294,7 +294,7 @@ public class TagResourceIntTest {
         tagRepository.save(tag);
 
         // Get all the tagList
-        restTagMockMvc.perform(get("/api/tags?sort=id,desc").requestAttr("ClientID", "testClientID"))
+        restTagMockMvc.perform(get("/api/tags?sort=id,desc").sessionAttr("ClientID", "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(tag.getId())))
@@ -305,7 +305,7 @@ public class TagResourceIntTest {
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
-    
+
     @Test
     public void getTag() throws Exception {
         // Initialize the database
