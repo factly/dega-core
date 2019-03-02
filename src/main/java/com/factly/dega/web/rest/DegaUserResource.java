@@ -2,6 +2,7 @@ package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.service.DegaUserService;
+import com.factly.dega.service.dto.KeyCloakUserDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
@@ -22,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -73,6 +75,7 @@ public class DegaUserResource {
         if (degaUserDTO.getId() != null) {
             throw new BadRequestAlertException("A new degaUser cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        degaUserDTO.setCreatedDate(ZonedDateTime.now());
         OAuth2Authentication auth = (OAuth2Authentication) request.getUserPrincipal();
         if (auth == null) {
             throw new BadRequestAlertException("A new degaUser cannot be created without user principal", ENTITY_NAME, "idexists");
@@ -80,26 +83,33 @@ public class DegaUserResource {
 
         // save the user to keycloak
         try {
-            // set the date here so that keycloak and mongo times of creation are close
-            degaUserDTO.setCreatedDate(ZonedDateTime.now());
-
-            log.info("Creating user in keycloak");
             String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
             JsonObject jObj = transformDTO(degaUserDTO);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
             httpHeaders.add("Authorization", token);
             String jsonAsString = jObj.toString();
-            log.debug("Create user request body {}", jsonAsString);
+            log.debug("Keycloak user request body {}", jsonAsString);
             HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
             restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
+        } catch(HttpClientErrorException e) {
+            if (e.getMessage().equals("403 Forbidden")) {
+                log.error("This logged in user {} does not have required access", auth.getPrincipal());
+                return null;
+            }
+            if (e.getMessage().equals("409 Conflict")) {
+                log.error("A user already exists with the same email address {}", degaUserDTO.getEmail());
+                return null;
+            }
+            // for all other errors rethrow
+            throw e;
         } catch(Exception e) {
-            log.error("keycloak user creation failed with the message {}", e.getMessage());
+            log.error("keycloak user creation failed with the message {}, exiting", e.getMessage());
             throw e;
         }
 
         // save the user to mongo database
-        log.info("Keycloak user creation is successful, adding user to degaUsers collection");
+        log.info("Keycloak user creation is successful, adding user to dega backend");
         DegaUserDTO result = degaUserService.save(degaUserDTO);
         return ResponseEntity.created(new URI("/api/dega-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -209,28 +219,16 @@ public class DegaUserResource {
     }
 
     private JsonObject transformDTO(DegaUserDTO degaUserDTO) {
-        JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(degaUserDTO);
-        jObj.remove("facebookURL");
-        jObj.remove("isActive");
-        jObj.remove("displayName");
-        jObj.remove("slug");
-        jObj.remove("roleId");
-        jObj.remove("organizations");
-        jObj.remove("organizationDefaultId");
-        jObj.remove("roleName");
-        jObj.remove("description");
-        jObj.remove("profilePicture");
-        jObj.remove("githubURL");
-        jObj.remove("linkedinURL");
-        jObj.remove("instagramURL");
-        jObj.remove("twitterURL");
-        jObj.remove("facebookURL");
-        jObj.remove("website");
-        jObj.remove("createdDate");
-        jObj.remove("organizationCurrentId");
-        jObj.addProperty("username", degaUserDTO.getEmail());
-        jObj.addProperty("id", String.valueOf(java.util.UUID.randomUUID()));
+        KeyCloakUserDTO keyCloakUserDTO = new KeyCloakUserDTO(
+            String.valueOf(java.util.UUID.randomUUID()),
+            degaUserDTO.getFirstName(),
+            degaUserDTO.getLastName(),
+            degaUserDTO.isEnabled(),
+            degaUserDTO.isEmailVerified(),
+            degaUserDTO.getEmail(),
+            degaUserDTO.getEmail()
+        );
+        JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakUserDTO);
         return jObj;
     }
-
 }

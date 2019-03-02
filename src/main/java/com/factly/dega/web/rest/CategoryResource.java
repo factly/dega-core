@@ -62,7 +62,7 @@ public class CategoryResource {
         if (categoryDTO.getId() != null) {
             throw new BadRequestAlertException("A new category cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             categoryDTO.setClientId((String) obj);
         }
@@ -108,7 +108,7 @@ public class CategoryResource {
     public ResponseEntity<List<CategoryDTO>> getAllCategories(Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to get a page of Categories");
         Page<CategoryDTO> page = new PageImpl(new ArrayList<>());
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             String clientId = (String) obj;
             page = categoryService.findByClientId(clientId, pageable);
@@ -173,7 +173,7 @@ public class CategoryResource {
     @GetMapping("/categorybyslug/{slug}")
     @Timed
     public Optional<CategoryDTO> getCategoryBySlug(@PathVariable String slug, HttpServletRequest request) {
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         String clientId = null;
         if (obj != null) {
             clientId = (String) obj;

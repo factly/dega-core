@@ -39,6 +39,7 @@ public class DegaContentResource {
                                                   @PathVariable String month,
                                                   @PathVariable String fileName,
                                                   HttpServletRequest request) {
+        // TODO validation 
         // Load file as Resource
         int yr = Integer.parseInt(year);
         int mon = Integer.parseInt(month);

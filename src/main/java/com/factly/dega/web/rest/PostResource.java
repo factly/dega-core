@@ -71,7 +71,7 @@ public class PostResource {
         if (status.isPresent() && status.get() != null) {
             postDTO.setStatusId(status.get().getId());
         }
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             postDTO.setClientId((String) obj);
         }
@@ -102,7 +102,7 @@ public class PostResource {
         if (status.get() != null) {
             postDTO.setStatusId(status.get().getId());
         }
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             postDTO.setClientId((String) obj);
         }
@@ -150,7 +150,7 @@ public class PostResource {
     public ResponseEntity<List<PostDTO>> getAllPosts(Pageable pageable, @RequestParam(required = false, defaultValue = "false") boolean eagerload, HttpServletRequest request) {
         log.debug("REST request to get a page of Posts");
         Page<PostDTO> page = new PageImpl(new ArrayList<>());
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             String clientId = (String) obj;
             page = postService.findByClientId(clientId, pageable);
@@ -214,7 +214,7 @@ public class PostResource {
     @GetMapping("/postbyslug/{slug}")
     @Timed
     public Optional<PostDTO> getPostBySlug(@PathVariable String slug, HttpServletRequest request) {
-        Object obj = request.getAttribute(Constants.CLIENT_ID);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         String clientId = null;
         if (obj != null) {
             clientId = (String) obj;

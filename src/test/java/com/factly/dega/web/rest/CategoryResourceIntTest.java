@@ -79,7 +79,7 @@ public class CategoryResourceIntTest {
 
     @Autowired
     private CategoryMapper categoryMapper;
-    
+
     @Autowired
     private CategoryService categoryService;
 
@@ -299,7 +299,7 @@ public class CategoryResourceIntTest {
         categoryRepository.save(category);
 
         // Get all the categoryList
-        restCategoryMockMvc.perform(get("/api/categories?sort=id,desc").requestAttr("ClientID", "testClientID"))
+        restCategoryMockMvc.perform(get("/api/categories?sort=id,desc").sessionAttr("ClientID", "testClientID"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId())))
@@ -311,7 +311,7 @@ public class CategoryResourceIntTest {
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
-    
+
     @Test
     public void getCategory() throws Exception {
         // Initialize the database
