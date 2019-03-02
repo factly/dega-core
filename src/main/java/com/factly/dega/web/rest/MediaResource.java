@@ -115,12 +115,13 @@ public class MediaResource {
 
         String fileSep = System.getProperty("file.separator");
         String clientStr = (String) client;
-        String filePath = "api" + fileSep + "dega-content" + fileSep + clientStr + fileSep + year + fileSep + month + fileSep;
+        String filePath = fileSep + "dega-content" + fileSep + clientStr + fileSep + year + fileSep + month + fileSep;
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
             .path(filePath)
             .path(fileName)
             .toUriString();
         mediaDTO.setUrl(fileDownloadUri);
+        mediaDTO.setSlug(fileDownloadUri);
 
         Object user = request.getSession().getAttribute(Constants.USER_ID);
         if (user != null) {

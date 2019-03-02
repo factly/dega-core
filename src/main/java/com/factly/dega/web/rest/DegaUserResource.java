@@ -111,7 +111,6 @@ public class DegaUserResource {
         // save the user to mongo database
         log.info("Keycloak user creation is successful, adding user to dega backend");
         DegaUserDTO result = degaUserService.save(degaUserDTO);
-
         return ResponseEntity.created(new URI("/api/dega-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
