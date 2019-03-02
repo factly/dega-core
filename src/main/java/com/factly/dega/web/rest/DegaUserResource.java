@@ -73,24 +73,34 @@ public class DegaUserResource {
         if (degaUserDTO.getId() != null) {
             throw new BadRequestAlertException("A new degaUser cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        degaUserDTO.setCreatedDate(ZonedDateTime.now());
         OAuth2Authentication auth = (OAuth2Authentication) request.getUserPrincipal();
+        if (auth == null) {
+            throw new BadRequestAlertException("A new degaUser cannot be created without user principal", ENTITY_NAME, "idexists");
+        }
 
         // save the user to keycloak
-        if (auth != null) {
+        try {
+            // set the date here so that keycloak and mongo times of creation are close
+            degaUserDTO.setCreatedDate(ZonedDateTime.now());
+
+            log.info("Creating user in keycloak");
             String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
             JsonObject jObj = transformDTO(degaUserDTO);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
             httpHeaders.add("Authorization", token);
             String jsonAsString = jObj.toString();
+            log.debug("Create user request body {}", jsonAsString);
             HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
             restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
+        } catch(Exception e) {
+            log.error("keycloak user creation failed with the message {}", e.getMessage());
+            throw e;
         }
 
         // save the user to mongo database
+        log.info("Keycloak user creation is successful, adding user to degaUsers collection");
         DegaUserDTO result = degaUserService.save(degaUserDTO);
-
         return ResponseEntity.created(new URI("/api/dega-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);

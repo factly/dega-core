@@ -63,50 +63,78 @@ public class ClientDetailsAspect {
     @Before("applicationPackagePointcut() && springBeanPointcut()")
     public void retrieveClientID(JoinPoint joinPoint) throws Throwable {
         try {
-            if (context != null && context.getAttribute(Constants.CLIENT_ID) == null) {
-                OAuth2Authentication auth = (OAuth2Authentication) context.getUserPrincipal();
-                if(auth != null) {
-                    String principal = (String) auth.getPrincipal();
-                    context.setAttribute("UserID", principal);
-
-                    if (principal.startsWith("service-account-")) {
-                        // Request with API token
-                        String[] tokens = principal.split("service-account-");
-
-                        if (tokens.length == 2) {
-                            String clientID = tokens[1];
-                            context.setAttribute(Constants.CLIENT_ID, clientID);
-                        } else {
-                            log.warn("No client found with the principal {}, exiting", principal);
-                        }
-                    } else {
-                        // request with user login
-                        String userId = principal;
-                        Optional<DegaUserDTO> user = degaUserService.findByEmailId(userId);
-                        log.info("Login userID is {}", userId);
-                        if (user.isPresent()) {
-                            // get the default org dto
-                            OrganizationDTO orgDTO = user.get()
-                                .getOrganizations()
-                                .stream()
-                                .filter(o -> o.getId().equals(user.get().getOrganizationDefaultId()))
-                                .findAny()
-                                .orElse(null);
-                            if (orgDTO != null) {
-                                String clientId = orgDTO.getClientId();
-                                context.setAttribute(Constants.CLIENT_ID, clientId);
-                            } else {
-                                log.warn("No org found with the default org id {}, exiting", user.get().getOrganizationDefaultId());
-                            }
-                        }
-                    }
-                }
+            if (context == null) {
+                log.warn("Context undefined, exiting");
+                return;
             }
 
+            Object clientId = context.getAttribute(Constants.CLIENT_ID);
+            if (clientId != null) {
+                String cId = (String) clientId;
+                log.info("Client ID is already set to {} in the context attribute, returning", cId);
+                return;
+            }
+
+            // get user principal
+            OAuth2Authentication auth = (OAuth2Authentication) context.getUserPrincipal();
+            if(auth == null) {
+                log.info("User principal is undefined (probably because of the public media api), exiting");
+                return;
+            }
+
+            String principal = (String) auth.getPrincipal();
+            if (principal.startsWith("service-account-")) {
+                log.info("Service account login detected");
+                // Request with API token
+                String[] tokens = principal.split("service-account-");
+                if (tokens.length != 2) {
+                    log.warn("No client found with the principal {}, exiting", principal);
+                    return;
+                }
+
+                clientId = tokens[1];
+                log.info("Setting client id to {} and user id to {}", clientId, principal);
+                context.setAttribute(Constants.CLIENT_ID, clientId);
+                context.setAttribute(Constants.USER_ID, principal);
+                return;
+            }
+
+            //if we are here, it means the login is user based
+            // request with user login
+            log.info("User account login detected");
+            String userId = principal;
+            Optional<DegaUserDTO> user = degaUserService.findByEmailId(userId);
+            if (!user.isPresent()) {
+                log.warn("No dega user found with the id {}, exiting", userId);
+                return;
+            }
+
+            String orgId = (user.get().getOrganizationCurrentId() != null) ?
+                user.get().getOrganizationCurrentId() : user.get().getOrganizationDefaultId();
+            if (orgId == null) {
+                log.warn("User with id {} is not associated with any organization, exiting", orgId);
+                return;
+            }
+
+            // get the organization
+            OrganizationDTO orgDTO = user.get()
+                .getOrganizations()
+                .stream()
+                .filter(o -> o.getId().equals(orgId))
+                .findAny()
+                .orElse(null);
+            if (orgDTO == null) {
+                log.warn("No organization found with the org id {}, exiting", user.get().getOrganizationDefaultId());
+                return;
+            }
+
+            clientId = orgDTO.getClientId();
+            log.info("Setting client id to {} and user id to {}", clientId, principal);
+            context.setAttribute(Constants.CLIENT_ID, clientId);
+            context.setAttribute(Constants.USER_ID, principal);
         } catch (IllegalArgumentException e) {
             log.error("Illegal argument: {} in {}.{}()", Arrays.toString(joinPoint.getArgs()),
                 joinPoint.getSignature().getDeclaringTypeName(), joinPoint.getSignature().getName());
-
             throw e;
         }
     }
