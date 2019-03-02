@@ -60,9 +60,13 @@ public class FormatResource {
         if (formatDTO.getId() != null) {
             throw new BadRequestAlertException("A new format cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            formatDTO.setClientId((String) obj);
+        if (formatDTO.isIsDefault()) {
+            formatDTO.setClientId(Constants.DEFAULT_CLIENTID);
+        } else if (formatDTO.getClientId() != null) {
+            Object obj = request.getAttribute("ClientID");
+            if (obj != null) {
+                formatDTO.setClientId((String) obj);
+            }
         }
         formatDTO.setCreatedDate(ZonedDateTime.now());
         formatDTO.setLastUpdatedDate(ZonedDateTime.now());

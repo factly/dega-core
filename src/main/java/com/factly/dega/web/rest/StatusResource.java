@@ -60,9 +60,13 @@ public class StatusResource {
         if (statusDTO.getId() != null) {
             throw new BadRequestAlertException("A new status cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            statusDTO.setClientId((String) obj);
+        if (statusDTO.isIsDefault()) {
+            statusDTO.setClientId(Constants.DEFAULT_CLIENTID);
+        } else if (statusDTO.getClientId() != null) {
+            Object obj = request.getAttribute("ClientID");
+            if (obj != null) {
+                statusDTO.setClientId((String) obj);
+            }
         }
         statusDTO.setCreatedDate(ZonedDateTime.now());
         statusDTO.setLastUpdatedDate(ZonedDateTime.now());
