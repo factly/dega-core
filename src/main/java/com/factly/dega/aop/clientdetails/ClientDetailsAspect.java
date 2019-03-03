@@ -104,6 +104,13 @@ public class ClientDetailsAspect {
             // request with user login
             log.info("User account login detected");
             String userId = principal;
+
+            // ignore admin login as this is the first time
+            if (userId.equals("admin")) {
+                log.info("Logged as admin, returning to the api");
+                return;
+            }
+
             Optional<DegaUserDTO> user = degaUserService.findByEmailId(userId);
             if (!user.isPresent()) {
                 String errorMsg = "No dega user found with the id "+userId+", exiting";
