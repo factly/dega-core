@@ -13,6 +13,7 @@ public final class Constants {
     public static final String DEFAULT_LANGUAGE = "en";
     public static final String CLIENT_ID = "ClientID";
     public static final String USER_ID = "UserID";
+    public static final String DEFAULT_CLIENTID = "default";
 
     private Constants() {
     }

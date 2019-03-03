@@ -60,9 +60,13 @@ public class RoleResource {
         if (roleDTO.getId() != null) {
             throw new BadRequestAlertException("A new role cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            roleDTO.setClientId((String) obj);
+        if (roleDTO.isIsDefault()) {
+            roleDTO.setClientId(Constants.DEFAULT_CLIENTID);
+        } else if (roleDTO.getClientId() != null) {
+            Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+            if (obj != null) {
+                roleDTO.setClientId((String) obj);
+            }
         }
         roleDTO.setCreatedDate(ZonedDateTime.now());
         roleDTO.setLastUpdatedDate(ZonedDateTime.now());
