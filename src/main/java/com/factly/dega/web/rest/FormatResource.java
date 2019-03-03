@@ -63,7 +63,7 @@ public class FormatResource {
         if (formatDTO.isIsDefault()) {
             formatDTO.setClientId(Constants.DEFAULT_CLIENTID);
         } else if (formatDTO.getClientId() != null) {
-            Object obj = request.getAttribute("ClientID");
+            Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
             if (obj != null) {
                 formatDTO.setClientId((String) obj);
             }

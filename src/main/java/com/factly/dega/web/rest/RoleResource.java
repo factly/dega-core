@@ -63,7 +63,7 @@ public class RoleResource {
         if (roleDTO.isIsDefault()) {
             roleDTO.setClientId(Constants.DEFAULT_CLIENTID);
         } else if (roleDTO.getClientId() != null) {
-            Object obj = request.getAttribute("ClientID");
+            Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
             if (obj != null) {
                 roleDTO.setClientId((String) obj);
             }
