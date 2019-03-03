@@ -61,6 +61,7 @@ public class ClientDetailsAspect {
      */
     @Before("applicationPackagePointcut() && springBeanPointcut()")
     public void retrieveClientID(JoinPoint joinPoint) throws Throwable {
+        log.info("Aspect to retrieve client id");
         HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
         HttpSession session = httpServletRequest.getSession();
         try {
