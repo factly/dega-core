@@ -62,7 +62,7 @@ public class StatusResource {
         }
         if (statusDTO.isIsDefault()) {
             statusDTO.setClientId(Constants.DEFAULT_CLIENTID);
-        } else if (statusDTO.getClientId() != null) {
+        } else if (statusDTO.getClientId() == null) {
             Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
             if (obj != null) {
                 statusDTO.setClientId((String) obj);
