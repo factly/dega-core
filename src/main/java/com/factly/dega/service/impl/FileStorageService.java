@@ -47,7 +47,7 @@ public class FileStorageService {
         // Normalize file name
         String name = StringUtils.cleanPath(file.getOriginalFilename());
         // remove all chars except a-z, 0-9
-        final String cleanFileName = name.replaceAll("[^A-Za-z0-9]","").toLowerCase();
+        final String cleanFileName = name.replaceAll("[^A-Za-z0-9.]","").toLowerCase();
 
         try {
             // Check if the file's name contains invalid characters
