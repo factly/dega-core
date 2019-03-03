@@ -131,6 +131,10 @@ public class PostResource {
         if (postDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        Optional<StatusDTO> status = statusService.findOneByName(postDTO.getStatusName());
+        if (status.get() != null) {
+            postDTO.setStatusId(status.get().getId());
+        }
         postDTO.setLastUpdatedDate(ZonedDateTime.now());
         PostDTO result = postService.save(postDTO);
         return ResponseEntity.ok()
