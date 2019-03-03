@@ -23,7 +23,6 @@ public class ClientDetailsAspectConfiguration {
     }
 
     @Bean
-    @Profile(JHipsterConstants.SPRING_PROFILE_DEVELOPMENT)
     public ClientDetailsAspect clientDetailsAspect(Environment env, DegaUserService degaUserService) {
         return new ClientDetailsAspect(env, degaUserService);
     }
