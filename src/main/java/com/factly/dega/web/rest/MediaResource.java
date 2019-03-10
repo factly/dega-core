@@ -106,12 +106,14 @@ public class MediaResource {
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         int year  = localDate.getYear();
         int month = localDate.getMonthValue();
+        String originalFileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf('.'));
         String fileName = fileStorageService.storeFile(file, client, year, month);
         mediaDTO.setName(fileName);
 
         // set the default slug by removing all special chars except letters and numbers
         mediaDTO.setSlug(getSlug((String) client, fileName));
-        mediaDTO.setTitle(fileName.substring(0, fileName.lastIndexOf('.')));
+        mediaDTO.setTitle(originalFileName);
+        mediaDTO.setAltText(originalFileName);
 
         String fileSep = System.getProperty("file.separator");
         String clientStr = (String) client;
