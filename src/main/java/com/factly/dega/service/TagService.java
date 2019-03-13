@@ -1,7 +1,6 @@
 package com.factly.dega.service;
 
 import com.factly.dega.service.dto.TagDTO;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -48,7 +47,7 @@ public interface TagService {
      * Search for the tag corresponding to the query.
      *
      * @param query the query of the search
-     * 
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */

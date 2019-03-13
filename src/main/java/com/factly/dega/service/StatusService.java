@@ -1,8 +1,6 @@
 package com.factly.dega.service;
 
-import java.util.Optional;
 import com.factly.dega.service.dto.StatusDTO;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -57,7 +55,7 @@ public interface StatusService {
      * Search for the status corresponding to the query.
      *
      * @param query the query of the search
-     * 
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */

@@ -1,13 +1,11 @@
 package com.factly.dega.repository;
 
-import java.util.Optional;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
-import com.factly.dega.domain.Post;
+import java.util.Optional;
 
 /**
  * Created by Sravan on 12/6/2018.

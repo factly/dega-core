@@ -1,21 +1,20 @@
 package com.factly.dega.service.impl;
 
-import com.factly.dega.service.DegaUserService;
 import com.factly.dega.domain.DegaUser;
 import com.factly.dega.repository.DegaUserRepository;
 import com.factly.dega.repository.search.DegaUserSearchRepository;
+import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.dto.DegaUserDTO;
 import com.factly.dega.service.mapper.DegaUserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * Service Implementation for managing DegaUser.

@@ -1,11 +1,7 @@
 package com.factly.dega.repository;
 
 import com.factly.dega.domain.Tag;
-import org.springframework.data.mongodb.repository.Query;
-import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
-
-import java.util.Optional;
 
 
 /**

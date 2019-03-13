@@ -1,9 +1,9 @@
 package com.factly.dega.service.mapper;
 
-import com.factly.dega.domain.*;
+import com.factly.dega.domain.Status;
 import com.factly.dega.service.dto.StatusDTO;
-
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * Mapper for the entity Status and its DTO StatusDTO.

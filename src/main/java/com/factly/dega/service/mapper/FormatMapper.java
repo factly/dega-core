@@ -1,9 +1,9 @@
 package com.factly.dega.service.mapper;
 
-import com.factly.dega.domain.*;
+import com.factly.dega.domain.Format;
 import com.factly.dega.service.dto.FormatDTO;
-
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * Mapper for the entity Format and its DTO FormatDTO.

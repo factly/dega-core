@@ -1,9 +1,9 @@
 package com.factly.dega.service.mapper;
 
-import com.factly.dega.domain.*;
+import com.factly.dega.domain.Tag;
 import com.factly.dega.service.dto.TagDTO;
-
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 /**
  * Mapper for the entity Tag and its DTO TagDTO.

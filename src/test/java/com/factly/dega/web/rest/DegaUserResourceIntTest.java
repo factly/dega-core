@@ -1,19 +1,15 @@
 package com.factly.dega.web.rest;
 
 import com.factly.dega.CoreApp;
-
 import com.factly.dega.domain.DegaUser;
+import com.factly.dega.domain.Organization;
 import com.factly.dega.domain.Role;
-import com.factly.dega.domain.Organization;
-import com.factly.dega.domain.Organization;
-import com.factly.dega.domain.Organization;
 import com.factly.dega.repository.DegaUserRepository;
 import com.factly.dega.repository.search.DegaUserSearchRepository;
 import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.dto.DegaUserDTO;
 import com.factly.dega.service.mapper.DegaUserMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
-
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,18 +31,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.client.RestTemplate;
 
-import java.security.Principal;
 import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.time.ZoneOffset;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
-import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
+import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;

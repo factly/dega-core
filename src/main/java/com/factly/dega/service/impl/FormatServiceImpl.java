@@ -1,21 +1,20 @@
 package com.factly.dega.service.impl;
 
-import com.factly.dega.service.FormatService;
 import com.factly.dega.domain.Format;
 import com.factly.dega.repository.FormatRepository;
 import com.factly.dega.repository.search.FormatSearchRepository;
+import com.factly.dega.service.FormatService;
 import com.factly.dega.service.dto.FormatDTO;
 import com.factly.dega.service.mapper.FormatMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 
 /**
  * Service Implementation for managing Format.

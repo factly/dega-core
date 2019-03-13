@@ -1,15 +1,14 @@
 package com.factly.dega.config;
 
+import com.factly.dega.security.oauth2.CachedUserInfoTokenServices;
+import com.factly.dega.security.oauth2.SimpleAuthoritiesExtractor;
+import com.factly.dega.security.oauth2.SimplePrincipalExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.AuthoritiesExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.PrincipalExtractor;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.ResourceServerProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.resource.UserInfoTokenServices;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import com.factly.dega.security.oauth2.CachedUserInfoTokenServices;
-import com.factly.dega.security.oauth2.SimpleAuthoritiesExtractor;
-import com.factly.dega.security.oauth2.SimplePrincipalExtractor;
 
 @Configuration
 public class OAuth2TokenServicesConfiguration {

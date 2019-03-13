@@ -1,7 +1,6 @@
 package com.factly.dega.service;
 
 import com.factly.dega.service.dto.CategoryDTO;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -48,7 +47,7 @@ public interface CategoryService {
      * Search for the category corresponding to the query.
      *
      * @param query the query of the search
-     * 
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */
