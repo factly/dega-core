@@ -6,6 +6,7 @@ import com.factly.dega.service.PostService;
 import com.factly.dega.service.StatusService;
 import com.factly.dega.service.dto.StatusDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.PostDTO;
@@ -75,6 +76,7 @@ public class PostResource {
         if (obj != null) {
             postDTO.setClientId((String) obj);
         }
+        postDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(postDTO.getTitle())));
         postDTO.setCreatedDate(ZonedDateTime.now());
         postDTO.setLastUpdatedDate(ZonedDateTime.now());
         PostDTO result = postService.save(postDTO);
@@ -106,6 +108,7 @@ public class PostResource {
         if (obj != null) {
             postDTO.setClientId((String) obj);
         }
+        postDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(postDTO.getTitle())));
         postDTO.setCreatedDate(ZonedDateTime.now());
         postDTO.setLastUpdatedDate(ZonedDateTime.now());
         postDTO.setPublishedDate(ZonedDateTime.now());
@@ -226,6 +229,24 @@ public class PostResource {
         log.debug("REST request to get post by clienId : {} and slug : {}", clientId, slug);
         Optional<PostDTO> postDTO = postService.findByClientIdAndSlug(clientId, slug);
         return postDTO;
+    }
+
+    public String getSlug(String clientId, String title){
+        if(clientId != null && title != null){
+            int slugExtention = 0;
+            return createSlug(clientId, title, title, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+        Optional<PostDTO> postDTO = postService.findByClientIdAndSlug(clientId, slug);
+        if(postDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(clientId, slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 
 }

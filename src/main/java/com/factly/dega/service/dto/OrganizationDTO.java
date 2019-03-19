@@ -93,7 +93,6 @@ public class OrganizationDTO implements Serializable {
     @NotNull
     private String clientId;
 
-    @NotNull
     private String slug;
 
     @NotNull

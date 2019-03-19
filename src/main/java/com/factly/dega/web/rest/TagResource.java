@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.config.Constants;
 import com.factly.dega.service.TagService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.TagDTO;
@@ -66,6 +67,7 @@ public class TagResource {
         if (obj != null) {
             tagDTO.setClientId((String) obj);
         }
+        tagDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(tagDTO.getName())));
         tagDTO.setCreatedDate(ZonedDateTime.now());
         tagDTO.setLastUpdatedDate(ZonedDateTime.now());
         TagDTO result = tagService.save(tagDTO);
@@ -181,6 +183,24 @@ public class TagResource {
         log.debug("REST request to get Tag by clienId : {} and slug : {}", clientId, slug);
         Optional<TagDTO> tagDTO = tagService.findByClientIdAndSlug(clientId, slug);
         return tagDTO;
+    }
+
+    public String getSlug(String clientId, String name){
+        if(clientId != null && name != null){
+            int slugExtention = 0;
+            return createSlug(clientId, name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+        Optional<TagDTO> tagDTO = tagService.findByClientIdAndSlug(clientId, slug);
+        if(tagDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(clientId, slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 
 }
