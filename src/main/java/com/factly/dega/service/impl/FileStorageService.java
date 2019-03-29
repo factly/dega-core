@@ -1,5 +1,6 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.web.rest.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -47,7 +48,7 @@ public class FileStorageService {
         // Normalize file name
         String name = StringUtils.cleanPath(file.getOriginalFilename());
         // remove all chars except a-z, 0-9
-        final String cleanFileName = name.replaceAll("[^A-Za-z0-9.]","").toLowerCase();
+        final String cleanFileName = CommonUtil.removeSpecialCharsFromString(name);
 
         try {
             // Check if the file's name contains invalid characters

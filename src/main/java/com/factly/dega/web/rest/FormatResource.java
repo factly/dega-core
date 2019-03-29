@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.config.Constants;
 import com.factly.dega.service.FormatService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.FormatDTO;
@@ -68,6 +69,7 @@ public class FormatResource {
                 formatDTO.setClientId((String) obj);
             }
         }
+        formatDTO.setSlug(getSlug(formatDTO.getClientId(), CommonUtil.removeSpecialCharsFromString(formatDTO.getName())));
         formatDTO.setCreatedDate(ZonedDateTime.now());
         formatDTO.setLastUpdatedDate(ZonedDateTime.now());
         FormatDTO result = formatService.save(formatDTO);
@@ -177,6 +179,24 @@ public class FormatResource {
         log.debug("REST request to get Format by clienId : {} and slug : {}", clientId, slug);
         Optional<FormatDTO> formatDTO = formatService.findByClientIdAndSlug(clientId, slug);
         return formatDTO;
+    }
+
+    public String getSlug(String clientId, String name){
+        if(clientId != null && name != null){
+            int slugExtention = 0;
+            return createSlug(clientId, name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+        Optional<FormatDTO> formatDTO = formatService.findByClientIdAndSlug(clientId, slug);
+        if(formatDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(clientId, slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 
 }

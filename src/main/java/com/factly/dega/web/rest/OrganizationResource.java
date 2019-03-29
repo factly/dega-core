@@ -1,8 +1,10 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.factly.dega.config.Constants;
 import com.factly.dega.service.OrganizationService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.OrganizationDTO;
@@ -56,6 +58,7 @@ public class OrganizationResource {
         if (organizationDTO.getId() != null) {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        organizationDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(organizationDTO.getName())));
         organizationDTO.setCreatedDate(ZonedDateTime.now());
         organizationDTO.setLastUpdatedDate(ZonedDateTime.now());
         OrganizationDTO result = organizationService.save(organizationDTO);
@@ -159,6 +162,24 @@ public class OrganizationResource {
         log.debug("REST request to get Organization by slug : {}", slug);
         Optional<OrganizationDTO> organizationDTO = organizationService.findBySlug(slug);
         return organizationDTO;
+    }
+
+    public String getSlug(String name){
+        if(name != null){
+            int slugExtention = 0;
+            return createSlug(name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String slug, String tempSlug, int slugExtention){
+        Optional<OrganizationDTO> postDTO = organizationService.findBySlug(slug);
+        if(postDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 
 }
