@@ -1,10 +1,12 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.factly.dega.config.Constants;
 import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.dto.DegaUserDTO;
 import com.factly.dega.service.dto.KeyCloakUserDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.google.gson.GsonBuilder;
@@ -99,6 +101,9 @@ public class DegaUserResource {
             log.error("keycloak user creation failed with the message {}, exiting", e.getMessage());
             throw e;
         }
+
+        // set slug
+         degaUserDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(degaUserDTO.getDisplayName())));
 
         // save the user to mongo database
         log.info("Keycloak user creation is successful, adding user to dega backend");
@@ -222,5 +227,23 @@ public class DegaUserResource {
         );
         JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakUserDTO);
         return jObj;
+    }
+
+    public String getSlug(String name){
+        if(name != null){
+            int slugExtention = 0;
+            return createSlug(name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String slug, String tempSlug, int slugExtention){
+        Optional<DegaUserDTO> postDTO = degaUserService.findBySlug(slug);
+        if(postDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 }

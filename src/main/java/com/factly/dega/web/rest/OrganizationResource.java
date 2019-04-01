@@ -180,5 +180,4 @@ public class OrganizationResource {
         }
         return slug;
     }
-
 }

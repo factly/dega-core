@@ -67,4 +67,12 @@ public interface DegaUserService {
      * @return the entity
      */
     Optional<DegaUserDTO> findByEmailId(String emailId);
+
+    /**
+     * Get the degaUser by clientId and slug.
+     *
+     * @param slug the slug of the DegaUserDTO
+     * @return Optional<DegaUserDTO> post by clientId and slug
+     */
+    Optional<DegaUserDTO> findBySlug(String slug);
 }

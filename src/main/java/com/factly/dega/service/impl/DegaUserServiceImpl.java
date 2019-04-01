@@ -127,4 +127,18 @@ public class DegaUserServiceImpl implements DegaUserService {
         return degaUserRepository.findByEmailId(emailId)
             .map(degaUserMapper::toDto);
     }
+
+    /**
+     * Get the degaUser by clientId and slug.
+     *
+     * @param slug the slug of the DegaUserDTO
+     * @return Optional<DegaUserDTO> post by clientId and slug
+     */
+    @Override
+    public Optional<DegaUserDTO> findBySlug(String slug) {
+        log.debug("Request to get DegaUser  by slug : {}", slug);
+        return degaUserRepository.findBySlug(slug)
+            .map(degaUserMapper::toDto);
+    }
+
 }
