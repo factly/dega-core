@@ -1,6 +1,7 @@
 package com.factly.dega.service;
 
 import com.factly.dega.service.dto.RoleDTO;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -47,7 +48,7 @@ public interface RoleService {
      * Search for the role corresponding to the query.
      *
      * @param query the query of the search
-     *
+     * 
      * @param pageable the pagination information
      * @return the list of entities
      */

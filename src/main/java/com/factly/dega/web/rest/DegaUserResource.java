@@ -3,12 +3,12 @@ package com.factly.dega.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.config.Constants;
 import com.factly.dega.service.DegaUserService;
-import com.factly.dega.service.dto.DegaUserDTO;
 import com.factly.dega.service.dto.KeyCloakUserDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
+import com.factly.dega.service.dto.DegaUserDTO;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -17,7 +17,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
@@ -28,9 +32,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing DegaUser.

@@ -3,11 +3,10 @@ package com.factly.dega.service.mapper;
 import com.factly.dega.domain.Authority;
 import com.factly.dega.domain.User;
 import com.factly.dega.service.dto.UserDTO;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**

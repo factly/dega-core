@@ -3,6 +3,7 @@ package com.factly.dega.repository;
 import com.factly.dega.config.Constants;
 import com.factly.dega.config.audit.AuditEventConverter;
 import com.factly.dega.domain.PersistentAuditEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.audit.AuditEvent;
@@ -12,9 +13,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * An implementation of Spring Boot's AuditEventRepository.

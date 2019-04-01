@@ -1,20 +1,22 @@
 package com.factly.dega.service.impl;
 
+import java.util.Optional;
+import com.factly.dega.service.StatusService;
 import com.factly.dega.domain.Status;
 import com.factly.dega.repository.StatusRepository;
 import com.factly.dega.repository.search.StatusSearchRepository;
-import com.factly.dega.service.StatusService;
 import com.factly.dega.service.dto.StatusDTO;
 import com.factly.dega.service.mapper.StatusMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * Service Implementation for managing Status.

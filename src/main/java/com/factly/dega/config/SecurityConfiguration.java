@@ -1,6 +1,7 @@
 package com.factly.dega.config;
 
-import com.factly.dega.security.AuthoritiesConstants;
+import com.factly.dega.security.*;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;

@@ -1,6 +1,7 @@
 package com.factly.dega.web.rest;
 
 import com.factly.dega.CoreApp;
+
 import com.factly.dega.config.Constants;
 import com.factly.dega.domain.Media;
 import com.factly.dega.repository.MediaRepository;
@@ -9,6 +10,7 @@ import com.factly.dega.service.MediaService;
 import com.factly.dega.service.dto.MediaDTO;
 import com.factly.dega.service.mapper.MediaMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,15 +28,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
+
 import static com.factly.dega.web.rest.TestUtil.sameInstant;
+import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;

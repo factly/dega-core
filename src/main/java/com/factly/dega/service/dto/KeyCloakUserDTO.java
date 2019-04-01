@@ -2,6 +2,10 @@ package com.factly.dega.service.dto;
 
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A DTO for the DegaUser entity.

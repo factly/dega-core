@@ -1,20 +1,21 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.service.MediaService;
 import com.factly.dega.domain.Media;
 import com.factly.dega.repository.MediaRepository;
 import com.factly.dega.repository.search.MediaSearchRepository;
-import com.factly.dega.service.MediaService;
 import com.factly.dega.service.dto.MediaDTO;
 import com.factly.dega.service.mapper.MediaMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * Service Implementation for managing Media.

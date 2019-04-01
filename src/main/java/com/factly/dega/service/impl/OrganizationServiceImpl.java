@@ -1,20 +1,21 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.service.OrganizationService;
 import com.factly.dega.domain.Organization;
 import com.factly.dega.repository.OrganizationRepository;
 import com.factly.dega.repository.search.OrganizationSearchRepository;
-import com.factly.dega.service.OrganizationService;
 import com.factly.dega.service.dto.OrganizationDTO;
 import com.factly.dega.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * Service Implementation for managing Organization.

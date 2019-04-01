@@ -1,20 +1,21 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.service.TagService;
 import com.factly.dega.domain.Tag;
 import com.factly.dega.repository.TagRepository;
 import com.factly.dega.repository.search.TagSearchRepository;
-import com.factly.dega.service.TagService;
 import com.factly.dega.service.dto.TagDTO;
 import com.factly.dega.service.mapper.TagMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
+import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * Service Implementation for managing Tag.

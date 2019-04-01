@@ -6,10 +6,12 @@ import com.factly.dega.domain.User;
 import com.factly.dega.repository.UserRepository;
 import com.factly.dega.repository.search.UserSearchRepository;
 import com.factly.dega.security.AuthoritiesConstants;
+
 import com.factly.dega.service.UserService;
 import com.factly.dega.service.dto.UserDTO;
 import com.factly.dega.service.mapper.UserMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,14 +26,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasItem;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**

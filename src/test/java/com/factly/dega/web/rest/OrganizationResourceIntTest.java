@@ -1,6 +1,7 @@
 package com.factly.dega.web.rest;
 
 import com.factly.dega.CoreApp;
+
 import com.factly.dega.domain.Organization;
 import com.factly.dega.repository.OrganizationRepository;
 import com.factly.dega.repository.search.OrganizationSearchRepository;
@@ -8,6 +9,7 @@ import com.factly.dega.service.OrganizationService;
 import com.factly.dega.service.dto.OrganizationDTO;
 import com.factly.dega.service.mapper.OrganizationMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,14 +27,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
+
 import static com.factly.dega.web.rest.TestUtil.sameInstant;
+import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
@@ -183,7 +187,7 @@ public class OrganizationResourceIntTest {
 
     @Autowired
     private OrganizationMapper organizationMapper;
-
+    
     @Autowired
     private OrganizationService organizationService;
 
@@ -547,7 +551,7 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
-
+    
     @Test
     public void getOrganization() throws Exception {
         // Initialize the database

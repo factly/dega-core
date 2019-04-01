@@ -1,6 +1,7 @@
 package com.factly.dega.web.rest;
 
 import com.factly.dega.CoreApp;
+
 import com.factly.dega.domain.Status;
 import com.factly.dega.repository.StatusRepository;
 import com.factly.dega.repository.search.StatusSearchRepository;
@@ -8,6 +9,7 @@ import com.factly.dega.service.StatusService;
 import com.factly.dega.service.dto.StatusDTO;
 import com.factly.dega.service.mapper.StatusMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,14 +26,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
-import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
+
 import static com.factly.dega.web.rest.TestUtil.sameInstant;
+import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
 import static org.hamcrest.Matchers.hasItem;
@@ -71,7 +74,7 @@ public class StatusResourceIntTest {
 
     @Autowired
     private StatusMapper statusMapper;
-
+    
     @Autowired
     private StatusService statusService;
 
@@ -285,7 +288,7 @@ public class StatusResourceIntTest {
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
-
+    
     @Test
     public void getStatus() throws Exception {
         // Initialize the database
