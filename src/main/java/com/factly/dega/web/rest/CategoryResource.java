@@ -5,6 +5,7 @@ import com.factly.dega.config.Constants;
 import com.factly.dega.service.CategoryService;
 import com.factly.dega.service.dto.CategoryDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -62,6 +63,7 @@ public class CategoryResource {
         if (obj != null) {
             categoryDTO.setClientId((String) obj);
         }
+        categoryDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(categoryDTO.getName())));
         categoryDTO.setCreatedDate(ZonedDateTime.now());
         categoryDTO.setLastUpdatedDate(ZonedDateTime.now());
         CategoryDTO result = categoryService.save(categoryDTO);
@@ -177,6 +179,24 @@ public class CategoryResource {
         log.debug("REST request to get Category by clienId : {} and slug : {}", clientId, slug);
         Optional<CategoryDTO> categoryDTO = categoryService.findByClientIdAndSlug(clientId, slug);
         return categoryDTO;
+    }
+
+    public String getSlug(String clientId, String name){
+        if(clientId != null && name != null){
+            int slugExtention = 0;
+            return createSlug(clientId, name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+        Optional<CategoryDTO> categoryDTO = categoryService.findByClientIdAndSlug(clientId, slug);
+        if(categoryDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(clientId, slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 
 }

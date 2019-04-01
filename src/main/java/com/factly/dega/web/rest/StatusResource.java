@@ -5,6 +5,7 @@ import com.factly.dega.config.Constants;
 import com.factly.dega.service.StatusService;
 import com.factly.dega.service.dto.StatusDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -64,6 +65,7 @@ public class StatusResource {
                 statusDTO.setClientId((String) obj);
             }
         }
+        statusDTO.setSlug(getSlug(statusDTO.getClientId(), CommonUtil.removeSpecialCharsFromString(statusDTO.getName())));
         statusDTO.setCreatedDate(ZonedDateTime.now());
         statusDTO.setLastUpdatedDate(ZonedDateTime.now());
         StatusDTO result = statusService.save(statusDTO);
@@ -172,6 +174,24 @@ public class StatusResource {
         log.debug("REST request to get Status by clienId : {} and slug : {}", clientId, slug);
         Optional<StatusDTO> statusDTO = statusService.findByClientIdAndSlug(clientId, slug);
         return statusDTO;
+    }
+
+    public String getSlug(String clientId, String name){
+        if(clientId != null && name != null){
+            int slugExtention = 0;
+            return createSlug(clientId, name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+        Optional<StatusDTO> statusDTO = statusService.findByClientIdAndSlug(clientId, slug);
+        if(statusDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(clientId, slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 
 }

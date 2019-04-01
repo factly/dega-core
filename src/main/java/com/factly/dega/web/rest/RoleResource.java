@@ -5,6 +5,7 @@ import com.factly.dega.config.Constants;
 import com.factly.dega.service.RoleService;
 import com.factly.dega.service.dto.RoleDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -64,6 +65,7 @@ public class RoleResource {
                 roleDTO.setClientId((String) obj);
             }
         }
+        roleDTO.setSlug(getSlug(roleDTO.getClientId(), CommonUtil.removeSpecialCharsFromString(roleDTO.getName())));
         roleDTO.setCreatedDate(ZonedDateTime.now());
         roleDTO.setLastUpdatedDate(ZonedDateTime.now());
         RoleDTO result = roleService.save(roleDTO);
@@ -174,5 +176,22 @@ public class RoleResource {
         return roleDTO;
     }
 
+    public String getSlug(String clientId, String name){
+        if(clientId != null && name != null){
+            int slugExtention = 0;
+            return createSlug(clientId, name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+        Optional<RoleDTO> roleDTO = roleService.findByClientIdAndSlug(clientId, slug);
+        if(roleDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(clientId, slug, tempSlug, slugExtention);
+        }
+        return slug;
+    }
 
 }

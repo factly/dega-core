@@ -107,7 +107,7 @@ public class MediaResource {
         mediaDTO.setName(fileName);
 
         // set the default slug by removing all special chars except letters and numbers
-        mediaDTO.setSlug(getSlug((String) client, fileName));
+        mediaDTO.setSlug(getSlug((String) client, originalFileName));
         mediaDTO.setTitle(originalFileName);
         mediaDTO.setAltText(originalFileName);
 
@@ -119,7 +119,7 @@ public class MediaResource {
             .path(fileName)
             .toUriString();
         mediaDTO.setUrl(fileDownloadUri);
-        mediaDTO.setSlug(fileDownloadUri);
+        //mediaDTO.setSlug(fileDownloadUri);
 
         Object user = request.getSession().getAttribute(Constants.USER_ID);
         if (user != null) {
@@ -256,10 +256,10 @@ public class MediaResource {
         return mediaDTO;
     }
 
-    public String getSlug(String clientId, String claim){
-        if(claim != null){
+    public String getSlug(String clientId, String fileName){
+        if(fileName != null){
             int slugExtention = 0;
-            String tempSlug = CommonUtil.removeSpecialCharsFromString(claim);
+            String tempSlug = CommonUtil.removeSpecialCharsFromString(fileName);
             return createSlug(clientId, tempSlug, tempSlug, slugExtention);
         }
         return null;

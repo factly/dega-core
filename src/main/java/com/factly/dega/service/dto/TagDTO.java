@@ -15,7 +15,6 @@ public class TagDTO implements Serializable {
     @NotNull
     private String name;
 
-    @NotNull
     private String slug;
 
     private String description;

@@ -19,7 +19,6 @@ public class StatusDTO implements Serializable {
 
     private Boolean isDefault;
 
-    @NotNull
     private String slug;
 
     private ZonedDateTime createdDate;

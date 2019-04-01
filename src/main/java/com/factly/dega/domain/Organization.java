@@ -141,7 +141,6 @@ public class Organization implements Serializable {
     @Field("time_zone")
     private String timeZone;
 
-    @NotNull
     @Field("client_id")
     private String clientId;
 

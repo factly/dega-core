@@ -21,7 +21,6 @@ public class FormatDTO implements Serializable {
 
     private String description;
 
-    @NotNull
     private String slug;
 
     private ZonedDateTime createdDate;

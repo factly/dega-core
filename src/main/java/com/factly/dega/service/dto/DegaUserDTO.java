@@ -37,7 +37,6 @@ public class DegaUserDTO implements Serializable {
 
     private String description;
 
-    @NotNull
     private String slug;
 
     @NotNull
