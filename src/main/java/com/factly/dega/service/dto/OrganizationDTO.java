@@ -90,7 +90,6 @@ public class OrganizationDTO implements Serializable {
 
     private String timeZone;
 
-    @NotNull
     private String clientId;
 
     private String slug;
