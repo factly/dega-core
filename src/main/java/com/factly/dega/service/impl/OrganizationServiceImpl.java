@@ -115,7 +115,7 @@ public class OrganizationServiceImpl implements OrganizationService {
      */
     @Override
     public Optional<OrganizationDTO> findBySlug(String slug) {
-        log.debug("Request to get post  by slug : {}", slug);
+        log.debug("Request to get Organization by slug : {}", slug);
         return organizationRepository.findBySlug(slug)
             .map(organizationMapper::toDto);
     }
