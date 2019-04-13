@@ -9,58 +9,58 @@ import { OrganizationService } from 'app/entities/core/organization/organization
 import { Organization } from 'app/shared/model/core/organization.model';
 
 describe('Component Tests', () => {
-  describe('Organization Management Update Component', () => {
-    let comp: OrganizationUpdateComponent;
-    let fixture: ComponentFixture<OrganizationUpdateComponent>;
-    let service: OrganizationService;
+    describe('Organization Management Update Component', () => {
+        let comp: OrganizationUpdateComponent;
+        let fixture: ComponentFixture<OrganizationUpdateComponent>;
+        let service: OrganizationService;
 
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [CoreTestModule],
-        declarations: [OrganizationUpdateComponent]
-      })
-        .overrideTemplate(OrganizationUpdateComponent, '')
-        .compileComponents();
+        beforeEach(() => {
+            TestBed.configureTestingModule({
+                imports: [CoreTestModule],
+                declarations: [OrganizationUpdateComponent]
+            })
+                .overrideTemplate(OrganizationUpdateComponent, '')
+                .compileComponents();
 
-      fixture = TestBed.createComponent(OrganizationUpdateComponent);
-      comp = fixture.componentInstance;
-      service = fixture.debugElement.injector.get(OrganizationService);
+            fixture = TestBed.createComponent(OrganizationUpdateComponent);
+            comp = fixture.componentInstance;
+            service = fixture.debugElement.injector.get(OrganizationService);
+        });
+
+        describe('save', () => {
+            it(
+                'Should call update service on save for existing entity',
+                fakeAsync(() => {
+                    // GIVEN
+                    const entity = new Organization('123');
+                    spyOn(service, 'update').and.returnValue(of(new HttpResponse({ body: entity })));
+                    comp.organization = entity;
+                    // WHEN
+                    comp.save();
+                    tick(); // simulate async
+
+                    // THEN
+                    expect(service.update).toHaveBeenCalledWith(entity);
+                    expect(comp.isSaving).toEqual(false);
+                })
+            );
+
+            it(
+                'Should call create service on save for new entity',
+                fakeAsync(() => {
+                    // GIVEN
+                    const entity = new Organization();
+                    spyOn(service, 'create').and.returnValue(of(new HttpResponse({ body: entity })));
+                    comp.organization = entity;
+                    // WHEN
+                    comp.save();
+                    tick(); // simulate async
+
+                    // THEN
+                    expect(service.create).toHaveBeenCalledWith(entity);
+                    expect(comp.isSaving).toEqual(false);
+                })
+            );
+        });
     });
-
-    describe('save', () => {
-      it(
-        'Should call update service on save for existing entity',
-        fakeAsync(() => {
-          // GIVEN
-          const entity = new Organization('123');
-          spyOn(service, 'update').and.returnValue(of(new HttpResponse({ body: entity })));
-          comp.organization = entity;
-          // WHEN
-          comp.save();
-          tick(); // simulate async
-
-          // THEN
-          expect(service.update).toHaveBeenCalledWith(entity);
-          expect(comp.isSaving).toEqual(false);
-        })
-      );
-
-      it(
-        'Should call create service on save for new entity',
-        fakeAsync(() => {
-          // GIVEN
-          const entity = new Organization();
-          spyOn(service, 'create').and.returnValue(of(new HttpResponse({ body: entity })));
-          comp.organization = entity;
-          // WHEN
-          comp.save();
-          tick(); // simulate async
-
-          // THEN
-          expect(service.create).toHaveBeenCalledWith(entity);
-          expect(comp.isSaving).toEqual(false);
-        })
-      );
-    });
-  });
 });

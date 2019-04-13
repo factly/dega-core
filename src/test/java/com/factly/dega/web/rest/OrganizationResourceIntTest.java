@@ -182,12 +182,18 @@ public class OrganizationResourceIntTest {
     private static final ZonedDateTime DEFAULT_LAST_UPDATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_LAST_UPDATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
+    private static final String DEFAULT_SITE_ADDRESS = "AAAAAAAAAA";
+    private static final String UPDATED_SITE_ADDRESS = "BBBBBBBBBB";
+
+    private static final Boolean DEFAULT_ENABLE_FACTCHECKING = false;
+    private static final Boolean UPDATED_ENABLE_FACTCHECKING = true;
+
     @Autowired
     private OrganizationRepository organizationRepository;
 
     @Autowired
     private OrganizationMapper organizationMapper;
-    
+
     @Autowired
     private OrganizationService organizationService;
 
@@ -276,7 +282,9 @@ public class OrganizationResourceIntTest {
             .slug(DEFAULT_SLUG)
             .email(DEFAULT_EMAIL)
             .createdDate(DEFAULT_CREATED_DATE)
-            .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE);
+            .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE)
+            .siteAddress(DEFAULT_SITE_ADDRESS)
+            .enableFactchecking(DEFAULT_ENABLE_FACTCHECKING);
         return organization;
     }
 
@@ -342,8 +350,10 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testOrganization.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testOrganization.getEmail()).isEqualTo(DEFAULT_EMAIL);
-        assertThat(testOrganization.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
-        assertThat(testOrganization.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
+        assertThat(testOrganization.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testOrganization.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testOrganization.getSiteAddress()).isEqualTo(DEFAULT_SITE_ADDRESS);
+        assertThat(testOrganization.isEnableFactchecking()).isEqualTo(DEFAULT_ENABLE_FACTCHECKING);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -498,6 +508,24 @@ public class OrganizationResourceIntTest {
     }
 
     @Test
+    public void checkSiteAddressIsRequired() throws Exception {
+        int databaseSizeBeforeTest = organizationRepository.findAll().size();
+        // set the field null
+        organization.setSiteAddress(null);
+
+        // Create the Organization, which fails.
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        restOrganizationMockMvc.perform(post("/api/organizations")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllOrganizations() throws Exception {
         // Initialize the database
         organizationRepository.save(organization);
@@ -549,9 +577,11 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
-            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
+            .andExpect(jsonPath("$.[*].siteAddress").value(hasItem(DEFAULT_SITE_ADDRESS.toString())))
+            .andExpect(jsonPath("$.[*].enableFactchecking").value(hasItem(DEFAULT_ENABLE_FACTCHECKING.booleanValue())));
     }
-    
+
     @Test
     public void getOrganization() throws Exception {
         // Initialize the database
@@ -604,7 +634,9 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
             .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
-            .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)));
+            .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)))
+            .andExpect(jsonPath("$.siteAddress").value(DEFAULT_SITE_ADDRESS.toString()))
+            .andExpect(jsonPath("$.enableFactchecking").value(DEFAULT_ENABLE_FACTCHECKING.booleanValue()));
     }
 
     @Test
@@ -666,7 +698,9 @@ public class OrganizationResourceIntTest {
             .slug(UPDATED_SLUG)
             .email(UPDATED_EMAIL)
             .createdDate(UPDATED_CREATED_DATE)
-            .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE);
+            .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE)
+            .siteAddress(UPDATED_SITE_ADDRESS)
+            .enableFactchecking(UPDATED_ENABLE_FACTCHECKING);
         OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
 
         restOrganizationMockMvc.perform(put("/api/organizations")
@@ -719,8 +753,10 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testOrganization.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testOrganization.getEmail()).isEqualTo(UPDATED_EMAIL);
-        assertThat(testOrganization.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
-        assertThat(testOrganization.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
+        assertThat(testOrganization.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
+        assertThat(testOrganization.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testOrganization.getSiteAddress()).isEqualTo(UPDATED_SITE_ADDRESS);
+        assertThat(testOrganization.isEnableFactchecking()).isEqualTo(UPDATED_ENABLE_FACTCHECKING);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -820,7 +856,9 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
-            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
+            .andExpect(jsonPath("$.[*].siteAddress").value(hasItem(DEFAULT_SITE_ADDRESS.toString())))
+            .andExpect(jsonPath("$.[*].enableFactchecking").value(hasItem(DEFAULT_ENABLE_FACTCHECKING.booleanValue())));
     }
 
     @Test

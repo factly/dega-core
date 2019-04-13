@@ -73,6 +73,8 @@
             <th jhiSortBy="email"><span jhiTranslate="coreApp.coreOrganization.email">Email</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="createdDate"><span jhiTranslate="coreApp.coreOrganization.createdDate">Created Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="lastUpdatedDate"><span jhiTranslate="coreApp.coreOrganization.lastUpdatedDate">Last Updated Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="siteAddress"><span jhiTranslate="coreApp.coreOrganization.siteAddress">Site Address</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="enableFactchecking"><span jhiTranslate="coreApp.coreOrganization.enableFactchecking">Enable Factchecking</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -122,6 +124,8 @@
                 <td>{{organization.email}}</td>
                 <td>{{organization.createdDate | date:'medium'}}</td>
                 <td>{{organization.lastUpdatedDate | date:'medium'}}</td>
+                <td>{{organization.siteAddress}}</td>
+                <td>{{organization.enableFactchecking}}</td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"

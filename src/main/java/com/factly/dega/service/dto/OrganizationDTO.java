@@ -102,6 +102,11 @@ public class OrganizationDTO implements Serializable {
 
     private ZonedDateTime lastUpdatedDate;
 
+    @NotNull
+    private String siteAddress;
+
+    private Boolean enableFactchecking;
+
     public String getId() {
         return id;
     }
@@ -454,6 +459,22 @@ public class OrganizationDTO implements Serializable {
         this.lastUpdatedDate = lastUpdatedDate;
     }
 
+    public String getSiteAddress() {
+        return siteAddress;
+    }
+
+    public void setSiteAddress(String siteAddress) {
+        this.siteAddress = siteAddress;
+    }
+
+    public Boolean isEnableFactchecking() {
+        return enableFactchecking;
+    }
+
+    public void setEnableFactchecking(Boolean enableFactchecking) {
+        this.enableFactchecking = enableFactchecking;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -522,6 +543,8 @@ public class OrganizationDTO implements Serializable {
             ", email='" + getEmail() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
+            ", siteAddress='" + getSiteAddress() + "'" +
+            ", enableFactchecking='" + isEnableFactchecking() + "'" +
             "}";
     }
 }
