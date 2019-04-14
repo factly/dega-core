@@ -161,6 +161,13 @@ public class Organization implements Serializable {
     @Field("last_updated_date")
     private ZonedDateTime lastUpdatedDate;
 
+    @NotNull
+    @Field("site_address")
+    private String siteAddress;
+
+    @Field("enable_factchecking")
+    private Boolean enableFactchecking;
+
     @DBRef
     @Field("degaUsers")
     @JsonIgnore
@@ -740,6 +747,32 @@ public class Organization implements Serializable {
         this.lastUpdatedDate = lastUpdatedDate;
     }
 
+    public String getSiteAddress() {
+        return siteAddress;
+    }
+
+    public Organization siteAddress(String siteAddress) {
+        this.siteAddress = siteAddress;
+        return this;
+    }
+
+    public void setSiteAddress(String siteAddress) {
+        this.siteAddress = siteAddress;
+    }
+
+    public Boolean isEnableFactchecking() {
+        return enableFactchecking;
+    }
+
+    public Organization enableFactchecking(Boolean enableFactchecking) {
+        this.enableFactchecking = enableFactchecking;
+        return this;
+    }
+
+    public void setEnableFactchecking(Boolean enableFactchecking) {
+        this.enableFactchecking = enableFactchecking;
+    }
+
     public Set<DegaUser> getDegaUsers() {
         return degaUsers;
     }
@@ -883,6 +916,8 @@ public class Organization implements Serializable {
             ", email='" + getEmail() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
+            ", siteAddress='" + getSiteAddress() + "'" +
+            ", enableFactchecking='" + isEnableFactchecking() + "'" +
             "}";
     }
 }

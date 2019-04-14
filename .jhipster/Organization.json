@@ -217,6 +217,17 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "siteAddress",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "enableFactchecking",
+            "fieldType": "Boolean"
         }
     ],
     "changelogDate": "20180923010442",
