@@ -1,7 +1,6 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.factly.dega.config.Constants;
 import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.dto.KeyCloakUserDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
@@ -22,8 +21,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -36,9 +36,6 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing DegaUser.
@@ -55,12 +52,29 @@ public class DegaUserResource {
 
     private final RestTemplate restTemplate;
 
+    private RestTemplate oauth2RestTemplate = null;
+
     private String keycloakServerURI;
 
-    public DegaUserResource(DegaUserService degaUserService, RestTemplate restTemplate, @Value("${keycloak.api.uri}") String keycloakServerURI) {
+    private String keycloakTokenURI;
+
+    private String keycloakClientId;
+
+    private String keycloakClientSecret;
+
+    public DegaUserResource(
+        DegaUserService degaUserService,
+        RestTemplate restTemplate,
+        @Value("${keycloak.api.uri}") String keycloakServerURI,
+        @Value("${security.oauth2.client.access-token-uri}") String keycloakTokenURI,
+        @Value("${security.oauth2.client.client-id}") String clientId,
+        @Value("${security.oauth2.client.client-secret}") String clientSecret) {
         this.degaUserService = degaUserService;
         this.restTemplate = restTemplate;
         this.keycloakServerURI = keycloakServerURI;
+        this.keycloakTokenURI = keycloakTokenURI;
+        this.keycloakClientId = clientId;
+        this.keycloakClientSecret = clientSecret;
     }
 
     /**
@@ -85,15 +99,14 @@ public class DegaUserResource {
 
         // save the user to keycloak
         try {
-            String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
+            RestTemplate rt = getOauth2RestTemplate();
             JsonObject jObj = transformDTO(degaUserDTO);
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-            httpHeaders.add("Authorization", token);
             String jsonAsString = jObj.toString();
             log.debug("Keycloak user request body {}", jsonAsString);
             HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
-            restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
+            rt.postForObject(keycloakServerURI, httpEntity, String.class);
         } catch(HttpClientErrorException e) {
             if (e.getMessage().equals("403 Forbidden")) {
                 log.error("This logged in user {} does not have required access", auth.getPrincipal());
@@ -119,6 +132,17 @@ public class DegaUserResource {
         return ResponseEntity.created(new URI("/api/dega-users/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+    private RestTemplate getOauth2RestTemplate() {
+        if (oauth2RestTemplate == null) {
+            ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
+            resourceDetails.setClientId(keycloakClientId);
+            resourceDetails.setClientSecret(keycloakClientSecret);
+            resourceDetails.setAccessTokenUri(keycloakTokenURI);
+            oauth2RestTemplate = new OAuth2RestTemplate(resourceDetails);
+        }
+        return oauth2RestTemplate;
     }
 
     /**
