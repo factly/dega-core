@@ -181,6 +181,12 @@
                         This field is required.
                     </small>
                 </div>
+                <div class="form-group">
+                    <label jhiTranslate="coreApp.coreDegaUser.roleMappingDegaUser" for="field_roleMappingDegaUser">Role Mapping Dega User</label>
+                    <select class="form-control" id="field_roleMappingDegaUser" multiple name="roleMappingDegaUser" [(ngModel)]="degaUser.roleMappingDegaUsers">
+                        <option [ngValue]="getSelected(degaUser.roleMappingDegaUsers, roleMappingOption)" *ngFor="let roleMappingOption of rolemappings; trackBy: trackRoleMappingById">{{roleMappingOption.id}}</option>
+                    </select>
+                </div>
             </div>
             <div>
                 <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">

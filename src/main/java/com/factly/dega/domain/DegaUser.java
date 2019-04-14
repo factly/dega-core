@@ -103,6 +103,13 @@ public class DegaUser implements Serializable {
     @JsonIgnore
     private Set<Post> posts = new HashSet<>();
 
+    @DBRef
+    @Field("roleMapping")
+    private Set<RoleMapping> roleMappings = new HashSet<>();
+    @DBRef
+    @Field("roleMappingDegaUsers")
+    private Set<RoleMapping> roleMappingDegaUsers = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -407,6 +414,56 @@ public class DegaUser implements Serializable {
 
     public void setPosts(Set<Post> posts) {
         this.posts = posts;
+    }
+
+    public Set<RoleMapping> getRoleMappings() {
+        return roleMappings;
+    }
+
+    public DegaUser roleMappings(Set<RoleMapping> roleMappings) {
+        this.roleMappings = roleMappings;
+        return this;
+    }
+
+    public DegaUser addRoleMapping(RoleMapping roleMapping) {
+        this.roleMappings.add(roleMapping);
+        roleMapping.setDegaUser(this);
+        return this;
+    }
+
+    public DegaUser removeRoleMapping(RoleMapping roleMapping) {
+        this.roleMappings.remove(roleMapping);
+        roleMapping.setDegaUser(null);
+        return this;
+    }
+
+    public void setRoleMappings(Set<RoleMapping> roleMappings) {
+        this.roleMappings = roleMappings;
+    }
+
+    public Set<RoleMapping> getRoleMappingDegaUsers() {
+        return roleMappingDegaUsers;
+    }
+
+    public DegaUser roleMappingDegaUsers(Set<RoleMapping> roleMappings) {
+        this.roleMappingDegaUsers = roleMappings;
+        return this;
+    }
+
+    public DegaUser addRoleMappingDegaUser(RoleMapping roleMapping) {
+        this.roleMappingDegaUsers.add(roleMapping);
+        roleMapping.getDegaUserRoleMappings().add(this);
+        return this;
+    }
+
+    public DegaUser removeRoleMappingDegaUser(RoleMapping roleMapping) {
+        this.roleMappingDegaUsers.remove(roleMapping);
+        roleMapping.getDegaUserRoleMappings().remove(this);
+        return this;
+    }
+
+    public void setRoleMappingDegaUsers(Set<RoleMapping> roleMappings) {
+        this.roleMappingDegaUsers = roleMappings;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

@@ -8,33 +8,33 @@ import { RoleDetailComponent } from 'app/entities/core/role/role-detail.componen
 import { Role } from 'app/shared/model/core/role.model';
 
 describe('Component Tests', () => {
-  describe('Role Management Detail Component', () => {
-    let comp: RoleDetailComponent;
-    let fixture: ComponentFixture<RoleDetailComponent>;
-    const route = ({ data: of({ role: new Role('123') }) } as any) as ActivatedRoute;
+    describe('Role Management Detail Component', () => {
+        let comp: RoleDetailComponent;
+        let fixture: ComponentFixture<RoleDetailComponent>;
+        const route = ({ data: of({ role: new Role('123') }) } as any) as ActivatedRoute;
 
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [CoreTestModule],
-        declarations: [RoleDetailComponent],
-        providers: [{ provide: ActivatedRoute, useValue: route }]
-      })
-        .overrideTemplate(RoleDetailComponent, '')
-        .compileComponents();
-      fixture = TestBed.createComponent(RoleDetailComponent);
-      comp = fixture.componentInstance;
+        beforeEach(() => {
+            TestBed.configureTestingModule({
+                imports: [CoreTestModule],
+                declarations: [RoleDetailComponent],
+                providers: [{ provide: ActivatedRoute, useValue: route }]
+            })
+                .overrideTemplate(RoleDetailComponent, '')
+                .compileComponents();
+            fixture = TestBed.createComponent(RoleDetailComponent);
+            comp = fixture.componentInstance;
+        });
+
+        describe('OnInit', () => {
+            it('Should call load all on init', () => {
+                // GIVEN
+
+                // WHEN
+                comp.ngOnInit();
+
+                // THEN
+                expect(comp.role).toEqual(jasmine.objectContaining({ id: '123' }));
+            });
+        });
     });
-
-    describe('OnInit', () => {
-      it('Should call load all on init', () => {
-        // GIVEN
-
-        // WHEN
-        comp.ngOnInit();
-
-        // THEN
-        expect(comp.role).toEqual(jasmine.objectContaining({ id: '123' }));
-      });
-    });
-  });
 });

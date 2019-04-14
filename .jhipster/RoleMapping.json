@@ -1,0 +1,48 @@
+{
+    "fluentMethods": true,
+    "clientRootFolder": "core",
+    "relationships": [
+        {
+            "relationshipName": "degaUser",
+            "otherEntityName": "degaUser",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "displayName"
+        },
+        {
+            "relationshipName": "organization",
+            "otherEntityName": "organization",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipName": "role",
+            "otherEntityName": "role",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipName": "degaUserRoleMapping",
+            "otherEntityName": "degaUser",
+            "relationshipType": "many-to-many",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "roleMappingDegaUser"
+        }
+    ],
+    "fields": [],
+    "dto": "mapstruct",
+    "searchEngine": "elasticsearch",
+    "service": "serviceImpl",
+    "entityTableName": "role_mapping",
+    "jpaMetamodelFiltering": false,
+    "pagination": "pagination",
+    "microserviceName": "core"
+}

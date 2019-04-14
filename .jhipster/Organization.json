@@ -20,6 +20,12 @@
             "otherEntityName": "degaUser",
             "relationshipType": "one-to-many",
             "otherEntityRelationshipName": "organizationCurrent"
+        },
+        {
+            "relationshipName": "roleMapping",
+            "otherEntityName": "roleMapping",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "organization"
         }
     ],
     "fields": [

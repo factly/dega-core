@@ -46,6 +46,20 @@
             "relationshipType": "many-to-many",
             "ownerSide": false,
             "otherEntityRelationshipName": "degaUser"
+        },
+        {
+            "relationshipName": "roleMapping",
+            "otherEntityName": "roleMapping",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "degaUser"
+        },
+        {
+            "relationshipName": "roleMappingDegaUser",
+            "otherEntityName": "roleMapping",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "id",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "degaUserRoleMapping"
         }
     ],
     "fields": [

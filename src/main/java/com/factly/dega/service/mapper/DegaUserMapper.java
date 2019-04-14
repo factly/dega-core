@@ -8,7 +8,7 @@ import org.mapstruct.*;
 /**
  * Mapper for the entity DegaUser and its DTO DegaUserDTO.
  */
-@Mapper(componentModel = "spring", uses = {RoleMapper.class, OrganizationMapper.class})
+@Mapper(componentModel = "spring", uses = {RoleMapper.class, OrganizationMapper.class, RoleMappingMapper.class})
 public interface DegaUserMapper extends EntityMapper<DegaUserDTO, DegaUser> {
 
     @Mapping(source = "role.id", target = "roleId")
@@ -23,6 +23,7 @@ public interface DegaUserMapper extends EntityMapper<DegaUserDTO, DegaUser> {
     @Mapping(source = "organizationDefaultId", target = "organizationDefault")
     @Mapping(source = "organizationCurrentId", target = "organizationCurrent")
     @Mapping(target = "posts", ignore = true)
+    @Mapping(target = "roleMappings", ignore = true)
     DegaUser toEntity(DegaUserDTO degaUserDTO);
 
     default DegaUser fromId(String id) {
