@@ -1,8 +1,10 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.factly.dega.config.Constants;
 import com.factly.dega.service.TagService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.TagDTO;
@@ -10,16 +12,20 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -52,11 +58,18 @@ public class TagResource {
      */
     @PostMapping("/tags")
     @Timed
-    public ResponseEntity<TagDTO> createTag(@Valid @RequestBody TagDTO tagDTO) throws URISyntaxException {
+    public ResponseEntity<TagDTO> createTag(@Valid @RequestBody TagDTO tagDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Tag : {}", tagDTO);
         if (tagDTO.getId() != null) {
             throw new BadRequestAlertException("A new tag cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+        if (obj != null) {
+            tagDTO.setClientId((String) obj);
+        }
+        tagDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(tagDTO.getName())));
+        tagDTO.setCreatedDate(ZonedDateTime.now());
+        tagDTO.setLastUpdatedDate(ZonedDateTime.now());
         TagDTO result = tagService.save(tagDTO);
         return ResponseEntity.created(new URI("/api/tags/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -79,6 +92,7 @@ public class TagResource {
         if (tagDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        tagDTO.setLastUpdatedDate(ZonedDateTime.now());
         TagDTO result = tagService.save(tagDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, tagDTO.getId().toString()))
@@ -93,11 +107,18 @@ public class TagResource {
      */
     @GetMapping("/tags")
     @Timed
-    public ResponseEntity<List<TagDTO>> getAllTags(Pageable pageable) {
+    public ResponseEntity<List<TagDTO>> getAllTags(Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to get a page of Tags");
-        Page<TagDTO> page = tagService.findAll(pageable);
+        Page<TagDTO> page = new PageImpl<>(new ArrayList<>());
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+        if (obj != null) {
+            String clientId = (String) obj;
+            page = tagService.findByClientId(clientId, pageable);
+
+        }
+
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/tags");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -143,6 +164,43 @@ public class TagResource {
         Page<TagDTO> page = tagService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tags");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /tagbyslug/:slug : get the tag.
+     *
+     * @param slug the slug of the TagDTO
+     * @return Optional<TagDTO> tag by clientId and slug
+     */
+    @GetMapping("/tagbyslug/{slug}")
+    @Timed
+    public Optional<TagDTO> getTagBySlug(@PathVariable String slug, HttpServletRequest request) {
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+        String clientId = null;
+        if (obj != null) {
+            clientId = (String) obj;
+        }
+        log.debug("REST request to get Tag by clienId : {} and slug : {}", clientId, slug);
+        Optional<TagDTO> tagDTO = tagService.findByClientIdAndSlug(clientId, slug);
+        return tagDTO;
+    }
+
+    public String getSlug(String clientId, String name){
+        if(clientId != null && name != null){
+            int slugExtention = 0;
+            return createSlug(clientId, name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+        Optional<TagDTO> tagDTO = tagService.findByClientIdAndSlug(clientId, slug);
+        if(tagDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(clientId, slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 
 }

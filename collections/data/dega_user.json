@@ -1,0 +1,160 @@
+[
+{
+    "_id" : ObjectId("5be0a822bea132948585fc41"),
+    "display_name" : "test",
+    "email" : "test@test.com",
+    "is_active" : true,
+    "slug" : "test",
+    "role" : DBRef("role", ObjectId("5be0a6a6bea132948585fc38")),
+    "organizations" : [
+        DBRef("organization", ObjectId("5be0a613bea132948585fc31")),
+        DBRef("organization", ObjectId("5be0a5e6bea132948585fc28"))
+    ],
+    "organizationDefault" : DBRef("organization", ObjectId("5be0a5e6bea132948585fc28")),
+    "_class" : "com.factly.dega.domain.DegaUser"
+},
+{
+    "_id" : ObjectId("5be8e0ccebcaa1724eab05e8"),
+    "display_name" : "Admin Factly",
+    "slug" : "admin-factly",
+    "enabled" : false,
+    "email_verified" : false,
+    "email" : "adminf@test.com",
+    "role" : DBRef("role", ObjectId("5be8d22bebcaa16e7e1d8ef1")),
+    "organizations" : [
+        DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1"))
+    ],
+    "organizationDefault" : DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1")),
+    "organizationCurrent" : DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1")),
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.DegaUser"
+},
+{
+    "_id" : ObjectId("5be8e249ebcaa1724eab05f4"),
+    "display_name" : "Editor Factly",
+    "slug" : "editor-factly",
+    "enabled" : false,
+    "email_verified" : false,
+    "email" : "editorf@test.com",
+    "role" : DBRef("role", ObjectId("5be8d23febcaa16e7e1d8ef4")),
+    "organizations" : [
+        DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1"))
+    ],
+    "organizationDefault" : DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1")),
+    "organizationCurrent" : DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1")),
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.DegaUser"
+},
+{
+    "_id" : ObjectId("5be8f21febcaa1724eab060d"),
+    "display_name" : "Author Factly",
+    "slug" : "author-factly",
+    "enabled" : false,
+    "email_verified" : false,
+    "email" : "authorf@test.com",
+    "role" : DBRef("role", ObjectId("5be8d29cebcaa16e7e1d8ef7")),
+    "organizations" : [
+        DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1"))
+    ],
+    "organizationDefault" : DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1")),
+    "organizationCurrent" : DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1")),
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.DegaUser"
+},
+{
+    "_id" : ObjectId("5be8f28febcaa1724eab0616"),
+    "display_name" : "Contributor - Factly",
+    "slug" : "contributor-factly",
+    "enabled" : true,
+    "email_verified" : true,
+    "email" : "contributorf@test.com",
+    "role" : DBRef("role", ObjectId("5be8d2acebcaa16e7e1d8efa")),
+    "organizations" : [
+        DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1"))
+    ],
+    "organizationDefault" : DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1")),
+    "organizationCurrent" : DBRef("organization", ObjectId("5be8cf7febcaa16e7e1d8ed1")),
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.DegaUser"
+},
+{
+    "_id" : ObjectId("5be8f30febcaa1724eab061c"),
+    "display_name" : "Admin - Factly Hindi",
+    "slug" : "admin-factly-hindi",
+    "enabled" : true,
+    "email_verified" : true,
+    "email" : "adminfh@test.com",
+    "role" : DBRef("role", ObjectId("5be8d22bebcaa16e7e1d8ef1")),
+    "organizations" : [
+        DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda"))
+    ],
+    "organizationDefault" : DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda")),
+    "organizationCurrent" : DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda")),
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.DegaUser"
+},
+{
+    "_id" : ObjectId("5be8f33febcaa1724eab0622"),
+    "display_name" : "Editor Factly Hindi",
+    "slug" : "editor-factly-hindi",
+    "enabled" : true,
+    "email_verified" : true,
+    "email" : "editorfh@test.com",
+    "role" : DBRef("role", ObjectId("5be8d23febcaa16e7e1d8ef4")),
+    "organizations" : [
+        DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda"))
+    ],
+    "organizationDefault" : DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda")),
+    "organizationCurrent" : DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda")),
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.DegaUser"
+},
+{
+    "_id" : ObjectId("5be8f49debcaa1724eab0628"),
+    "display_name" : "Author Factly Hindi",
+    "slug" : "author-factly-hindi",
+    "enabled" : true,
+    "email_verified" : true,
+    "email" : "authorfh@test.com",
+    "role" : DBRef("role", ObjectId("5be8d29cebcaa16e7e1d8ef7")),
+    "organizations" : [
+        DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda"))
+    ],
+    "organizationDefault" : DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda")),
+    "organizationCurrent" : DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda")),
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.DegaUser"
+},
+{
+    "_id" : ObjectId("5be8f521ebcaa1724eab062e"),
+    "display_name" : "Contributor Factly Hindi",
+    "slug" : "contributor-factly-hindi",
+    "enabled" : true,
+    "email_verified" : true,
+    "email" : "contributorfh@test.com",
+    "role" : DBRef("role", ObjectId("5be8d2acebcaa16e7e1d8efa")),
+    "organizations" : [
+        DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda"))
+    ],
+    "organizationDefault" : DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda")),
+    "organizationCurrent" : DBRef("organization", ObjectId("5be8d06debcaa16e7e1d8eda")),
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.DegaUser"
+}
+]

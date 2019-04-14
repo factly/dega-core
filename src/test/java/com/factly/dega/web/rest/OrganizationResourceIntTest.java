@@ -13,6 +13,7 @@ import com.factly.dega.web.rest.errors.ExceptionTranslator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,10 +26,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 
+import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
@@ -48,9 +55,6 @@ public class OrganizationResourceIntTest {
 
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
-
-    private static final String DEFAULT_EMAIL = "AAAAAAAAAA";
-    private static final String UPDATED_EMAIL = "BBBBBBBBBB";
 
     private static final String DEFAULT_PHONE = "AAAAAAAAAA";
     private static final String UPDATED_PHONE = "BBBBBBBBBB";
@@ -166,12 +170,30 @@ public class OrganizationResourceIntTest {
     private static final String DEFAULT_CLIENT_ID = "AAAAAAAAAA";
     private static final String UPDATED_CLIENT_ID = "BBBBBBBBBB";
 
+    private static final String DEFAULT_SLUG = "AAAAAAAAAA";
+    private static final String UPDATED_SLUG = "BBBBBBBBBB";
+
+    private static final String DEFAULT_EMAIL = "'9J@k.aigzweazmUStGihIpV'";
+    private static final String UPDATED_EMAIL = "'w.@O.qVa'";
+
+    private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
+    private static final ZonedDateTime DEFAULT_LAST_UPDATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
+    private static final ZonedDateTime UPDATED_LAST_UPDATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
+
+    private static final String DEFAULT_SITE_ADDRESS = "AAAAAAAAAA";
+    private static final String UPDATED_SITE_ADDRESS = "BBBBBBBBBB";
+
+    private static final Boolean DEFAULT_ENABLE_FACTCHECKING = false;
+    private static final Boolean UPDATED_ENABLE_FACTCHECKING = true;
+
     @Autowired
     private OrganizationRepository organizationRepository;
 
     @Autowired
     private OrganizationMapper organizationMapper;
-    
+
     @Autowired
     private OrganizationService organizationService;
 
@@ -196,6 +218,9 @@ public class OrganizationResourceIntTest {
 
     private Organization organization;
 
+    @Mock
+    private OrganizationService organizationServiceMock;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -216,7 +241,6 @@ public class OrganizationResourceIntTest {
     public static Organization createEntity() {
         Organization organization = new Organization()
             .name(DEFAULT_NAME)
-            .email(DEFAULT_EMAIL)
             .phone(DEFAULT_PHONE)
             .siteTitle(DEFAULT_SITE_TITLE)
             .tagLine(DEFAULT_TAG_LINE)
@@ -254,7 +278,13 @@ public class OrganizationResourceIntTest {
             .mailchimpAPIKey(DEFAULT_MAILCHIMP_API_KEY)
             .siteLanguage(DEFAULT_SITE_LANGUAGE)
             .timeZone(DEFAULT_TIME_ZONE)
-            .clientId(DEFAULT_CLIENT_ID);
+            .clientId(DEFAULT_CLIENT_ID)
+            .slug(DEFAULT_SLUG)
+            .email(DEFAULT_EMAIL)
+            .createdDate(DEFAULT_CREATED_DATE)
+            .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE)
+            .siteAddress(DEFAULT_SITE_ADDRESS)
+            .enableFactchecking(DEFAULT_ENABLE_FACTCHECKING);
         return organization;
     }
 
@@ -280,7 +310,6 @@ public class OrganizationResourceIntTest {
         assertThat(organizationList).hasSize(databaseSizeBeforeCreate + 1);
         Organization testOrganization = organizationList.get(organizationList.size() - 1);
         assertThat(testOrganization.getName()).isEqualTo(DEFAULT_NAME);
-        assertThat(testOrganization.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testOrganization.getPhone()).isEqualTo(DEFAULT_PHONE);
         assertThat(testOrganization.getSiteTitle()).isEqualTo(DEFAULT_SITE_TITLE);
         assertThat(testOrganization.getTagLine()).isEqualTo(DEFAULT_TAG_LINE);
@@ -319,6 +348,12 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getSiteLanguage()).isEqualTo(DEFAULT_SITE_LANGUAGE);
         assertThat(testOrganization.getTimeZone()).isEqualTo(DEFAULT_TIME_ZONE);
         assertThat(testOrganization.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
+        assertThat(testOrganization.getSlug()).isEqualTo(DEFAULT_SLUG);
+        assertThat(testOrganization.getEmail()).isEqualTo(DEFAULT_EMAIL);
+        assertThat(testOrganization.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
+        assertThat(testOrganization.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
+        assertThat(testOrganization.getSiteAddress()).isEqualTo(DEFAULT_SITE_ADDRESS);
+        assertThat(testOrganization.isEnableFactchecking()).isEqualTo(DEFAULT_ENABLE_FACTCHECKING);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -351,24 +386,6 @@ public class OrganizationResourceIntTest {
         int databaseSizeBeforeTest = organizationRepository.findAll().size();
         // set the field null
         organization.setName(null);
-
-        // Create the Organization, which fails.
-        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
-
-        restOrganizationMockMvc.perform(post("/api/organizations")
-            .contentType(TestUtil.APPLICATION_JSON_UTF8)
-            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
-            .andExpect(status().isBadRequest());
-
-        List<Organization> organizationList = organizationRepository.findAll();
-        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
-    }
-
-    @Test
-    public void checkEmailIsRequired() throws Exception {
-        int databaseSizeBeforeTest = organizationRepository.findAll().size();
-        // set the field null
-        organization.setEmail(null);
 
         // Create the Organization, which fails.
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
@@ -419,6 +436,96 @@ public class OrganizationResourceIntTest {
     }
 
     @Test
+    public void checkSlugIsRequired() throws Exception {
+        int databaseSizeBeforeTest = organizationRepository.findAll().size();
+        // set the field null
+        organization.setSlug(null);
+
+        // Create the Organization, which fails.
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        restOrganizationMockMvc.perform(post("/api/organizations")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    public void checkEmailIsRequired() throws Exception {
+        int databaseSizeBeforeTest = organizationRepository.findAll().size();
+        // set the field null
+        organization.setEmail(null);
+
+        // Create the Organization, which fails.
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        restOrganizationMockMvc.perform(post("/api/organizations")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    public void checkCreatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = organizationRepository.findAll().size();
+        // set the field null
+        organization.setCreatedDate(null);
+
+        // Create the Organization, which fails.
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        restOrganizationMockMvc.perform(post("/api/organizations")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isCreated());
+
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest + 1);
+    }
+
+    @Test
+    public void checkLastUpdatedDateIsRequired() throws Exception {
+        int databaseSizeBeforeTest = organizationRepository.findAll().size();
+        // set the field null
+        organization.setLastUpdatedDate(null);
+
+        // Create the Organization, which fails.
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        restOrganizationMockMvc.perform(post("/api/organizations")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isCreated());
+
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest + 1);
+    }
+
+    @Test
+    public void checkSiteAddressIsRequired() throws Exception {
+        int databaseSizeBeforeTest = organizationRepository.findAll().size();
+        // set the field null
+        organization.setSiteAddress(null);
+
+        // Create the Organization, which fails.
+        OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        restOrganizationMockMvc.perform(post("/api/organizations")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<Organization> organizationList = organizationRepository.findAll();
+        assertThat(organizationList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllOrganizations() throws Exception {
         // Initialize the database
         organizationRepository.save(organization);
@@ -429,7 +536,6 @@ public class OrganizationResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organization.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
             .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE.toString())))
             .andExpect(jsonPath("$.[*].siteTitle").value(hasItem(DEFAULT_SITE_TITLE.toString())))
             .andExpect(jsonPath("$.[*].tagLine").value(hasItem(DEFAULT_TAG_LINE.toString())))
@@ -467,9 +573,15 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].mailchimpAPIKey").value(hasItem(DEFAULT_MAILCHIMP_API_KEY.toString())))
             .andExpect(jsonPath("$.[*].siteLanguage").value(hasItem(DEFAULT_SITE_LANGUAGE.toString())))
             .andExpect(jsonPath("$.[*].timeZone").value(hasItem(DEFAULT_TIME_ZONE.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
+            .andExpect(jsonPath("$.[*].siteAddress").value(hasItem(DEFAULT_SITE_ADDRESS.toString())))
+            .andExpect(jsonPath("$.[*].enableFactchecking").value(hasItem(DEFAULT_ENABLE_FACTCHECKING.booleanValue())));
     }
-    
+
     @Test
     public void getOrganization() throws Exception {
         // Initialize the database
@@ -481,7 +593,6 @@ public class OrganizationResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(organization.getId()))
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
-            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
             .andExpect(jsonPath("$.phone").value(DEFAULT_PHONE.toString()))
             .andExpect(jsonPath("$.siteTitle").value(DEFAULT_SITE_TITLE.toString()))
             .andExpect(jsonPath("$.tagLine").value(DEFAULT_TAG_LINE.toString()))
@@ -519,7 +630,13 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.mailchimpAPIKey").value(DEFAULT_MAILCHIMP_API_KEY.toString()))
             .andExpect(jsonPath("$.siteLanguage").value(DEFAULT_SITE_LANGUAGE.toString()))
             .andExpect(jsonPath("$.timeZone").value(DEFAULT_TIME_ZONE.toString()))
-            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()));
+            .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
+            .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
+            .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+            .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)))
+            .andExpect(jsonPath("$.siteAddress").value(DEFAULT_SITE_ADDRESS.toString()))
+            .andExpect(jsonPath("$.enableFactchecking").value(DEFAULT_ENABLE_FACTCHECKING.booleanValue()));
     }
 
     @Test
@@ -540,7 +657,6 @@ public class OrganizationResourceIntTest {
         Organization updatedOrganization = organizationRepository.findById(organization.getId()).get();
         updatedOrganization
             .name(UPDATED_NAME)
-            .email(UPDATED_EMAIL)
             .phone(UPDATED_PHONE)
             .siteTitle(UPDATED_SITE_TITLE)
             .tagLine(UPDATED_TAG_LINE)
@@ -578,7 +694,13 @@ public class OrganizationResourceIntTest {
             .mailchimpAPIKey(UPDATED_MAILCHIMP_API_KEY)
             .siteLanguage(UPDATED_SITE_LANGUAGE)
             .timeZone(UPDATED_TIME_ZONE)
-            .clientId(UPDATED_CLIENT_ID);
+            .clientId(UPDATED_CLIENT_ID)
+            .slug(UPDATED_SLUG)
+            .email(UPDATED_EMAIL)
+            .createdDate(UPDATED_CREATED_DATE)
+            .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE)
+            .siteAddress(UPDATED_SITE_ADDRESS)
+            .enableFactchecking(UPDATED_ENABLE_FACTCHECKING);
         OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
 
         restOrganizationMockMvc.perform(put("/api/organizations")
@@ -591,7 +713,6 @@ public class OrganizationResourceIntTest {
         assertThat(organizationList).hasSize(databaseSizeBeforeUpdate);
         Organization testOrganization = organizationList.get(organizationList.size() - 1);
         assertThat(testOrganization.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testOrganization.getEmail()).isEqualTo(UPDATED_EMAIL);
         assertThat(testOrganization.getPhone()).isEqualTo(UPDATED_PHONE);
         assertThat(testOrganization.getSiteTitle()).isEqualTo(UPDATED_SITE_TITLE);
         assertThat(testOrganization.getTagLine()).isEqualTo(UPDATED_TAG_LINE);
@@ -630,6 +751,12 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getSiteLanguage()).isEqualTo(UPDATED_SITE_LANGUAGE);
         assertThat(testOrganization.getTimeZone()).isEqualTo(UPDATED_TIME_ZONE);
         assertThat(testOrganization.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testOrganization.getSlug()).isEqualTo(UPDATED_SLUG);
+        assertThat(testOrganization.getEmail()).isEqualTo(UPDATED_EMAIL);
+        assertThat(testOrganization.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
+        assertThat(testOrganization.getLastUpdatedDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE);
+        assertThat(testOrganization.getSiteAddress()).isEqualTo(UPDATED_SITE_ADDRESS);
+        assertThat(testOrganization.isEnableFactchecking()).isEqualTo(UPDATED_ENABLE_FACTCHECKING);
 
         // Validate the Organization in Elasticsearch
         verify(mockOrganizationSearchRepository, times(1)).save(testOrganization);
@@ -688,7 +815,6 @@ public class OrganizationResourceIntTest {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(organization.getId())))
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
-            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
             .andExpect(jsonPath("$.[*].phone").value(hasItem(DEFAULT_PHONE.toString())))
             .andExpect(jsonPath("$.[*].siteTitle").value(hasItem(DEFAULT_SITE_TITLE.toString())))
             .andExpect(jsonPath("$.[*].tagLine").value(hasItem(DEFAULT_TAG_LINE.toString())))
@@ -726,7 +852,13 @@ public class OrganizationResourceIntTest {
             .andExpect(jsonPath("$.[*].mailchimpAPIKey").value(hasItem(DEFAULT_MAILCHIMP_API_KEY.toString())))
             .andExpect(jsonPath("$.[*].siteLanguage").value(hasItem(DEFAULT_SITE_LANGUAGE.toString())))
             .andExpect(jsonPath("$.[*].timeZone").value(hasItem(DEFAULT_TIME_ZONE.toString())))
-            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())));
+            .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
+            .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
+            .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
+            .andExpect(jsonPath("$.[*].siteAddress").value(hasItem(DEFAULT_SITE_ADDRESS.toString())))
+            .andExpect(jsonPath("$.[*].enableFactchecking").value(hasItem(DEFAULT_ENABLE_FACTCHECKING.booleanValue())));
     }
 
     @Test

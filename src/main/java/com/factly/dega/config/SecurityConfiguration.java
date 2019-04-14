@@ -35,14 +35,14 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
             .exceptionHandling()
             .authenticationEntryPoint(problemSupport)
             .accessDeniedHandler(problemSupport)
-        .and()
+            .and()
             .headers()
             .frameOptions()
             .disable()
-        .and()
+            .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
+            .and()
             .authorizeRequests()
             .antMatchers("/api/**").authenticated()
             .antMatchers("/management/health").permitAll()
@@ -56,7 +56,7 @@ public class SecurityConfiguration extends ResourceServerConfigurerAdapter {
      */
     @Bean
     public OAuth2RestTemplate oAuth2RestTemplate(OAuth2ProtectedResourceDetails oAuth2ProtectedResourceDetails,
-        OAuth2ClientContext oAuth2ClientContext) {
+                                                 OAuth2ClientContext oAuth2ClientContext) {
         return new OAuth2RestTemplate(oAuth2ProtectedResourceDetails, oAuth2ClientContext);
     }
 

@@ -1,0 +1,62 @@
+[
+{
+    "name" : "Super Admin",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "super-admin",
+    "degaUser" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Role"
+},
+{
+    "name" : "Administrator",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "administrator",
+    "degaUser" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Role"
+},
+{
+    "name" : "Editor",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "editor",
+    "degaUser" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Role"
+},
+{
+    "name" : "Author",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "author",
+    "degaUser" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Role"
+},
+{
+    "name" : "Contributor",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "contributor",
+    "degaUser" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Role"
+},
+{
+    "name" : "Subscriber",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "subscriber",
+    "degaUser" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Role"
+}
+]

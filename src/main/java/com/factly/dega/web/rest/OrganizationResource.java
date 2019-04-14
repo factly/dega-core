@@ -1,8 +1,10 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.factly.dega.config.Constants;
 import com.factly.dega.service.OrganizationService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.OrganizationDTO;
@@ -16,15 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Organization.
@@ -52,11 +53,14 @@ public class OrganizationResource {
      */
     @PostMapping("/organizations")
     @Timed
-    public ResponseEntity<OrganizationDTO> createOrganization(@Valid @RequestBody OrganizationDTO organizationDTO) throws URISyntaxException {
+    public ResponseEntity<OrganizationDTO> createOrganization(@Valid @RequestBody OrganizationDTO organizationDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Organization : {}", organizationDTO);
         if (organizationDTO.getId() != null) {
             throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        organizationDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(organizationDTO.getName())));
+        organizationDTO.setCreatedDate(ZonedDateTime.now());
+        organizationDTO.setLastUpdatedDate(ZonedDateTime.now());
         OrganizationDTO result = organizationService.save(organizationDTO);
         return ResponseEntity.created(new URI("/api/organizations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -79,6 +83,7 @@ public class OrganizationResource {
         if (organizationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        organizationDTO.setLastUpdatedDate(ZonedDateTime.now());
         OrganizationDTO result = organizationService.save(organizationDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizationDTO.getId().toString()))
@@ -93,11 +98,11 @@ public class OrganizationResource {
      */
     @GetMapping("/organizations")
     @Timed
-    public ResponseEntity<List<OrganizationDTO>> getAllOrganizations(Pageable pageable) {
+    public ResponseEntity<List<OrganizationDTO>> getAllOrganizations(Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to get a page of Organizations");
         Page<OrganizationDTO> page = organizationService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -145,4 +150,35 @@ public class OrganizationResource {
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
     }
 
+    /**
+     * GET  /organizationbyslug/:slug : get the organization.
+     *
+     * @param slug the slug of the OrganizationDTO
+     * @return Optional<OrganizationDTO> organization by clientId and slug
+     */
+    @GetMapping("/organizationbyslug/{slug}")
+    @Timed
+    public Optional<OrganizationDTO> getOrganizationBySlug(@PathVariable String slug) {
+        log.debug("REST request to get Organization by slug : {}", slug);
+        Optional<OrganizationDTO> organizationDTO = organizationService.findBySlug(slug);
+        return organizationDTO;
+    }
+
+    public String getSlug(String name){
+        if(name != null){
+            int slugExtention = 0;
+            return createSlug(name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String slug, String tempSlug, int slugExtention){
+        Optional<OrganizationDTO> postDTO = organizationService.findBySlug(slug);
+        if(postDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(slug, tempSlug, slugExtention);
+        }
+        return slug;
+    }
 }

@@ -1,17 +1,30 @@
 {
     "fluentMethods": true,
     "clientRootFolder": "core",
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipName": "degaUser",
+            "otherEntityName": "degaUser",
+            "relationshipType": "many-to-many",
+            "ownerSide": false,
+            "otherEntityRelationshipName": "organization"
+        },
+        {
+            "relationshipName": "degaUserDefault",
+            "otherEntityName": "degaUser",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "organizationDefault"
+        },
+        {
+            "relationshipName": "degaUserCurrent",
+            "otherEntityName": "degaUser",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "organizationCurrent"
+        }
+    ],
     "fields": [
         {
             "fieldName": "name",
-            "fieldType": "String",
-            "fieldValidateRules": [
-                "required"
-            ]
-        },
-        {
-            "fieldName": "email",
             "fieldType": "String",
             "fieldValidateRules": [
                 "required"
@@ -174,6 +187,47 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "slug",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "email",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required",
+                "pattern"
+            ],
+            "fieldValidateRulesPattern": "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'"
+        },
+        {
+            "fieldName": "createdDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "lastUpdatedDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "siteAddress",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "enableFactchecking",
+            "fieldType": "Boolean"
         }
     ],
     "changelogDate": "20180923010442",

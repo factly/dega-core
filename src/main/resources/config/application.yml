@@ -73,6 +73,13 @@ spring:
             enabled: false
     thymeleaf:
         mode: HTML
+    servlet:
+        multipart:
+            enabled: true
+            file-size-threshold: 2KB
+            max-file-size: 200MB
+            max-request-size: 200MB
+
 
 # ===================================================================
 # OpenID Connect Settings. Default settings are for Keycloak in Docker.
@@ -99,7 +106,7 @@ security:
             client-id: internal
             client-secret: internal
         resource:
-            user-info-uri: http://localhost:9080/auth/realms/jhipster/protocol/openid-connect/userinfo
+            user-info-uri: http://localhost:9080/auth/realms/dega/protocol/openid-connect/userinfo
 
 server:
     servlet:
@@ -145,9 +152,6 @@ jhipster:
         license:
         license-url:
 
-logging:
-    file: build/core.log
-
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
@@ -158,3 +162,6 @@ logging:
 # ===================================================================
 
 # application:
+dega:
+    media:
+        upload-dir: ./dega-content

@@ -1,0 +1,52 @@
+[
+{
+    "name" : "Standard",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "standard",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Format"
+},
+{
+    "name" : "Gallery",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "gallery",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Format"
+},
+{
+    "name" : "Image",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "image",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Format"
+},
+{
+    "name" : "Video",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "video",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Format"
+},
+{
+    "name" : "Audio",
+    "is_default" : true,
+    "client_id" : "All",
+    "slug" : "audio",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Format"
+}
+]

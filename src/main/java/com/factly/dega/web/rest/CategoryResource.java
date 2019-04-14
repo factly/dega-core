@@ -1,8 +1,10 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.factly.dega.config.Constants;
 import com.factly.dega.service.CategoryService;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
+import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.CategoryDTO;
@@ -10,16 +12,20 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -52,11 +58,18 @@ public class CategoryResource {
      */
     @PostMapping("/categories")
     @Timed
-    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO) throws URISyntaxException {
+    public ResponseEntity<CategoryDTO> createCategory(@Valid @RequestBody CategoryDTO categoryDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Category : {}", categoryDTO);
         if (categoryDTO.getId() != null) {
             throw new BadRequestAlertException("A new category cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+        if (obj != null) {
+            categoryDTO.setClientId((String) obj);
+        }
+        categoryDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(categoryDTO.getName())));
+        categoryDTO.setCreatedDate(ZonedDateTime.now());
+        categoryDTO.setLastUpdatedDate(ZonedDateTime.now());
         CategoryDTO result = categoryService.save(categoryDTO);
         return ResponseEntity.created(new URI("/api/categories/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -79,6 +92,7 @@ public class CategoryResource {
         if (categoryDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+        categoryDTO.setLastUpdatedDate(ZonedDateTime.now());
         CategoryDTO result = categoryService.save(categoryDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, categoryDTO.getId().toString()))
@@ -93,11 +107,17 @@ public class CategoryResource {
      */
     @GetMapping("/categories")
     @Timed
-    public ResponseEntity<List<CategoryDTO>> getAllCategories(Pageable pageable) {
+    public ResponseEntity<List<CategoryDTO>> getAllCategories(Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to get a page of Categories");
-        Page<CategoryDTO> page = categoryService.findAll(pageable);
+        Page<CategoryDTO> page = new PageImpl(new ArrayList<>());
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+        if (obj != null) {
+            String clientId = (String) obj;
+            page = categoryService.findByClientId(clientId, pageable);
+
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/categories");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
     /**
@@ -143,6 +163,44 @@ public class CategoryResource {
         Page<CategoryDTO> page = categoryService.search(query, pageable);
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/categories");
         return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+    }
+
+    /**
+     * GET  /categorybyslug/:slug : get the category.
+     *
+     * @param slug the slug of the CategoryDTO
+     * @param request
+     * @return Optional<CategoryDTO> category by clientId and slug
+     */
+    @GetMapping("/categorybyslug/{slug}")
+    @Timed
+    public Optional<CategoryDTO> getCategoryBySlug(@PathVariable String slug, HttpServletRequest request) {
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+        String clientId = null;
+        if (obj != null) {
+            clientId = (String) obj;
+        }
+        log.debug("REST request to get Category by clienId : {} and slug : {}", clientId, slug);
+        Optional<CategoryDTO> categoryDTO = categoryService.findByClientIdAndSlug(clientId, slug);
+        return categoryDTO;
+    }
+
+    public String getSlug(String clientId, String name){
+        if(clientId != null && name != null){
+            int slugExtention = 0;
+            return createSlug(clientId, name, name, slugExtention);
+        }
+        return null;
+    }
+
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+        Optional<CategoryDTO> categoryDTO = categoryService.findByClientIdAndSlug(clientId, slug);
+        if(categoryDTO.isPresent()){
+            slugExtention += 1;
+            slug = tempSlug + slugExtention;
+            return createSlug(clientId, slug, tempSlug, slugExtention);
+        }
+        return slug;
     }
 
 }

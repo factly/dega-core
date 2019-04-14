@@ -1,5 +1,53 @@
 {
-    "name": "Post",
+    "fluentMethods": true,
+    "clientRootFolder": "core",
+    "relationships": [
+        {
+            "relationshipName": "tag",
+            "otherEntityName": "tag",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "post"
+        },
+        {
+            "relationshipName": "category",
+            "otherEntityName": "category",
+            "relationshipType": "many-to-many",
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "post"
+        },
+        {
+            "relationshipName": "status",
+            "otherEntityName": "status",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipName": "format",
+            "otherEntityName": "format",
+            "relationshipType": "many-to-one",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name"
+        },
+        {
+            "relationshipName": "degaUser",
+            "otherEntityName": "degaUser",
+            "relationshipType": "many-to-many",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "displayName",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "post"
+        }
+    ],
     "fields": [
         {
             "fieldName": "title",
@@ -14,18 +62,77 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "content",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "excerpt",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "publishedDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "lastUpdatedDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "featured",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "sticky",
+            "fieldType": "Boolean"
+        },
+        {
+            "fieldName": "updates",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "slug",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "password",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "featuredMedia",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "subTitle",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "createdDate",
+            "fieldType": "ZonedDateTime",
+            "fieldValidateRules": [
+                "required"
+            ]
         }
     ],
-    "relationships": [],
     "changelogDate": "20180923010443",
-    "entityTableName": "post",
     "dto": "mapstruct",
-    "pagination": "pagination",
+    "searchEngine": "elasticsearch",
     "service": "serviceImpl",
+    "entityTableName": "post",
     "jpaMetamodelFiltering": false,
-    "fluentMethods": true,
-    "clientRootFolder": "core",
-    "applications": "*",
-    "microserviceName": "core",
-    "searchEngine": "elasticsearch"
+    "pagination": "pagination",
+    "microserviceName": "core"
 }

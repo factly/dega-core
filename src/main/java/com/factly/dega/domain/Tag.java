@@ -1,5 +1,6 @@
 package com.factly.dega.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -7,6 +8,9 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -32,8 +36,22 @@ public class Tag implements Serializable {
     @Field("description")
     private String description;
 
-    @Field("meta")
-    private String meta;
+    @NotNull
+    @Field("client_id")
+    private String clientId;
+
+    @NotNull
+    @Field("created_date")
+    private ZonedDateTime createdDate;
+
+    @NotNull
+    @Field("last_updated_date")
+    private ZonedDateTime lastUpdatedDate;
+
+    @DBRef
+    @Field("posts")
+    @JsonIgnore
+    private Set<Post> posts = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -83,17 +101,68 @@ public class Tag implements Serializable {
         this.description = description;
     }
 
-    public String getMeta() {
-        return meta;
+    public String getClientId() {
+        return clientId;
     }
 
-    public Tag meta(String meta) {
-        this.meta = meta;
+    public Tag clientId(String clientId) {
+        this.clientId = clientId;
         return this;
     }
 
-    public void setMeta(String meta) {
-        this.meta = meta;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public Tag createdDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+        return this;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public Tag lastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+        return this;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public Tag posts(Set<Post> posts) {
+        this.posts = posts;
+        return this;
+    }
+
+    public Tag addPost(Post post) {
+        this.posts.add(post);
+        post.getTags().add(this);
+        return this;
+    }
+
+    public Tag removePost(Post post) {
+        this.posts.remove(post);
+        post.getTags().remove(this);
+        return this;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -124,7 +193,9 @@ public class Tag implements Serializable {
             ", name='" + getName() + "'" +
             ", slug='" + getSlug() + "'" +
             ", description='" + getDescription() + "'" +
-            ", meta='" + getMeta() + "'" +
+            ", clientId='" + getClientId() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }

@@ -1,0 +1,72 @@
+[
+{
+    "name" : "Publish",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "publish",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Status"
+},
+{
+    "name" : "Future",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "future",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Status"
+},
+{
+    "name" : "Draft",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "draft",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Status"
+},
+{
+    "name" : "Pending",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "pending",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Status"
+},
+{
+    "name" : "Private",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "private",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Status"
+},
+{
+    "name" : "Trash",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "trash",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Status"
+},
+{
+    "name" : "Auto-Draft",
+    "client_id" : "All",
+    "is_default" : true,
+    "slug" : "auto-draft",
+    "post" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Status"
+}
+]

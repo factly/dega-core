@@ -1,5 +1,6 @@
 package com.factly.dega.service.dto;
 
+import java.time.ZonedDateTime;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -16,12 +17,15 @@ public class CategoryDTO implements Serializable {
 
     private String description;
 
-    @NotNull
     private String slug;
 
     private String parent;
 
-    private String meta;
+    private String clientId;
+
+    private ZonedDateTime createdDate;
+
+    private ZonedDateTime lastUpdatedDate;
 
     public String getId() {
         return id;
@@ -63,12 +67,28 @@ public class CategoryDTO implements Serializable {
         this.parent = parent;
     }
 
-    public String getMeta() {
-        return meta;
+    public String getClientId() {
+        return clientId;
     }
 
-    public void setMeta(String meta) {
-        this.meta = meta;
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
     }
 
     @Override
@@ -100,7 +120,9 @@ public class CategoryDTO implements Serializable {
             ", description='" + getDescription() + "'" +
             ", slug='" + getSlug() + "'" +
             ", parent='" + getParent() + "'" +
-            ", meta='" + getMeta() + "'" +
+            ", clientId='" + getClientId() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             "}";
     }
 }

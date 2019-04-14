@@ -1,0 +1,313 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-organization-heading" jhiTranslate="coreApp.coreOrganization.home.createOrEditLabel">Create or edit a Organization</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!organization.id">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="organization.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.name" for="field_name">Name</label>
+                    <input type="text" class="form-control" name="name" id="field_name"
+                        [(ngModel)]="organization.name" required/>
+                    <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.phone" for="field_phone">Phone</label>
+                    <input type="text" class="form-control" name="phone" id="field_phone"
+                        [(ngModel)]="organization.phone" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.siteTitle" for="field_siteTitle">Site Title</label>
+                    <input type="text" class="form-control" name="siteTitle" id="field_siteTitle"
+                        [(ngModel)]="organization.siteTitle" required/>
+                    <div [hidden]="!(editForm.controls.siteTitle?.dirty && editForm.controls.siteTitle?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.siteTitle?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.tagLine" for="field_tagLine">Tag Line</label>
+                    <input type="text" class="form-control" name="tagLine" id="field_tagLine"
+                        [(ngModel)]="organization.tagLine" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.description" for="field_description">Description</label>
+                    <input type="text" class="form-control" name="description" id="field_description"
+                        [(ngModel)]="organization.description" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.logoURL" for="field_logoURL">Logo URL</label>
+                    <input type="text" class="form-control" name="logoURL" id="field_logoURL"
+                        [(ngModel)]="organization.logoURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.logoURLMobile" for="field_logoURLMobile">Logo URL Mobile</label>
+                    <input type="text" class="form-control" name="logoURLMobile" id="field_logoURLMobile"
+                        [(ngModel)]="organization.logoURLMobile" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.favIconURL" for="field_favIconURL">Fav Icon URL</label>
+                    <input type="text" class="form-control" name="favIconURL" id="field_favIconURL"
+                        [(ngModel)]="organization.favIconURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.mobileIconURL" for="field_mobileIconURL">Mobile Icon URL</label>
+                    <input type="text" class="form-control" name="mobileIconURL" id="field_mobileIconURL"
+                        [(ngModel)]="organization.mobileIconURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.baiduVerificationCode" for="field_baiduVerificationCode">Baidu Verification Code</label>
+                    <input type="text" class="form-control" name="baiduVerificationCode" id="field_baiduVerificationCode"
+                        [(ngModel)]="organization.baiduVerificationCode" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.bingVerificationCode" for="field_bingVerificationCode">Bing Verification Code</label>
+                    <input type="text" class="form-control" name="bingVerificationCode" id="field_bingVerificationCode"
+                        [(ngModel)]="organization.bingVerificationCode" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.googleVerificationCode" for="field_googleVerificationCode">Google Verification Code</label>
+                    <input type="text" class="form-control" name="googleVerificationCode" id="field_googleVerificationCode"
+                        [(ngModel)]="organization.googleVerificationCode" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.yandexVerificationCode" for="field_yandexVerificationCode">Yandex Verification Code</label>
+                    <input type="text" class="form-control" name="yandexVerificationCode" id="field_yandexVerificationCode"
+                        [(ngModel)]="organization.yandexVerificationCode" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.facebookURL" for="field_facebookURL">Facebook URL</label>
+                    <input type="text" class="form-control" name="facebookURL" id="field_facebookURL"
+                        [(ngModel)]="organization.facebookURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.twitterURL" for="field_twitterURL">Twitter URL</label>
+                    <input type="text" class="form-control" name="twitterURL" id="field_twitterURL"
+                        [(ngModel)]="organization.twitterURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.instagramURL" for="field_instagramURL">Instagram URL</label>
+                    <input type="text" class="form-control" name="instagramURL" id="field_instagramURL"
+                        [(ngModel)]="organization.instagramURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.linkedInURL" for="field_linkedInURL">Linked In URL</label>
+                    <input type="text" class="form-control" name="linkedInURL" id="field_linkedInURL"
+                        [(ngModel)]="organization.linkedInURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.pinterestURL" for="field_pinterestURL">Pinterest URL</label>
+                    <input type="text" class="form-control" name="pinterestURL" id="field_pinterestURL"
+                        [(ngModel)]="organization.pinterestURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.youTubeURL" for="field_youTubeURL">You Tube URL</label>
+                    <input type="text" class="form-control" name="youTubeURL" id="field_youTubeURL"
+                        [(ngModel)]="organization.youTubeURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.googlePlusURL" for="field_googlePlusURL">Google Plus URL</label>
+                    <input type="text" class="form-control" name="googlePlusURL" id="field_googlePlusURL"
+                        [(ngModel)]="organization.googlePlusURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.githubURL" for="field_githubURL">Github URL</label>
+                    <input type="text" class="form-control" name="githubURL" id="field_githubURL"
+                        [(ngModel)]="organization.githubURL" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.facebookPageAccessToken" for="field_facebookPageAccessToken">Facebook Page Access Token</label>
+                    <input type="text" class="form-control" name="facebookPageAccessToken" id="field_facebookPageAccessToken"
+                        [(ngModel)]="organization.facebookPageAccessToken" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.gaTrackingCode" for="field_gaTrackingCode">Ga Tracking Code</label>
+                    <input type="text" class="form-control" name="gaTrackingCode" id="field_gaTrackingCode"
+                        [(ngModel)]="organization.gaTrackingCode" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.githubClientId" for="field_githubClientId">Github Client Id</label>
+                    <input type="text" class="form-control" name="githubClientId" id="field_githubClientId"
+                        [(ngModel)]="organization.githubClientId" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.githubClientSecret" for="field_githubClientSecret">Github Client Secret</label>
+                    <input type="text" class="form-control" name="githubClientSecret" id="field_githubClientSecret"
+                        [(ngModel)]="organization.githubClientSecret" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.twitterClientId" for="field_twitterClientId">Twitter Client Id</label>
+                    <input type="text" class="form-control" name="twitterClientId" id="field_twitterClientId"
+                        [(ngModel)]="organization.twitterClientId" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.twitterClientSecret" for="field_twitterClientSecret">Twitter Client Secret</label>
+                    <input type="text" class="form-control" name="twitterClientSecret" id="field_twitterClientSecret"
+                        [(ngModel)]="organization.twitterClientSecret" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.facebookClientId" for="field_facebookClientId">Facebook Client Id</label>
+                    <input type="text" class="form-control" name="facebookClientId" id="field_facebookClientId"
+                        [(ngModel)]="organization.facebookClientId" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.facebookClientSecret" for="field_facebookClientSecret">Facebook Client Secret</label>
+                    <input type="text" class="form-control" name="facebookClientSecret" id="field_facebookClientSecret"
+                        [(ngModel)]="organization.facebookClientSecret" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.googleClientId" for="field_googleClientId">Google Client Id</label>
+                    <input type="text" class="form-control" name="googleClientId" id="field_googleClientId"
+                        [(ngModel)]="organization.googleClientId" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.googleClientSecret" for="field_googleClientSecret">Google Client Secret</label>
+                    <input type="text" class="form-control" name="googleClientSecret" id="field_googleClientSecret"
+                        [(ngModel)]="organization.googleClientSecret" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.linkedInClientId" for="field_linkedInClientId">Linked In Client Id</label>
+                    <input type="text" class="form-control" name="linkedInClientId" id="field_linkedInClientId"
+                        [(ngModel)]="organization.linkedInClientId" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.linkedInClientSecret" for="field_linkedInClientSecret">Linked In Client Secret</label>
+                    <input type="text" class="form-control" name="linkedInClientSecret" id="field_linkedInClientSecret"
+                        [(ngModel)]="organization.linkedInClientSecret" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.instagramClientId" for="field_instagramClientId">Instagram Client Id</label>
+                    <input type="text" class="form-control" name="instagramClientId" id="field_instagramClientId"
+                        [(ngModel)]="organization.instagramClientId" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.instagramClientSecret" for="field_instagramClientSecret">Instagram Client Secret</label>
+                    <input type="text" class="form-control" name="instagramClientSecret" id="field_instagramClientSecret"
+                        [(ngModel)]="organization.instagramClientSecret" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.mailchimpAPIKey" for="field_mailchimpAPIKey">Mailchimp API Key</label>
+                    <input type="text" class="form-control" name="mailchimpAPIKey" id="field_mailchimpAPIKey"
+                        [(ngModel)]="organization.mailchimpAPIKey" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.siteLanguage" for="field_siteLanguage">Site Language</label>
+                    <input type="text" class="form-control" name="siteLanguage" id="field_siteLanguage"
+                        [(ngModel)]="organization.siteLanguage" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.timeZone" for="field_timeZone">Time Zone</label>
+                    <input type="text" class="form-control" name="timeZone" id="field_timeZone"
+                        [(ngModel)]="organization.timeZone" />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.clientId" for="field_clientId">Client Id</label>
+                    <input type="text" class="form-control" name="clientId" id="field_clientId"
+                        [(ngModel)]="organization.clientId" required/>
+                    <div [hidden]="!(editForm.controls.clientId?.dirty && editForm.controls.clientId?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.clientId?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.slug" for="field_slug">Slug</label>
+                    <input type="text" class="form-control" name="slug" id="field_slug"
+                        [(ngModel)]="organization.slug" required/>
+                    <div [hidden]="!(editForm.controls.slug?.dirty && editForm.controls.slug?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.slug?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.email" for="field_email">Email</label>
+                    <input type="text" class="form-control" name="email" id="field_email"
+                        [(ngModel)]="organization.email" required pattern="'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,30}$'"/>
+                    <div [hidden]="!(editForm.controls.email?.dirty && editForm.controls.email?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.email?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.email?.errors?.pattern" jhiTranslate="entity.validation.pattern" translateValues="{ pattern: 'Email' }">
+                            This field should follow pattern for "Email".
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.createdDate" for="field_createdDate">Created Date</label>
+                    <div class="d-flex">
+                        <input id="field_createdDate" type="datetime-local" class="form-control" name="createdDate" [(ngModel)]="createdDate"
+                        required/>
+                    </div>
+                    <div [hidden]="!(editForm.controls.createdDate?.dirty && editForm.controls.createdDate?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.createdDate?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.createdDate?.errors?.ZonedDateTimelocal" jhiTranslate="entity.validation.ZonedDateTimelocal">
+                            This field should be a date and time.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.lastUpdatedDate" for="field_lastUpdatedDate">Last Updated Date</label>
+                    <div class="d-flex">
+                        <input id="field_lastUpdatedDate" type="datetime-local" class="form-control" name="lastUpdatedDate" [(ngModel)]="lastUpdatedDate"
+                        required/>
+                    </div>
+                    <div [hidden]="!(editForm.controls.lastUpdatedDate?.dirty && editForm.controls.lastUpdatedDate?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.lastUpdatedDate?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.lastUpdatedDate?.errors?.ZonedDateTimelocal" jhiTranslate="entity.validation.ZonedDateTimelocal">
+                            This field should be a date and time.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.siteAddress" for="field_siteAddress">Site Address</label>
+                    <input type="text" class="form-control" name="siteAddress" id="field_siteAddress"
+                        [(ngModel)]="organization.siteAddress" required/>
+                    <div [hidden]="!(editForm.controls.siteAddress?.dirty && editForm.controls.siteAddress?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.siteAddress?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.enableFactchecking" for="field_enableFactchecking">Enable Factchecking</label>
+                    <input type="checkbox" class="form-control" name="enableFactchecking" id="field_enableFactchecking"
+                        [(ngModel)]="organization.enableFactchecking" />
+                </div>
+
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

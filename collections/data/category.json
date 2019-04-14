@@ -1,0 +1,42 @@
+[
+{
+    "name" : "Category 1",
+    "description" : "Sample description of Category 1",
+    "slug" : "category-1",
+    "client_id" : "factly",
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Category"
+},
+{
+    "name" : "Category 2",
+    "description" : "Sample description of Category 2",
+    "slug" : "category-2",
+    "client_id" : "factly",
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Category"
+},
+{
+    "name" : "Category 1",
+    "description" : "Sample description of Category 1",
+    "slug" : "category-1",
+    "client_id" : "factlyhindi",
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Category"
+},
+{
+    "name" : "Category 2",
+    "description" : "Sample description of Category 2",
+    "slug" : "category-2",
+    "client_id" : "factlyhindi",
+    "posts" : [
+
+    ],
+    "_class" : "com.factly.dega.domain.Category"
+}
+]

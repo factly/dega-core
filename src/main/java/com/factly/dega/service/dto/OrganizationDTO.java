@@ -1,5 +1,6 @@
 package com.factly.dega.service.dto;
 
+import java.time.ZonedDateTime;
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.util.Objects;
@@ -13,9 +14,6 @@ public class OrganizationDTO implements Serializable {
 
     @NotNull
     private String name;
-
-    @NotNull
-    private String email;
 
     private String phone;
 
@@ -92,8 +90,22 @@ public class OrganizationDTO implements Serializable {
 
     private String timeZone;
 
-    @NotNull
     private String clientId;
+
+    private String slug;
+
+    @NotNull
+    /*@Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")*/
+    private String email;
+
+    private ZonedDateTime createdDate;
+
+    private ZonedDateTime lastUpdatedDate;
+
+    @NotNull
+    private String siteAddress;
+
+    private Boolean enableFactchecking;
 
     public String getId() {
         return id;
@@ -109,14 +121,6 @@ public class OrganizationDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {
@@ -423,6 +427,54 @@ public class OrganizationDTO implements Serializable {
         this.clientId = clientId;
     }
 
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    public String getSiteAddress() {
+        return siteAddress;
+    }
+
+    public void setSiteAddress(String siteAddress) {
+        this.siteAddress = siteAddress;
+    }
+
+    public Boolean isEnableFactchecking() {
+        return enableFactchecking;
+    }
+
+    public void setEnableFactchecking(Boolean enableFactchecking) {
+        this.enableFactchecking = enableFactchecking;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -449,7 +501,6 @@ public class OrganizationDTO implements Serializable {
         return "OrganizationDTO{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", email='" + getEmail() + "'" +
             ", phone='" + getPhone() + "'" +
             ", siteTitle='" + getSiteTitle() + "'" +
             ", tagLine='" + getTagLine() + "'" +
@@ -488,6 +539,12 @@ public class OrganizationDTO implements Serializable {
             ", siteLanguage='" + getSiteLanguage() + "'" +
             ", timeZone='" + getTimeZone() + "'" +
             ", clientId='" + getClientId() + "'" +
+            ", slug='" + getSlug() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
+            ", siteAddress='" + getSiteAddress() + "'" +
+            ", enableFactchecking='" + isEnableFactchecking() + "'" +
             "}";
     }
 }

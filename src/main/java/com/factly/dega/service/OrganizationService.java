@@ -48,9 +48,18 @@ public interface OrganizationService {
      * Search for the organization corresponding to the query.
      *
      * @param query the query of the search
-     * 
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */
     Page<OrganizationDTO> search(String query, Pageable pageable);
+
+    /**
+     * Get the organization by clientId and slug.
+     *
+     * @param slug the slug of the OrganizationDTO
+     * @return Optional<OrganizationDTO> post by clientId and slug
+     */
+    Optional<OrganizationDTO> findBySlug(String slug);
+
 }

@@ -1,0 +1,148 @@
+// JDL definition for application 'core' generated with command 'jhipster export-jdl'
+
+entity Category {
+  name String required,
+  description String,
+  slug String required,
+  parent String,
+  clientId String required
+}
+entity DegaUser {
+  firstName String,
+  lastName String,
+  displayName String required,
+  website String,
+  facebookURL String,
+  twitterURL String,
+  instagramURL String,
+  linkedinURL String,
+  githubURL String,
+  profilePicture String,
+  description String,
+  slug String required,
+  enabled Boolean required,
+  emailVerified Boolean,
+  email String required unique pattern(/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/)
+}
+entity Format {
+  name String required,
+  isDefault Boolean,
+  clientId String,
+  description String,
+  slug String required
+}
+entity Media {
+  name String required,
+  type String required,
+  url String required,
+  fileSize String,
+  dimensions String,
+  title String,
+  caption String,
+  altText String,
+  description String,
+  uploadedBy String required,
+  publishedDate ZonedDateTime required,
+  publishedDateGMT ZonedDateTime required,
+  lastUpdatedDate ZonedDateTime required,
+  lastUpdatedDateGMT ZonedDateTime required,
+  slug String required
+}
+entity Organization {
+  name String required,
+  phone String,
+  siteTitle String required,
+  tagLine String,
+  description String,
+  logoURL String,
+  logoURLMobile String,
+  favIconURL String,
+  mobileIconURL String,
+  baiduVerificationCode String,
+  bingVerificationCode String,
+  googleVerificationCode String,
+  yandexVerificationCode String,
+  facebookURL String,
+  twitterURL String,
+  instagramURL String,
+  linkedInURL String,
+  pinterestURL String,
+  youTubeURL String,
+  googlePlusURL String,
+  githubURL String,
+  facebookPageAccessToken String,
+  gaTrackingCode String,
+  githubClientId String,
+  githubClientSecret String,
+  twitterClientId String,
+  twitterClientSecret String,
+  facebookClientId String,
+  facebookClientSecret String,
+  googleClientId String,
+  googleClientSecret String,
+  linkedInClientId String,
+  linkedInClientSecret String,
+  instagramClientId String,
+  instagramClientSecret String,
+  mailchimpAPIKey String,
+  siteLanguage String,
+  timeZone String,
+  clientId String required,
+  slug String required,
+  email String required pattern(/'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,30}$'/)
+}
+entity Post {
+  title String required,
+  clientId String required,
+  content String required,
+  excerpt String,
+  publishedDate ZonedDateTime required,
+  publishedDateGMT ZonedDateTime required,
+  lastUpdatedDate ZonedDateTime required,
+  lastUpdatedDateGMT ZonedDateTime required,
+  featured Boolean,
+  sticky Boolean,
+  updates String,
+  slug String required,
+  password String,
+  featuredMedia String,
+  subTitle String
+}
+entity Role {
+  name String required,
+  clientId String required,
+  isDefault Boolean,
+  slug String required
+}
+entity Status {
+  name String required,
+  clientId String required,
+  isDefault Boolean,
+  slug String required
+}
+entity Tag {
+  name String required,
+  slug String required,
+  description String,
+  clientId String required
+}
+relationship OneToMany {
+  Role{degaUser} to DegaUser{role(name) required},
+  Organization{degaUserDefault} to DegaUser{organizationDefault(name) required},
+  Organization{degaUserCurrent} to DegaUser{organizationCurrent(name) required},
+  Status{post} to Post{status(name) required},
+  Format{post} to Post{format(name) required}
+}
+relationship ManyToMany {
+  DegaUser{organization(name) required} to Organization{degaUser},
+  Post{tag(name)} to Tag{post},
+  Post{category(name)} to Category{post},
+  Post{degaUser(displayName) required} to DegaUser{post}
+}
+
+dto Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with mapstruct
+paginate Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with pagination
+service Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with serviceImpl
+search Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with elasticsearch
+microservice Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with core
+clientRootFolder Category, DegaUser, Format, Media, Organization, Post, Role, Status, Tag with core

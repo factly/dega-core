@@ -5,12 +5,14 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 
 /**
  * Spring Data MongoDB repository for the Tag entity.
  */
 @SuppressWarnings("unused")
 @Repository
-public interface TagRepository extends MongoRepository<Tag, String> {
+public interface TagRepository extends DegaCustomRepository<Tag, String> {
 
 }

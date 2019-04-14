@@ -1,5 +1,6 @@
 package com.factly.dega.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -7,6 +8,9 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -24,10 +28,6 @@ public class Organization implements Serializable {
     @NotNull
     @Field("name")
     private String name;
-
-    @NotNull
-    @Field("email")
-    private String email;
 
     @Field("phone")
     private String phone;
@@ -141,10 +141,44 @@ public class Organization implements Serializable {
     @Field("time_zone")
     private String timeZone;
 
-    @NotNull
     @Field("client_id")
     private String clientId;
 
+    @NotNull
+    @Field("slug")
+    private String slug;
+
+    @NotNull
+    /*@Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")*/
+    @Field("email")
+    private String email;
+
+    @NotNull
+    @Field("created_date")
+    private ZonedDateTime createdDate;
+
+    @NotNull
+    @Field("last_updated_date")
+    private ZonedDateTime lastUpdatedDate;
+
+    @NotNull
+    @Field("site_address")
+    private String siteAddress;
+
+    @Field("enable_factchecking")
+    private Boolean enableFactchecking;
+
+    @DBRef
+    @Field("degaUsers")
+    @JsonIgnore
+    private Set<DegaUser> degaUsers = new HashSet<>();
+
+    @DBRef
+    @Field("degaUserDefault")
+    private Set<DegaUser> degaUserDefaults = new HashSet<>();
+    @DBRef
+    @Field("degaUserCurrent")
+    private Set<DegaUser> degaUserCurrents = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -165,19 +199,6 @@ public class Organization implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Organization email(String email) {
-        this.email = email;
-        return this;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getPhone() {
@@ -673,6 +694,159 @@ public class Organization implements Serializable {
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public Organization slug(String slug) {
+        this.slug = slug;
+        return this;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public Organization email(String email) {
+        this.email = email;
+        return this;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public ZonedDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public Organization createdDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+        return this;
+    }
+
+    public void setCreatedDate(ZonedDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public ZonedDateTime getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public Organization lastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+        return this;
+    }
+
+    public void setLastUpdatedDate(ZonedDateTime lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    public String getSiteAddress() {
+        return siteAddress;
+    }
+
+    public Organization siteAddress(String siteAddress) {
+        this.siteAddress = siteAddress;
+        return this;
+    }
+
+    public void setSiteAddress(String siteAddress) {
+        this.siteAddress = siteAddress;
+    }
+
+    public Boolean isEnableFactchecking() {
+        return enableFactchecking;
+    }
+
+    public Organization enableFactchecking(Boolean enableFactchecking) {
+        this.enableFactchecking = enableFactchecking;
+        return this;
+    }
+
+    public void setEnableFactchecking(Boolean enableFactchecking) {
+        this.enableFactchecking = enableFactchecking;
+    }
+
+    public Set<DegaUser> getDegaUsers() {
+        return degaUsers;
+    }
+
+    public Organization degaUsers(Set<DegaUser> degaUsers) {
+        this.degaUsers = degaUsers;
+        return this;
+    }
+
+    public Organization addDegaUser(DegaUser degaUser) {
+        this.degaUsers.add(degaUser);
+        degaUser.getOrganizations().add(this);
+        return this;
+    }
+
+    public Organization removeDegaUser(DegaUser degaUser) {
+        this.degaUsers.remove(degaUser);
+        degaUser.getOrganizations().remove(this);
+        return this;
+    }
+
+    public void setDegaUsers(Set<DegaUser> degaUsers) {
+        this.degaUsers = degaUsers;
+    }
+
+    public Set<DegaUser> getDegaUserDefaults() {
+        return degaUserDefaults;
+    }
+
+    public Organization degaUserDefaults(Set<DegaUser> degaUsers) {
+        this.degaUserDefaults = degaUsers;
+        return this;
+    }
+
+    public Organization addDegaUserDefault(DegaUser degaUser) {
+        this.degaUserDefaults.add(degaUser);
+        degaUser.setOrganizationDefault(this);
+        return this;
+    }
+
+    public Organization removeDegaUserDefault(DegaUser degaUser) {
+        this.degaUserDefaults.remove(degaUser);
+        degaUser.setOrganizationDefault(null);
+        return this;
+    }
+
+    public void setDegaUserDefaults(Set<DegaUser> degaUsers) {
+        this.degaUserDefaults = degaUsers;
+    }
+
+    public Set<DegaUser> getDegaUserCurrents() {
+        return degaUserCurrents;
+    }
+
+    public Organization degaUserCurrents(Set<DegaUser> degaUsers) {
+        this.degaUserCurrents = degaUsers;
+        return this;
+    }
+
+    public Organization addDegaUserCurrent(DegaUser degaUser) {
+        this.degaUserCurrents.add(degaUser);
+        degaUser.setOrganizationCurrent(this);
+        return this;
+    }
+
+    public Organization removeDegaUserCurrent(DegaUser degaUser) {
+        this.degaUserCurrents.remove(degaUser);
+        degaUser.setOrganizationCurrent(null);
+        return this;
+    }
+
+    public void setDegaUserCurrents(Set<DegaUser> degaUsers) {
+        this.degaUserCurrents = degaUsers;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -700,7 +874,6 @@ public class Organization implements Serializable {
         return "Organization{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
-            ", email='" + getEmail() + "'" +
             ", phone='" + getPhone() + "'" +
             ", siteTitle='" + getSiteTitle() + "'" +
             ", tagLine='" + getTagLine() + "'" +
@@ -739,6 +912,12 @@ public class Organization implements Serializable {
             ", siteLanguage='" + getSiteLanguage() + "'" +
             ", timeZone='" + getTimeZone() + "'" +
             ", clientId='" + getClientId() + "'" +
+            ", slug='" + getSlug() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", createdDate='" + getCreatedDate() + "'" +
+            ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
+            ", siteAddress='" + getSiteAddress() + "'" +
+            ", enableFactchecking='" + isEnableFactchecking() + "'" +
             "}";
     }
 }

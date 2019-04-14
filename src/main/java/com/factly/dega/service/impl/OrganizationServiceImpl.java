@@ -106,4 +106,18 @@ public class OrganizationServiceImpl implements OrganizationService {
         return organizationSearchRepository.search(queryStringQuery(query), pageable)
             .map(organizationMapper::toDto);
     }
+
+    /**
+     * Get the organization by clientId and slug.
+     *
+     * @param slug the slug of the OrganizationDTO
+     * @return Optional<OrganizationDTO> organization by clientId and slug
+     */
+    @Override
+    public Optional<OrganizationDTO> findBySlug(String slug) {
+        log.debug("Request to get Organization by slug : {}", slug);
+        return organizationRepository.findBySlug(slug)
+            .map(organizationMapper::toDto);
+    }
+
 }
