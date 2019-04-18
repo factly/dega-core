@@ -37,8 +37,7 @@
             "organizationDefault": "Organization Default",
             "organizationCurrent": "Organization Current",
             "post": "Post",
-            "roleMapping": "Role Mapping",
-            "roleMappingDegaUser": "Role Mapping Dega User"
+            "roleMapping": "Role Mapping"
         }
     }
 }

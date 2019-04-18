@@ -30,7 +30,7 @@
             <thead>
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
             <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="degaUserDisplayName"><span jhiTranslate="coreApp.coreRoleMapping.degaUser">Dega User</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="name"><span jhiTranslate="coreApp.coreRoleMapping.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="organizationName"><span jhiTranslate="coreApp.coreRoleMapping.organization">Organization</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="roleName"><span jhiTranslate="coreApp.coreRoleMapping.role">Role</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
@@ -39,11 +39,7 @@
             <tbody>
             <tr *ngFor="let roleMapping of roleMappings ;trackBy: trackId">
                 <td><a [routerLink]="['/role-mapping', roleMapping.id, 'view' ]">{{roleMapping.id}}</a></td>
-                <td>
-                    <div *ngIf="roleMapping.degaUserId">
-                        <a [routerLink]="['../dega-user', roleMapping.degaUserId , 'view' ]" >{{roleMapping.degaUserDisplayName}}</a>
-                    </div>
-                </td>
+                <td>{{roleMapping.name}}</td>
                 <td>
                     <div *ngIf="roleMapping.organizationId">
                         <a [routerLink]="['../organization', roleMapping.organizationId , 'view' ]" >{{roleMapping.organizationName}}</a>

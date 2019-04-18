@@ -5,11 +5,9 @@
             <hr>
             <jhi-alert-error></jhi-alert-error>
             <dl class="row-md jh-entity-details">
-                <dt><span jhiTranslate="coreApp.coreRoleMapping.degaUser">Dega User</span></dt>
+                <dt><span jhiTranslate="coreApp.coreRoleMapping.name">Name</span></dt>
                 <dd>
-                    <div *ngIf="roleMapping.degaUserId">
-                        <a [routerLink]="['/dega-user', roleMapping.degaUserId, 'view']">{{roleMapping.degaUserDisplayName}}</a>
-                    </div>
+                    <span>{{roleMapping.name}}</span>
                 </dd>
                 <dt><span jhiTranslate="coreApp.coreRoleMapping.organization">Organization</span></dt>
                 <dd>

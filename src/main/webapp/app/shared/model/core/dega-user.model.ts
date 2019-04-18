@@ -30,7 +30,6 @@ export interface IDegaUser {
     organizationCurrentId?: string;
     posts?: IPost[];
     roleMappings?: IRoleMapping[];
-    roleMappingDegaUsers?: IRoleMapping[];
 }
 
 export class DegaUser implements IDegaUser {
@@ -60,8 +59,7 @@ export class DegaUser implements IDegaUser {
         public organizationCurrentName?: string,
         public organizationCurrentId?: string,
         public posts?: IPost[],
-        public roleMappings?: IRoleMapping[],
-        public roleMappingDegaUsers?: IRoleMapping[]
+        public roleMappings?: IRoleMapping[]
     ) {
         this.enabled = this.enabled || false;
         this.emailVerified = this.emailVerified || false;

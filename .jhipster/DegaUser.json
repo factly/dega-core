@@ -50,16 +50,13 @@
         {
             "relationshipName": "roleMapping",
             "otherEntityName": "roleMapping",
-            "relationshipType": "one-to-many",
-            "otherEntityRelationshipName": "degaUser"
-        },
-        {
-            "relationshipName": "roleMappingDegaUser",
-            "otherEntityName": "roleMapping",
             "relationshipType": "many-to-many",
-            "otherEntityField": "id",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name",
             "ownerSide": true,
-            "otherEntityRelationshipName": "degaUserRoleMapping"
+            "otherEntityRelationshipName": "degaUser"
         }
     ],
     "fields": [

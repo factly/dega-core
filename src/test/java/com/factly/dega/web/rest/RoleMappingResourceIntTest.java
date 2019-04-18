@@ -3,7 +3,6 @@ package com.factly.dega.web.rest;
 import com.factly.dega.CoreApp;
 
 import com.factly.dega.domain.RoleMapping;
-import com.factly.dega.domain.DegaUser;
 import com.factly.dega.domain.Organization;
 import com.factly.dega.domain.Role;
 import com.factly.dega.repository.RoleMappingRepository;
@@ -48,6 +47,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = CoreApp.class)
 public class RoleMappingResourceIntTest {
+
+    private static final String DEFAULT_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_NAME = "BBBBBBBBBB";
 
     @Autowired
     private RoleMappingRepository roleMappingRepository;
@@ -97,11 +99,8 @@ public class RoleMappingResourceIntTest {
      * if they test an entity which requires the current entity.
      */
     public static RoleMapping createEntity() {
-        RoleMapping roleMapping = new RoleMapping();
-        // Add required entity
-        DegaUser degaUser = DegaUserResourceIntTest.createEntity();
-        degaUser.setId("fixed-id-for-tests");
-        roleMapping.setDegaUser(degaUser);
+        RoleMapping roleMapping = new RoleMapping()
+            .name(DEFAULT_NAME);
         // Add required entity
         Organization organization = OrganizationResourceIntTest.createEntity();
         organization.setId("fixed-id-for-tests");
@@ -134,6 +133,7 @@ public class RoleMappingResourceIntTest {
         List<RoleMapping> roleMappingList = roleMappingRepository.findAll();
         assertThat(roleMappingList).hasSize(databaseSizeBeforeCreate + 1);
         RoleMapping testRoleMapping = roleMappingList.get(roleMappingList.size() - 1);
+        assertThat(testRoleMapping.getName()).isEqualTo(DEFAULT_NAME);
 
         // Validate the RoleMapping in Elasticsearch
         verify(mockRoleMappingSearchRepository, times(1)).save(testRoleMapping);
@@ -162,6 +162,24 @@ public class RoleMappingResourceIntTest {
     }
 
     @Test
+    public void checkNameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = roleMappingRepository.findAll().size();
+        // set the field null
+        roleMapping.setName(null);
+
+        // Create the RoleMapping, which fails.
+        RoleMappingDTO roleMappingDTO = roleMappingMapper.toDto(roleMapping);
+
+        restRoleMappingMockMvc.perform(post("/api/role-mappings")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(roleMappingDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<RoleMapping> roleMappingList = roleMappingRepository.findAll();
+        assertThat(roleMappingList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllRoleMappings() throws Exception {
         // Initialize the database
         roleMappingRepository.save(roleMapping);
@@ -170,7 +188,8 @@ public class RoleMappingResourceIntTest {
         restRoleMappingMockMvc.perform(get("/api/role-mappings?sort=id,desc"))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(roleMapping.getId())));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(roleMapping.getId())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
     }
     
     @Test
@@ -182,7 +201,8 @@ public class RoleMappingResourceIntTest {
         restRoleMappingMockMvc.perform(get("/api/role-mappings/{id}", roleMapping.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.id").value(roleMapping.getId()));
+            .andExpect(jsonPath("$.id").value(roleMapping.getId()))
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
     }
 
     @Test
@@ -201,6 +221,8 @@ public class RoleMappingResourceIntTest {
 
         // Update the roleMapping
         RoleMapping updatedRoleMapping = roleMappingRepository.findById(roleMapping.getId()).get();
+        updatedRoleMapping
+            .name(UPDATED_NAME);
         RoleMappingDTO roleMappingDTO = roleMappingMapper.toDto(updatedRoleMapping);
 
         restRoleMappingMockMvc.perform(put("/api/role-mappings")
@@ -212,6 +234,7 @@ public class RoleMappingResourceIntTest {
         List<RoleMapping> roleMappingList = roleMappingRepository.findAll();
         assertThat(roleMappingList).hasSize(databaseSizeBeforeUpdate);
         RoleMapping testRoleMapping = roleMappingList.get(roleMappingList.size() - 1);
+        assertThat(testRoleMapping.getName()).isEqualTo(UPDATED_NAME);
 
         // Validate the RoleMapping in Elasticsearch
         verify(mockRoleMappingSearchRepository, times(1)).save(testRoleMapping);
@@ -268,7 +291,8 @@ public class RoleMappingResourceIntTest {
         restRoleMappingMockMvc.perform(get("/api/_search/role-mappings?query=id:" + roleMapping.getId()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
-            .andExpect(jsonPath("$.[*].id").value(hasItem(roleMapping.getId())));
+            .andExpect(jsonPath("$.[*].id").value(hasItem(roleMapping.getId())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
     }
 
     @Test

@@ -6,12 +6,12 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IRoleMapping } from 'app/shared/model/core/role-mapping.model';
 import { RoleMappingService } from './role-mapping.service';
-import { IDegaUser } from 'app/shared/model/core/dega-user.model';
-import { DegaUserService } from 'app/entities/core/dega-user';
 import { IOrganization } from 'app/shared/model/core/organization.model';
 import { OrganizationService } from 'app/entities/core/organization';
 import { IRole } from 'app/shared/model/core/role.model';
 import { RoleService } from 'app/entities/core/role';
+import { IDegaUser } from 'app/shared/model/core/dega-user.model';
+import { DegaUserService } from 'app/entities/core/dega-user';
 
 @Component({
     selector: 'jhi-role-mapping-update',
@@ -21,18 +21,18 @@ export class RoleMappingUpdateComponent implements OnInit {
     roleMapping: IRoleMapping;
     isSaving: boolean;
 
-    degausers: IDegaUser[];
-
     organizations: IOrganization[];
 
     roles: IRole[];
 
+    degausers: IDegaUser[];
+
     constructor(
         private jhiAlertService: JhiAlertService,
         private roleMappingService: RoleMappingService,
-        private degaUserService: DegaUserService,
         private organizationService: OrganizationService,
         private roleService: RoleService,
+        private degaUserService: DegaUserService,
         private activatedRoute: ActivatedRoute
     ) {}
 
@@ -41,12 +41,6 @@ export class RoleMappingUpdateComponent implements OnInit {
         this.activatedRoute.data.subscribe(({ roleMapping }) => {
             this.roleMapping = roleMapping;
         });
-        this.degaUserService.query().subscribe(
-            (res: HttpResponse<IDegaUser[]>) => {
-                this.degausers = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
         this.organizationService.query().subscribe(
             (res: HttpResponse<IOrganization[]>) => {
                 this.organizations = res.body;
@@ -56,6 +50,12 @@ export class RoleMappingUpdateComponent implements OnInit {
         this.roleService.query().subscribe(
             (res: HttpResponse<IRole[]>) => {
                 this.roles = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.degaUserService.query().subscribe(
+            (res: HttpResponse<IDegaUser[]>) => {
+                this.degausers = res.body;
             },
             (res: HttpErrorResponse) => this.onError(res.message)
         );
@@ -91,15 +91,15 @@ export class RoleMappingUpdateComponent implements OnInit {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 
-    trackDegaUserById(index: number, item: IDegaUser) {
-        return item.id;
-    }
-
     trackOrganizationById(index: number, item: IOrganization) {
         return item.id;
     }
 
     trackRoleById(index: number, item: IRole) {
+        return item.id;
+    }
+
+    trackDegaUserById(index: number, item: IDegaUser) {
         return item.id;
     }
 

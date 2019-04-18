@@ -3,15 +3,6 @@
     "clientRootFolder": "core",
     "relationships": [
         {
-            "relationshipName": "degaUser",
-            "otherEntityName": "degaUser",
-            "relationshipType": "many-to-one",
-            "relationshipValidateRules": [
-                "required"
-            ],
-            "otherEntityField": "displayName"
-        },
-        {
             "relationshipName": "organization",
             "otherEntityName": "organization",
             "relationshipType": "many-to-one",
@@ -30,14 +21,22 @@
             "otherEntityField": "name"
         },
         {
-            "relationshipName": "degaUserRoleMapping",
+            "relationshipName": "degaUser",
             "otherEntityName": "degaUser",
             "relationshipType": "many-to-many",
             "ownerSide": false,
-            "otherEntityRelationshipName": "roleMappingDegaUser"
+            "otherEntityRelationshipName": "roleMapping"
         }
     ],
-    "fields": [],
+    "fields": [
+        {
+            "fieldName": "name",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
     "dto": "mapstruct",
     "searchEngine": "elasticsearch",
     "service": "serviceImpl",

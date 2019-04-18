@@ -16,10 +16,10 @@
             "detail": {
                 "title": "Role Mapping"
             },
-            "degaUser": "Dega User",
+            "name": "Name",
             "organization": "Organization",
             "role": "Role",
-            "degaUserRoleMapping": "Dega User Role Mapping"
+            "degaUser": "Dega User"
         }
     }
 }

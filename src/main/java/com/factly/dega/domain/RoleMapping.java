@@ -25,25 +25,24 @@ public class RoleMapping implements Serializable {
     @Id
     private String id;
 
-    @DBRef
-    @Field("degaUser")
-    @JsonIgnoreProperties("")
-    private DegaUser degaUser;
+    @NotNull
+    @Field("name")
+    private String name;
 
     @DBRef
     @Field("organization")
-    @JsonIgnoreProperties("")
+    @JsonIgnoreProperties("roleMappings")
     private Organization organization;
 
     @DBRef
     @Field("role")
-    @JsonIgnoreProperties("")
+    @JsonIgnoreProperties("roleMappings")
     private Role role;
 
     @DBRef
-    @Field("degaUserRoleMappings")
+    @Field("degaUsers")
     @JsonIgnore
-    private Set<DegaUser> degaUserRoleMappings = new HashSet<>();
+    private Set<DegaUser> degaUsers = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -54,17 +53,17 @@ public class RoleMapping implements Serializable {
         this.id = id;
     }
 
-    public DegaUser getDegaUser() {
-        return degaUser;
+    public String getName() {
+        return name;
     }
 
-    public RoleMapping degaUser(DegaUser degaUser) {
-        this.degaUser = degaUser;
+    public RoleMapping name(String name) {
+        this.name = name;
         return this;
     }
 
-    public void setDegaUser(DegaUser degaUser) {
-        this.degaUser = degaUser;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Organization getOrganization() {
@@ -93,29 +92,29 @@ public class RoleMapping implements Serializable {
         this.role = role;
     }
 
-    public Set<DegaUser> getDegaUserRoleMappings() {
-        return degaUserRoleMappings;
+    public Set<DegaUser> getDegaUsers() {
+        return degaUsers;
     }
 
-    public RoleMapping degaUserRoleMappings(Set<DegaUser> degaUsers) {
-        this.degaUserRoleMappings = degaUsers;
+    public RoleMapping degaUsers(Set<DegaUser> degaUsers) {
+        this.degaUsers = degaUsers;
         return this;
     }
 
-    public RoleMapping addDegaUserRoleMapping(DegaUser degaUser) {
-        this.degaUserRoleMappings.add(degaUser);
-        degaUser.getRoleMappingDegaUsers().add(this);
+    public RoleMapping addDegaUser(DegaUser degaUser) {
+        this.degaUsers.add(degaUser);
+        degaUser.getRoleMappings().add(this);
         return this;
     }
 
-    public RoleMapping removeDegaUserRoleMapping(DegaUser degaUser) {
-        this.degaUserRoleMappings.remove(degaUser);
-        degaUser.getRoleMappingDegaUsers().remove(this);
+    public RoleMapping removeDegaUser(DegaUser degaUser) {
+        this.degaUsers.remove(degaUser);
+        degaUser.getRoleMappings().remove(this);
         return this;
     }
 
-    public void setDegaUserRoleMappings(Set<DegaUser> degaUsers) {
-        this.degaUserRoleMappings = degaUsers;
+    public void setDegaUsers(Set<DegaUser> degaUsers) {
+        this.degaUsers = degaUsers;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
@@ -143,6 +142,7 @@ public class RoleMapping implements Serializable {
     public String toString() {
         return "RoleMapping{" +
             "id=" + getId() +
+            ", name='" + getName() + "'" +
             "}";
     }
 }

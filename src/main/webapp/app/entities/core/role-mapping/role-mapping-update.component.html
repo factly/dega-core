@@ -9,20 +9,18 @@
                     <input type="text" class="form-control" id="id" name="id"
                         [(ngModel)]="roleMapping.id" readonly />
                 </div>
-
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="coreApp.coreRoleMapping.degaUser" for="field_degaUser">Dega User</label>
-                    <select class="form-control" id="field_degaUser" name="degaUser" [(ngModel)]="roleMapping.degaUserId"  required>
-                        <option *ngIf="!editForm.value.degaUser" [ngValue]="null" selected></option>
-                        <option [ngValue]="degaUserOption.id" *ngFor="let degaUserOption of degausers; trackBy: trackDegaUserById">{{degaUserOption.displayName}}</option>
-                    </select>
-                </div>
-                <div [hidden]="!(editForm.controls.degaUser?.dirty && editForm.controls.degaUser?.invalid)">
-                    <small class="form-text text-danger"
-                        [hidden]="!editForm.controls.degaUser?.errors?.required" jhiTranslate="entity.validation.required">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreRoleMapping.name" for="field_name">Name</label>
+                    <input type="text" class="form-control" name="name" id="field_name"
+                        [(ngModel)]="roleMapping.name" required/>
+                    <div [hidden]="!(editForm.controls.name?.dirty && editForm.controls.name?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.name?.errors?.required" jhiTranslate="entity.validation.required">
                         This field is required.
-                    </small>
+                        </small>
+                    </div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="coreApp.coreRoleMapping.organization" for="field_organization">Organization</label>
                     <select class="form-control" id="field_organization" name="organization" [(ngModel)]="roleMapping.organizationId"  required>

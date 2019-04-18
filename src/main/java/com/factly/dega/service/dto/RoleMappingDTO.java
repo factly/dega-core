@@ -11,9 +11,8 @@ public class RoleMappingDTO implements Serializable {
 
     private String id;
 
-    private String degaUserId;
-
-    private String degaUserDisplayName;
+    @NotNull
+    private String name;
 
     private String organizationId;
 
@@ -31,20 +30,12 @@ public class RoleMappingDTO implements Serializable {
         this.id = id;
     }
 
-    public String getDegaUserId() {
-        return degaUserId;
+    public String getName() {
+        return name;
     }
 
-    public void setDegaUserId(String degaUserId) {
-        this.degaUserId = degaUserId;
-    }
-
-    public String getDegaUserDisplayName() {
-        return degaUserDisplayName;
-    }
-
-    public void setDegaUserDisplayName(String degaUserDisplayName) {
-        this.degaUserDisplayName = degaUserDisplayName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getOrganizationId() {
@@ -104,8 +95,7 @@ public class RoleMappingDTO implements Serializable {
     public String toString() {
         return "RoleMappingDTO{" +
             "id=" + getId() +
-            ", degaUser=" + getDegaUserId() +
-            ", degaUser='" + getDegaUserDisplayName() + "'" +
+            ", name='" + getName() + "'" +
             ", organization=" + getOrganizationId() +
             ", organization='" + getOrganizationName() + "'" +
             ", role=" + getRoleId() +
