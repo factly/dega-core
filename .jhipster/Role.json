@@ -7,6 +7,12 @@
             "otherEntityName": "degaUser",
             "relationshipType": "one-to-many",
             "otherEntityRelationshipName": "role"
+        },
+        {
+            "relationshipName": "roleMapping",
+            "otherEntityName": "roleMapping",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "role"
         }
     ],
     "fields": [

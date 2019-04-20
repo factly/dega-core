@@ -74,7 +74,7 @@ public class RoleResourceIntTest {
 
     @Autowired
     private RoleMapper roleMapper;
-    
+
     @Autowired
     private RoleService roleService;
 
@@ -288,7 +288,7 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
-    
+
     @Test
     public void getRole() throws Exception {
         // Initialize the database

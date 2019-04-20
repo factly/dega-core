@@ -51,6 +51,9 @@ public class Role implements Serializable {
     @DBRef
     @Field("degaUser")
     private Set<DegaUser> degaUsers = new HashSet<>();
+    @DBRef
+    @Field("roleMapping")
+    private Set<RoleMapping> roleMappings = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -161,6 +164,31 @@ public class Role implements Serializable {
 
     public void setDegaUsers(Set<DegaUser> degaUsers) {
         this.degaUsers = degaUsers;
+    }
+
+    public Set<RoleMapping> getRoleMappings() {
+        return roleMappings;
+    }
+
+    public Role roleMappings(Set<RoleMapping> roleMappings) {
+        this.roleMappings = roleMappings;
+        return this;
+    }
+
+    public Role addRoleMapping(RoleMapping roleMapping) {
+        this.roleMappings.add(roleMapping);
+        roleMapping.setRole(this);
+        return this;
+    }
+
+    public Role removeRoleMapping(RoleMapping roleMapping) {
+        this.roleMappings.remove(roleMapping);
+        roleMapping.setRole(null);
+        return this;
+    }
+
+    public void setRoleMappings(Set<RoleMapping> roleMappings) {
+        this.roleMappings = roleMappings;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 

@@ -15,84 +15,84 @@ import { IRole } from 'app/shared/model/core/role.model';
 
 @Injectable({ providedIn: 'root' })
 export class RoleResolve implements Resolve<IRole> {
-  constructor(private service: RoleService) {}
+    constructor(private service: RoleService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Role> {
-    const id = route.params['id'] ? route.params['id'] : null;
-    if (id) {
-      return this.service.find(id).pipe(
-        filter((response: HttpResponse<Role>) => response.ok),
-        map((role: HttpResponse<Role>) => role.body)
-      );
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Role> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<Role>) => response.ok),
+                map((role: HttpResponse<Role>) => role.body)
+            );
+        }
+        return of(new Role());
     }
-    return of(new Role());
-  }
 }
 
 export const roleRoute: Routes = [
-  {
-    path: 'role',
-    component: RoleComponent,
-    resolve: {
-      pagingParams: JhiResolvePagingParams
+    {
+        path: 'role',
+        component: RoleComponent,
+        resolve: {
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'coreApp.coreRole.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     },
-    data: {
-      authorities: ['ROLE_USER'],
-      defaultSort: 'id,asc',
-      pageTitle: 'coreApp.coreRole.home.title'
+    {
+        path: 'role/:id/view',
+        component: RoleDetailComponent,
+        resolve: {
+            role: RoleResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.coreRole.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'role/:id/view',
-    component: RoleDetailComponent,
-    resolve: {
-      role: RoleResolve
+    {
+        path: 'role/new',
+        component: RoleUpdateComponent,
+        resolve: {
+            role: RoleResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.coreRole.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.coreRole.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'role/new',
-    component: RoleUpdateComponent,
-    resolve: {
-      role: RoleResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.coreRole.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'role/:id/edit',
-    component: RoleUpdateComponent,
-    resolve: {
-      role: RoleResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.coreRole.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  }
+    {
+        path: 'role/:id/edit',
+        component: RoleUpdateComponent,
+        resolve: {
+            role: RoleResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.coreRole.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    }
 ];
 
 export const rolePopupRoute: Routes = [
-  {
-    path: 'role/:id/delete',
-    component: RoleDeletePopupComponent,
-    resolve: {
-      role: RoleResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.coreRole.home.title'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
+    {
+        path: 'role/:id/delete',
+        component: RoleDeletePopupComponent,
+        resolve: {
+            role: RoleResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.coreRole.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
+    }
 ];

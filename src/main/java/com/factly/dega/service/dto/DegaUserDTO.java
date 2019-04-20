@@ -63,6 +63,8 @@ public class DegaUserDTO implements Serializable {
 
     private String organizationCurrentName;
 
+    private Set<RoleMappingDTO> roleMappings = new HashSet<>();
+
     public String getId() {
         return id;
     }
@@ -253,6 +255,14 @@ public class DegaUserDTO implements Serializable {
 
     public void setOrganizationCurrentName(String organizationName) {
         this.organizationCurrentName = organizationName;
+    }
+
+    public Set<RoleMappingDTO> getRoleMappings() {
+        return roleMappings;
+    }
+
+    public void setRoleMappings(Set<RoleMappingDTO> roleMappings) {
+        this.roleMappings = roleMappings;
     }
 
     @Override
