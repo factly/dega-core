@@ -9,51 +9,51 @@ import { IRole } from 'app/shared/model/core/role.model';
 import { RoleService } from './role.service';
 
 @Component({
-  selector: 'jhi-role-update',
-  templateUrl: './role-update.component.html'
+    selector: 'jhi-role-update',
+    templateUrl: './role-update.component.html'
 })
 export class RoleUpdateComponent implements OnInit {
-  role: IRole;
-  isSaving: boolean;
-  createdDate: string;
-  lastUpdatedDate: string;
+    role: IRole;
+    isSaving: boolean;
+    createdDate: string;
+    lastUpdatedDate: string;
 
-  constructor(private roleService: RoleService, private activatedRoute: ActivatedRoute) {}
+    constructor(private roleService: RoleService, private activatedRoute: ActivatedRoute) {}
 
-  ngOnInit() {
-    this.isSaving = false;
-    this.activatedRoute.data.subscribe(({ role }) => {
-      this.role = role;
-      this.createdDate = this.role.createdDate != null ? this.role.createdDate.format(DATE_TIME_FORMAT) : null;
-      this.lastUpdatedDate = this.role.lastUpdatedDate != null ? this.role.lastUpdatedDate.format(DATE_TIME_FORMAT) : null;
-    });
-  }
-
-  previousState() {
-    window.history.back();
-  }
-
-  save() {
-    this.isSaving = true;
-    this.role.createdDate = this.createdDate != null ? moment(this.createdDate, DATE_TIME_FORMAT) : null;
-    this.role.lastUpdatedDate = this.lastUpdatedDate != null ? moment(this.lastUpdatedDate, DATE_TIME_FORMAT) : null;
-    if (this.role.id !== undefined) {
-      this.subscribeToSaveResponse(this.roleService.update(this.role));
-    } else {
-      this.subscribeToSaveResponse(this.roleService.create(this.role));
+    ngOnInit() {
+        this.isSaving = false;
+        this.activatedRoute.data.subscribe(({ role }) => {
+            this.role = role;
+            this.createdDate = this.role.createdDate != null ? this.role.createdDate.format(DATE_TIME_FORMAT) : null;
+            this.lastUpdatedDate = this.role.lastUpdatedDate != null ? this.role.lastUpdatedDate.format(DATE_TIME_FORMAT) : null;
+        });
     }
-  }
 
-  private subscribeToSaveResponse(result: Observable<HttpResponse<IRole>>) {
-    result.subscribe((res: HttpResponse<IRole>) => this.onSaveSuccess(), (res: HttpErrorResponse) => this.onSaveError());
-  }
+    previousState() {
+        window.history.back();
+    }
 
-  private onSaveSuccess() {
-    this.isSaving = false;
-    this.previousState();
-  }
+    save() {
+        this.isSaving = true;
+        this.role.createdDate = this.createdDate != null ? moment(this.createdDate, DATE_TIME_FORMAT) : null;
+        this.role.lastUpdatedDate = this.lastUpdatedDate != null ? moment(this.lastUpdatedDate, DATE_TIME_FORMAT) : null;
+        if (this.role.id !== undefined) {
+            this.subscribeToSaveResponse(this.roleService.update(this.role));
+        } else {
+            this.subscribeToSaveResponse(this.roleService.create(this.role));
+        }
+    }
 
-  private onSaveError() {
-    this.isSaving = false;
-  }
+    private subscribeToSaveResponse(result: Observable<HttpResponse<IRole>>) {
+        result.subscribe((res: HttpResponse<IRole>) => this.onSaveSuccess(), (res: HttpErrorResponse) => this.onSaveError());
+    }
+
+    private onSaveSuccess() {
+        this.isSaving = false;
+        this.previousState();
+    }
+
+    private onSaveError() {
+        this.isSaving = false;
+    }
 }

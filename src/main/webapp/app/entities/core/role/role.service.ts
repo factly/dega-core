@@ -14,72 +14,72 @@ type EntityArrayResponseType = HttpResponse<IRole[]>;
 
 @Injectable({ providedIn: 'root' })
 export class RoleService {
-  public resourceUrl = SERVER_API_URL + 'api/roles';
-  public resourceSearchUrl = SERVER_API_URL + 'api/_search/roles';
+    public resourceUrl = SERVER_API_URL + 'api/roles';
+    public resourceSearchUrl = SERVER_API_URL + 'api/_search/roles';
 
-  constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient) {}
 
-  create(role: IRole): Observable<EntityResponseType> {
-    const copy = this.convertDateFromClient(role);
-    return this.http
-      .post<IRole>(this.resourceUrl, copy, { observe: 'response' })
-      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
-  }
-
-  update(role: IRole): Observable<EntityResponseType> {
-    const copy = this.convertDateFromClient(role);
-    return this.http
-      .put<IRole>(this.resourceUrl, copy, { observe: 'response' })
-      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
-  }
-
-  find(id: string): Observable<EntityResponseType> {
-    return this.http
-      .get<IRole>(`${this.resourceUrl}/${id}`, { observe: 'response' })
-      .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
-  }
-
-  query(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http
-      .get<IRole[]>(this.resourceUrl, { params: options, observe: 'response' })
-      .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
-  }
-
-  delete(id: string): Observable<HttpResponse<any>> {
-    return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
-  }
-
-  search(req?: any): Observable<EntityArrayResponseType> {
-    const options = createRequestOption(req);
-    return this.http
-      .get<IRole[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
-      .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
-  }
-
-  protected convertDateFromClient(role: IRole): IRole {
-    const copy: IRole = Object.assign({}, role, {
-      createdDate: role.createdDate != null && role.createdDate.isValid() ? role.createdDate.toJSON() : null,
-      lastUpdatedDate: role.lastUpdatedDate != null && role.lastUpdatedDate.isValid() ? role.lastUpdatedDate.toJSON() : null
-    });
-    return copy;
-  }
-
-  protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
-    if (res.body) {
-      res.body.createdDate = res.body.createdDate != null ? moment(res.body.createdDate) : null;
-      res.body.lastUpdatedDate = res.body.lastUpdatedDate != null ? moment(res.body.lastUpdatedDate) : null;
+    create(role: IRole): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(role);
+        return this.http
+            .post<IRole>(this.resourceUrl, copy, { observe: 'response' })
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
-    return res;
-  }
 
-  protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
-    if (res.body) {
-      res.body.forEach((role: IRole) => {
-        role.createdDate = role.createdDate != null ? moment(role.createdDate) : null;
-        role.lastUpdatedDate = role.lastUpdatedDate != null ? moment(role.lastUpdatedDate) : null;
-      });
+    update(role: IRole): Observable<EntityResponseType> {
+        const copy = this.convertDateFromClient(role);
+        return this.http
+            .put<IRole>(this.resourceUrl, copy, { observe: 'response' })
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
     }
-    return res;
-  }
+
+    find(id: string): Observable<EntityResponseType> {
+        return this.http
+            .get<IRole>(`${this.resourceUrl}/${id}`, { observe: 'response' })
+            .pipe(map((res: EntityResponseType) => this.convertDateFromServer(res)));
+    }
+
+    query(req?: any): Observable<EntityArrayResponseType> {
+        const options = createRequestOption(req);
+        return this.http
+            .get<IRole[]>(this.resourceUrl, { params: options, observe: 'response' })
+            .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+    }
+
+    delete(id: string): Observable<HttpResponse<any>> {
+        return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
+    }
+
+    search(req?: any): Observable<EntityArrayResponseType> {
+        const options = createRequestOption(req);
+        return this.http
+            .get<IRole[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+            .pipe(map((res: EntityArrayResponseType) => this.convertDateArrayFromServer(res)));
+    }
+
+    protected convertDateFromClient(role: IRole): IRole {
+        const copy: IRole = Object.assign({}, role, {
+            createdDate: role.createdDate != null && role.createdDate.isValid() ? role.createdDate.toJSON() : null,
+            lastUpdatedDate: role.lastUpdatedDate != null && role.lastUpdatedDate.isValid() ? role.lastUpdatedDate.toJSON() : null
+        });
+        return copy;
+    }
+
+    protected convertDateFromServer(res: EntityResponseType): EntityResponseType {
+        if (res.body) {
+            res.body.createdDate = res.body.createdDate != null ? moment(res.body.createdDate) : null;
+            res.body.lastUpdatedDate = res.body.lastUpdatedDate != null ? moment(res.body.lastUpdatedDate) : null;
+        }
+        return res;
+    }
+
+    protected convertDateArrayFromServer(res: EntityArrayResponseType): EntityArrayResponseType {
+        if (res.body) {
+            res.body.forEach((role: IRole) => {
+                role.createdDate = role.createdDate != null ? moment(role.createdDate) : null;
+                role.lastUpdatedDate = role.lastUpdatedDate != null ? moment(role.lastUpdatedDate) : null;
+            });
+        }
+        return res;
+    }
 }

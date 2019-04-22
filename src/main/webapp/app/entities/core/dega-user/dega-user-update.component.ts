@@ -14,108 +14,123 @@ import { IOrganization } from 'app/shared/model/core/organization.model';
 import { OrganizationService } from 'app/entities/core/organization';
 import { IPost } from 'app/shared/model/core/post.model';
 import { PostService } from 'app/entities/core/post';
+import { IRoleMapping } from 'app/shared/model/core/role-mapping.model';
+import { RoleMappingService } from 'app/entities/core/role-mapping';
 
 @Component({
-  selector: 'jhi-dega-user-update',
-  templateUrl: './dega-user-update.component.html'
+    selector: 'jhi-dega-user-update',
+    templateUrl: './dega-user-update.component.html'
 })
 export class DegaUserUpdateComponent implements OnInit {
-  degaUser: IDegaUser;
-  isSaving: boolean;
+    degaUser: IDegaUser;
+    isSaving: boolean;
 
-  roles: IRole[];
+    roles: IRole[];
 
-  organizations: IOrganization[];
+    organizations: IOrganization[];
 
-  posts: IPost[];
-  createdDate: string;
+    posts: IPost[];
 
-  constructor(
-    private jhiAlertService: JhiAlertService,
-    private degaUserService: DegaUserService,
-    private roleService: RoleService,
-    private organizationService: OrganizationService,
-    private postService: PostService,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    rolemappings: IRoleMapping[];
+    createdDate: string;
 
-  ngOnInit() {
-    this.isSaving = false;
-    this.activatedRoute.data.subscribe(({ degaUser }) => {
-      this.degaUser = degaUser;
-      this.createdDate = this.degaUser.createdDate != null ? this.degaUser.createdDate.format(DATE_TIME_FORMAT) : null;
-    });
-    this.roleService.query().subscribe(
-      (res: HttpResponse<IRole[]>) => {
-        this.roles = res.body;
-      },
-      (res: HttpErrorResponse) => this.onError(res.message)
-    );
-    this.organizationService.query().subscribe(
-      (res: HttpResponse<IOrganization[]>) => {
-        this.organizations = res.body;
-      },
-      (res: HttpErrorResponse) => this.onError(res.message)
-    );
-    this.postService.query().subscribe(
-      (res: HttpResponse<IPost[]>) => {
-        this.posts = res.body;
-      },
-      (res: HttpErrorResponse) => this.onError(res.message)
-    );
-  }
+    constructor(
+        private jhiAlertService: JhiAlertService,
+        private degaUserService: DegaUserService,
+        private roleService: RoleService,
+        private organizationService: OrganizationService,
+        private postService: PostService,
+        private roleMappingService: RoleMappingService,
+        private activatedRoute: ActivatedRoute
+    ) {}
 
-  previousState() {
-    window.history.back();
-  }
-
-  save() {
-    this.isSaving = true;
-    this.degaUser.createdDate = this.createdDate != null ? moment(this.createdDate, DATE_TIME_FORMAT) : null;
-    if (this.degaUser.id !== undefined) {
-      this.subscribeToSaveResponse(this.degaUserService.update(this.degaUser));
-    } else {
-      this.subscribeToSaveResponse(this.degaUserService.create(this.degaUser));
+    ngOnInit() {
+        this.isSaving = false;
+        this.activatedRoute.data.subscribe(({ degaUser }) => {
+            this.degaUser = degaUser;
+            this.createdDate = this.degaUser.createdDate != null ? this.degaUser.createdDate.format(DATE_TIME_FORMAT) : null;
+        });
+        this.roleService.query().subscribe(
+            (res: HttpResponse<IRole[]>) => {
+                this.roles = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.organizationService.query().subscribe(
+            (res: HttpResponse<IOrganization[]>) => {
+                this.organizations = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.postService.query().subscribe(
+            (res: HttpResponse<IPost[]>) => {
+                this.posts = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.roleMappingService.query().subscribe(
+            (res: HttpResponse<IRoleMapping[]>) => {
+                this.rolemappings = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
     }
-  }
 
-  private subscribeToSaveResponse(result: Observable<HttpResponse<IDegaUser>>) {
-    result.subscribe((res: HttpResponse<IDegaUser>) => this.onSaveSuccess(), (res: HttpErrorResponse) => this.onSaveError());
-  }
+    previousState() {
+        window.history.back();
+    }
 
-  private onSaveSuccess() {
-    this.isSaving = false;
-    this.previousState();
-  }
-
-  private onSaveError() {
-    this.isSaving = false;
-  }
-
-  private onError(errorMessage: string) {
-    this.jhiAlertService.error(errorMessage, null, null);
-  }
-
-  trackRoleById(index: number, item: IRole) {
-    return item.id;
-  }
-
-  trackOrganizationById(index: number, item: IOrganization) {
-    return item.id;
-  }
-
-  trackPostById(index: number, item: IPost) {
-    return item.id;
-  }
-
-  getSelected(selectedVals: Array<any>, option: any) {
-    if (selectedVals) {
-      for (let i = 0; i < selectedVals.length; i++) {
-        if (option.id === selectedVals[i].id) {
-          return selectedVals[i];
+    save() {
+        this.isSaving = true;
+        this.degaUser.createdDate = this.createdDate != null ? moment(this.createdDate, DATE_TIME_FORMAT) : null;
+        if (this.degaUser.id !== undefined) {
+            this.subscribeToSaveResponse(this.degaUserService.update(this.degaUser));
+        } else {
+            this.subscribeToSaveResponse(this.degaUserService.create(this.degaUser));
         }
-      }
     }
-    return option;
-  }
+
+    private subscribeToSaveResponse(result: Observable<HttpResponse<IDegaUser>>) {
+        result.subscribe((res: HttpResponse<IDegaUser>) => this.onSaveSuccess(), (res: HttpErrorResponse) => this.onSaveError());
+    }
+
+    private onSaveSuccess() {
+        this.isSaving = false;
+        this.previousState();
+    }
+
+    private onSaveError() {
+        this.isSaving = false;
+    }
+
+    private onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
+    }
+
+    trackRoleById(index: number, item: IRole) {
+        return item.id;
+    }
+
+    trackOrganizationById(index: number, item: IOrganization) {
+        return item.id;
+    }
+
+    trackPostById(index: number, item: IPost) {
+        return item.id;
+    }
+
+    trackRoleMappingById(index: number, item: IRoleMapping) {
+        return item.id;
+    }
+
+    getSelected(selectedVals: Array<any>, option: any) {
+        if (selectedVals) {
+            for (let i = 0; i < selectedVals.length; i++) {
+                if (option.id === selectedVals[i].id) {
+                    return selectedVals[i];
+                }
+            }
+        }
+        return option;
+    }
 }

@@ -7,6 +7,7 @@ import com.factly.dega.domain.Role;
 import com.factly.dega.domain.Organization;
 import com.factly.dega.domain.Organization;
 import com.factly.dega.domain.Organization;
+import com.factly.dega.domain.RoleMapping;
 import com.factly.dega.repository.DegaUserRepository;
 import com.factly.dega.repository.search.DegaUserSearchRepository;
 import com.factly.dega.service.DegaUserService;
@@ -209,6 +210,10 @@ public class DegaUserResourceIntTest {
         degaUser.setOrganizationDefault(organization);
         // Add required entity
         degaUser.setOrganizationCurrent(organization);
+        // Add required entity
+        RoleMapping roleMapping = RoleMappingResourceIntTest.createEntity();
+        roleMapping.setId("fixed-id-for-tests");
+        degaUser.getRoleMappings().add(roleMapping);
         return degaUser;
     }
 

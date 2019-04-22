@@ -8,33 +8,33 @@ import { DegaUserDetailComponent } from 'app/entities/core/dega-user/dega-user-d
 import { DegaUser } from 'app/shared/model/core/dega-user.model';
 
 describe('Component Tests', () => {
-  describe('DegaUser Management Detail Component', () => {
-    let comp: DegaUserDetailComponent;
-    let fixture: ComponentFixture<DegaUserDetailComponent>;
-    const route = ({ data: of({ degaUser: new DegaUser('123') }) } as any) as ActivatedRoute;
+    describe('DegaUser Management Detail Component', () => {
+        let comp: DegaUserDetailComponent;
+        let fixture: ComponentFixture<DegaUserDetailComponent>;
+        const route = ({ data: of({ degaUser: new DegaUser('123') }) } as any) as ActivatedRoute;
 
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [CoreTestModule],
-        declarations: [DegaUserDetailComponent],
-        providers: [{ provide: ActivatedRoute, useValue: route }]
-      })
-        .overrideTemplate(DegaUserDetailComponent, '')
-        .compileComponents();
-      fixture = TestBed.createComponent(DegaUserDetailComponent);
-      comp = fixture.componentInstance;
+        beforeEach(() => {
+            TestBed.configureTestingModule({
+                imports: [CoreTestModule],
+                declarations: [DegaUserDetailComponent],
+                providers: [{ provide: ActivatedRoute, useValue: route }]
+            })
+                .overrideTemplate(DegaUserDetailComponent, '')
+                .compileComponents();
+            fixture = TestBed.createComponent(DegaUserDetailComponent);
+            comp = fixture.componentInstance;
+        });
+
+        describe('OnInit', () => {
+            it('Should call load all on init', () => {
+                // GIVEN
+
+                // WHEN
+                comp.ngOnInit();
+
+                // THEN
+                expect(comp.degaUser).toEqual(jasmine.objectContaining({ id: '123' }));
+            });
+        });
     });
-
-    describe('OnInit', () => {
-      it('Should call load all on init', () => {
-        // GIVEN
-
-        // WHEN
-        comp.ngOnInit();
-
-        // THEN
-        expect(comp.degaUser).toEqual(jasmine.objectContaining({ id: '123' }));
-      });
-    });
-  });
 });

@@ -13,6 +13,7 @@ public interface RoleMapper extends EntityMapper<RoleDTO, Role> {
 
 
     @Mapping(target = "degaUsers", ignore = true)
+    @Mapping(target = "roleMappings", ignore = true)
     Role toEntity(RoleDTO roleDTO);
 
     default Role fromId(String id) {

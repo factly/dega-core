@@ -46,6 +46,17 @@
             "relationshipType": "many-to-many",
             "ownerSide": false,
             "otherEntityRelationshipName": "degaUser"
+        },
+        {
+            "relationshipName": "roleMapping",
+            "otherEntityName": "roleMapping",
+            "relationshipType": "many-to-many",
+            "relationshipValidateRules": [
+                "required"
+            ],
+            "otherEntityField": "name",
+            "ownerSide": true,
+            "otherEntityRelationshipName": "degaUser"
         }
     ],
     "fields": [
