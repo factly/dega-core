@@ -59,11 +59,31 @@ public class DegaUserDTO implements Serializable {
 
     private String organizationDefaultName;
 
+    public OrganizationDTO getOrganizationDefault() {
+        return organizationDefault;
+    }
+
+    public void setOrganizationDefault(OrganizationDTO organizationDefault) {
+        this.organizationDefault = organizationDefault;
+    }
+
+    public OrganizationDTO getOrganizationCurrent() {
+        return organizationCurrent;
+    }
+
+    public void setOrganizationCurrent(OrganizationDTO organizationCurrent) {
+        this.organizationCurrent = organizationCurrent;
+    }
+
     private String organizationCurrentId;
 
     private String organizationCurrentName;
 
     private Set<RoleMappingDTO> roleMappings = new HashSet<>();
+
+    private OrganizationDTO organizationDefault;
+
+    private OrganizationDTO organizationCurrent;
 
     public String getId() {
         return id;
