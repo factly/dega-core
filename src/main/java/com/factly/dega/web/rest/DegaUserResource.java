@@ -1,9 +1,9 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.factly.dega.config.Constants;
 import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.dto.KeyCloakUserDTO;
+import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
@@ -14,6 +14,7 @@ import com.google.gson.JsonObject;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +23,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
-import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -36,9 +38,6 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing DegaUser.
@@ -53,14 +52,15 @@ public class DegaUserResource {
 
     private final DegaUserService degaUserService;
 
-    private final RestTemplate restTemplate;
+    private KeycloakUtils keycloakUtils;
 
-    private String keycloakServerURI;
-
-    public DegaUserResource(DegaUserService degaUserService, RestTemplate restTemplate, @Value("${keycloak.api.uri}") String keycloakServerURI) {
+    @Autowired
+    public DegaUserResource(
+        DegaUserService degaUserService,
+        RestTemplate restTemplate,
+        KeycloakUtils keycloakUtils) {
         this.degaUserService = degaUserService;
-        this.restTemplate = restTemplate;
-        this.keycloakServerURI = keycloakServerURI;
+        this.keycloakUtils = keycloakUtils;
     }
 
     /**
@@ -78,40 +78,17 @@ public class DegaUserResource {
             throw new BadRequestAlertException("A new degaUser cannot already have an ID", ENTITY_NAME, "idexists");
         }
         degaUserDTO.setCreatedDate(ZonedDateTime.now());
-        OAuth2Authentication auth = (OAuth2Authentication) request.getUserPrincipal();
-        if (auth == null) {
-            throw new BadRequestAlertException("A new degaUser cannot be created without user principal", ENTITY_NAME, "idexists");
-        }
 
         // save the user to keycloak
-        try {
-            String token = "Bearer " + (OAuth2AuthenticationDetails.class.cast(auth.getDetails())).getTokenValue();
-            JsonObject jObj = transformDTO(degaUserDTO);
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-            httpHeaders.add("Authorization", token);
-            String jsonAsString = jObj.toString();
-            log.debug("Keycloak user request body {}", jsonAsString);
-            HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
-            restTemplate.postForObject(keycloakServerURI, httpEntity, String.class);
-        } catch(HttpClientErrorException e) {
-            if (e.getMessage().equals("403 Forbidden")) {
-                log.error("This logged in user {} does not have required access", auth.getPrincipal());
-                return null;
-            }
-            if (e.getMessage().equals("409 Conflict")) {
-                log.error("A user already exists with the same email address {}", degaUserDTO.getEmail());
-                return null;
-            }
-            // for all other errors rethrow
-            throw e;
-        } catch(Exception e) {
-            log.error("keycloak user creation failed with the message {}, exiting", e.getMessage());
-            throw e;
+        JsonObject jObj = transformDTO(degaUserDTO);
+        String jsonAsString = jObj.toString();
+        Boolean status = keycloakUtils.create("users", jsonAsString);
+        if(status == false) {
+            return null;
         }
 
         // set slug
-         degaUserDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(degaUserDTO.getDisplayName())));
+        degaUserDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(degaUserDTO.getDisplayName())));
 
         // save the user to mongo database
         log.info("Keycloak user creation is successful, adding user to dega backend");
