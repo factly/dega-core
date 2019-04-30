@@ -59,9 +59,10 @@ public class OrganizationResource {
     public ResponseEntity<OrganizationDTO> createOrganization(@Valid @RequestBody OrganizationDTO organizationDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to save Organization : {}", organizationDTO);
         if (organizationDTO.getId() != null) {
-            throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "idexists");
+            throw new BadRequestAlertException("A new organization cannot already have an ID", ENTITY_NAME, "id exists");
         }
         organizationDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(organizationDTO.getName())));
+        organizationDTO.setClientId(getSlug(CommonUtil.removeSpecialCharsFromString(organizationDTO.getName())));
         organizationDTO.setCreatedDate(ZonedDateTime.now());
         organizationDTO.setLastUpdatedDate(ZonedDateTime.now());
         OrganizationDTO result = organizationService.save(organizationDTO);
