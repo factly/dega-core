@@ -3,20 +3,26 @@ package com.factly.dega.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.config.Constants;
 import com.factly.dega.service.RoleService;
+import com.factly.dega.service.dto.DegaUserDTO;
+import com.factly.dega.service.dto.KeyCloakRoleDTO;
+import com.factly.dega.service.dto.KeyCloakUserDTO;
+import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
 import com.factly.dega.service.dto.RoleDTO;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -43,8 +49,12 @@ public class RoleResource {
 
     private final RoleService roleService;
 
-    public RoleResource(RoleService roleService) {
+    private KeycloakUtils keycloakUtils;
+
+    public RoleResource(RoleService roleService,
+                        KeycloakUtils keycloakUtils) {
         this.roleService = roleService;
+        this.keycloakUtils = keycloakUtils;
     }
 
     /**
@@ -72,10 +82,34 @@ public class RoleResource {
         roleDTO.setSlug(getSlug(roleDTO.getClientId(), CommonUtil.removeSpecialCharsFromString(roleDTO.getName())));
         roleDTO.setCreatedDate(ZonedDateTime.now());
         roleDTO.setLastUpdatedDate(ZonedDateTime.now());
+
+        // save the user to keycloak
+        JsonObject jObj = transformDTO(roleDTO);
+        String jsonAsString = jObj.toString();
+        Boolean status = keycloakUtils.create("roles", jsonAsString);
+        if(status == false) {
+            return null;
+        }
+
+
         RoleDTO result = roleService.save(roleDTO);
         return ResponseEntity.created(new URI("/api/roles/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
+    }
+
+
+    private JsonObject transformDTO(RoleDTO roleDTO) {
+        KeyCloakRoleDTO keyCloakRoleDTO = new KeyCloakRoleDTO(
+            String.valueOf(java.util.UUID.randomUUID()),
+            roleDTO.getName(),
+            roleDTO.toString(),
+            false,
+            false,
+            roleDTO.getClientId()
+        );
+        JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleDTO);
+        return jObj;
     }
 
     /**
