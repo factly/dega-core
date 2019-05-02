@@ -100,9 +100,10 @@ public class RoleResource {
 
 
     private JsonObject transformDTO(RoleDTO roleDTO) {
+        String roleName = "ROLE_" + roleDTO.getName().replaceAll("\\s+", "_").toUpperCase();
         KeyCloakRoleDTO keyCloakRoleDTO = new KeyCloakRoleDTO(
             String.valueOf(java.util.UUID.randomUUID()),
-            roleDTO.getName(),
+            roleName,
             roleDTO.toString(),
             false,
             false,
