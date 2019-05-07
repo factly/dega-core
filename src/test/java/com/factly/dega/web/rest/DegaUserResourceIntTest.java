@@ -13,6 +13,7 @@ import com.factly.dega.repository.search.DegaUserSearchRepository;
 import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.dto.DegaUserDTO;
 import com.factly.dega.service.mapper.DegaUserMapper;
+import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -163,10 +164,13 @@ public class DegaUserResourceIntTest {
 
     private DegaUser degaUser;
 
+    @Autowired
+    private KeycloakUtils keycloakUtils;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final DegaUserResource degaUserResource = new DegaUserResource(degaUserService, restTemplate, keycloakServerURI);
+        final DegaUserResource degaUserResource = new DegaUserResource(degaUserService, restTemplate, keycloakUtils);
         this.restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -405,7 +409,7 @@ public class DegaUserResourceIntTest {
     }
 
     public void getAllDegaUsersWithEagerRelationshipsIsEnabled() throws Exception {
-        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakServerURI);
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakUtils);
         when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
@@ -421,7 +425,7 @@ public class DegaUserResourceIntTest {
     }
 
     public void getAllDegaUsersWithEagerRelationshipsIsNotEnabled() throws Exception {
-        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakServerURI);
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakUtils);
             when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

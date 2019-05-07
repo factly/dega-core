@@ -8,6 +8,7 @@ import com.factly.dega.repository.search.RoleSearchRepository;
 import com.factly.dega.service.RoleService;
 import com.factly.dega.service.dto.RoleDTO;
 import com.factly.dega.service.mapper.RoleMapper;
+import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -98,11 +99,13 @@ public class RoleResourceIntTest {
     private MockMvc restRoleMockMvc;
 
     private Role role;
+    @Autowired
+    private KeycloakUtils keycloakUtils;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final RoleResource roleResource = new RoleResource(roleService);
+        final RoleResource roleResource = new RoleResource(roleService, keycloakUtils);
         this.restRoleMockMvc = MockMvcBuilders.standaloneSetup(roleResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
