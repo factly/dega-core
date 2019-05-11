@@ -68,7 +68,7 @@ public class PostResource {
         if (postDTO.getId() != null) {
             throw new BadRequestAlertException("A new post cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Optional<StatusDTO> status = statusService.findOneByName("Draft");
+        Optional<StatusDTO> status = statusService.findOneByName(postDTO.getStatusName());
         if (status.isPresent() && status.get() != null) {
             postDTO.setStatusId(status.get().getId());
         }
@@ -79,44 +79,15 @@ public class PostResource {
         postDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(postDTO.getTitle())));
         postDTO.setCreatedDate(ZonedDateTime.now());
         postDTO.setLastUpdatedDate(ZonedDateTime.now());
+        if (postDTO.getStatusName().equalsIgnoreCase("publish")) {
+            postDTO.setPublishedDate(ZonedDateTime.now());
+        }
         PostDTO result = postService.save(postDTO);
         return ResponseEntity.created(new URI("/api/posts/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
 
-    /**
-     * POST  /posts : Create a new post.
-     *
-     * @param postDTO the postDTO to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new postDTO, or with status 400 (Bad Request) if the post has already an ID
-     * @throws URISyntaxException if the Location URI syntax is incorrect
-     */
-    @PostMapping("/publish")
-    @Timed
-    public ResponseEntity<PostDTO> publishPost(@Valid @RequestBody PostDTO postDTO, HttpServletRequest request) throws URISyntaxException {
-        log.debug("REST request to save Post : {}", postDTO);
-        if (postDTO.getId() != null) {
-            throw new BadRequestAlertException("A new post cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-
-        Optional<StatusDTO> status = statusService.findOneByName("Publish");
-        if (status.get() != null) {
-            postDTO.setStatusId(status.get().getId());
-        }
-        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            postDTO.setClientId((String) obj);
-        }
-        postDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(postDTO.getTitle())));
-        postDTO.setCreatedDate(ZonedDateTime.now());
-        postDTO.setLastUpdatedDate(ZonedDateTime.now());
-        postDTO.setPublishedDate(ZonedDateTime.now());
-        PostDTO result = postService.save(postDTO);
-        return ResponseEntity.created(new URI("/api/posts/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
-    }
 
     /**
      * PUT  /posts : Updates an existing post.
