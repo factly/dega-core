@@ -109,6 +109,7 @@ public class PostResource {
         if (status.get() != null) {
             postDTO.setStatusId(status.get().getId());
         }
+        postDTO.setPublishedDate(ZonedDateTime.now());
         postDTO.setLastUpdatedDate(ZonedDateTime.now());
         PostDTO result = postService.save(postDTO);
         return ResponseEntity.ok()
