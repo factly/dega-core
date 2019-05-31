@@ -73,7 +73,8 @@ public class RoleResource {
         }
         if (roleDTO.isIsDefault()) {
             roleDTO.setClientId(Constants.DEFAULT_CLIENTID);
-        } else if (roleDTO.getClientId() == null) {
+        } else {
+            roleDTO.setClientId(null);
             Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
             if (obj != null) {
                 roleDTO.setClientId((String) obj);
@@ -124,10 +125,19 @@ public class RoleResource {
      */
     @PutMapping("/roles")
     @Timed
-    public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO) throws URISyntaxException {
+    public ResponseEntity<RoleDTO> updateRole(@Valid @RequestBody RoleDTO roleDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to update Role : {}", roleDTO);
         if (roleDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (roleDTO.isIsDefault()) {
+            roleDTO.setClientId(Constants.DEFAULT_CLIENTID);
+        } else {
+            roleDTO.setClientId(null);
+            Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+            if (obj != null) {
+                roleDTO.setClientId((String) obj);
+            }
         }
         roleDTO.setLastUpdatedDate(ZonedDateTime.now());
         RoleDTO result = roleService.save(roleDTO);

@@ -63,7 +63,8 @@ public class FormatResource {
         }
         if (formatDTO.isIsDefault()) {
             formatDTO.setClientId(Constants.DEFAULT_CLIENTID);
-        } else if (formatDTO.getClientId() == null) {
+        } else {
+            formatDTO.setClientId(null);
             Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
             if (obj != null) {
                 formatDTO.setClientId((String) obj);
@@ -89,10 +90,19 @@ public class FormatResource {
      */
     @PutMapping("/formats")
     @Timed
-    public ResponseEntity<FormatDTO> updateFormat(@Valid @RequestBody FormatDTO formatDTO) throws URISyntaxException {
+    public ResponseEntity<FormatDTO> updateFormat(@Valid @RequestBody FormatDTO formatDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to update Format : {}", formatDTO);
         if (formatDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (formatDTO.isIsDefault()) {
+            formatDTO.setClientId(Constants.DEFAULT_CLIENTID);
+        } else {
+            formatDTO.setClientId(null);
+            Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+            if (obj != null) {
+                formatDTO.setClientId((String) obj);
+            }
         }
         formatDTO.setLastUpdatedDate(ZonedDateTime.now());
         FormatDTO result = formatService.save(formatDTO);

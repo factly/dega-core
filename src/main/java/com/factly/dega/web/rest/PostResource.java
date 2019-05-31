@@ -72,6 +72,7 @@ public class PostResource {
         if (status.isPresent() && status.get() != null) {
             postDTO.setStatusId(status.get().getId());
         }
+        postDTO.setClientId(null);
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             postDTO.setClientId((String) obj);
@@ -100,7 +101,7 @@ public class PostResource {
      */
     @PutMapping("/posts")
     @Timed
-    public ResponseEntity<PostDTO> updatePost(@Valid @RequestBody PostDTO postDTO) throws URISyntaxException {
+    public ResponseEntity<PostDTO> updatePost(@Valid @RequestBody PostDTO postDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to update Post : {}", postDTO);
         if (postDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
@@ -108,6 +109,11 @@ public class PostResource {
         Optional<StatusDTO> status = statusService.findOneByName(postDTO.getStatusName());
         if (status.get() != null) {
             postDTO.setStatusId(status.get().getId());
+        }
+        postDTO.setClientId(null);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+        if (obj != null) {
+            postDTO.setClientId((String) obj);
         }
         postDTO.setPublishedDate(ZonedDateTime.now());
         postDTO.setLastUpdatedDate(ZonedDateTime.now());
