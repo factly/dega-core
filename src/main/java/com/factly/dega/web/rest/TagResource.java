@@ -63,6 +63,7 @@ public class TagResource {
         if (tagDTO.getId() != null) {
             throw new BadRequestAlertException("A new tag cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        tagDTO.setClientId(null);
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             tagDTO.setClientId((String) obj);
@@ -87,10 +88,15 @@ public class TagResource {
      */
     @PutMapping("/tags")
     @Timed
-    public ResponseEntity<TagDTO> updateTag(@Valid @RequestBody TagDTO tagDTO) throws URISyntaxException {
+    public ResponseEntity<TagDTO> updateTag(@Valid @RequestBody TagDTO tagDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to update Tag : {}", tagDTO);
         if (tagDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        tagDTO.setClientId(null);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+        if (obj != null) {
+            tagDTO.setClientId((String) obj);
         }
         tagDTO.setLastUpdatedDate(ZonedDateTime.now());
         TagDTO result = tagService.save(tagDTO);

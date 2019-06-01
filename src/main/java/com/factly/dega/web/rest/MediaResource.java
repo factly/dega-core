@@ -75,6 +75,7 @@ public class MediaResource {
         if (mediaDTO.getId() != null) {
             throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
         }
+        mediaDTO.setClientId(null);
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             mediaDTO.setClientId((String) obj);
@@ -162,10 +163,15 @@ public class MediaResource {
      */
     @PutMapping("/media")
     @Timed
-    public ResponseEntity<MediaDTO> updateMedia(@Valid @RequestBody MediaDTO mediaDTO) throws URISyntaxException {
+    public ResponseEntity<MediaDTO> updateMedia(@Valid @RequestBody MediaDTO mediaDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to update Media : {}", mediaDTO);
         if (mediaDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        mediaDTO.setClientId(null);
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+        if (obj != null) {
+            mediaDTO.setClientId((String) obj);
         }
         mediaDTO.setLastUpdatedDate(ZonedDateTime.now());
         MediaDTO result = mediaService.save(mediaDTO);

@@ -63,7 +63,8 @@ public class StatusResource {
         }
         if (statusDTO.isIsDefault()) {
             statusDTO.setClientId(Constants.DEFAULT_CLIENTID);
-        } else if (statusDTO.getClientId() == null) {
+        } else {
+            statusDTO.setClientId(null);
             Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
             if (obj != null) {
                 statusDTO.setClientId((String) obj);
@@ -89,10 +90,19 @@ public class StatusResource {
      */
     @PutMapping("/statuses")
     @Timed
-    public ResponseEntity<StatusDTO> updateStatus(@Valid @RequestBody StatusDTO statusDTO) throws URISyntaxException {
+    public ResponseEntity<StatusDTO> updateStatus(@Valid @RequestBody StatusDTO statusDTO, HttpServletRequest request) throws URISyntaxException {
         log.debug("REST request to update Status : {}", statusDTO);
         if (statusDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (statusDTO.isIsDefault()) {
+            statusDTO.setClientId(Constants.DEFAULT_CLIENTID);
+        } else {
+            statusDTO.setClientId(null);
+            Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
+            if (obj != null) {
+                statusDTO.setClientId((String) obj);
+            }
         }
         statusDTO.setLastUpdatedDate(ZonedDateTime.now());
         StatusDTO result = statusService.save(statusDTO);
