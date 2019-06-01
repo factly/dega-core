@@ -30,6 +30,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -183,11 +184,15 @@ public class PostResource {
      */
     @GetMapping("/_search/posts")
     @Timed
-    public ResponseEntity<List<PostDTO>> searchPosts(@RequestParam String query, Pageable pageable) {
+    public ResponseEntity<List<PostDTO>> searchPosts(@RequestParam String query, Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to search for a page of Posts for query {}", query);
+        String clientId = (String) request.getSession().getAttribute(Constants.CLIENT_ID);
         Page<PostDTO> page = postService.search(query, pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/posts");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        List<PostDTO> postsByClientId = page.getContent().stream().filter(postDTO -> postDTO.getClientId().equals(clientId)).collect(Collectors.toList());
+        Page<PostDTO> postPage = new PageImpl<>(postsByClientId, pageable, postsByClientId.size());
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, postPage, "/api/_search/posts");
+
+        return new ResponseEntity<>(postPage.getContent(), headers, HttpStatus.OK);
     }
 
     /**
