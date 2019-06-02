@@ -12,6 +12,7 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -164,11 +166,14 @@ public class StatusResource {
      */
     @GetMapping("/_search/statuses")
     @Timed
-    public ResponseEntity<List<StatusDTO>> searchStatuses(@RequestParam String query, Pageable pageable) {
+    public ResponseEntity<List<StatusDTO>> searchStatuses(@RequestParam String query, Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to search for a page of Statuses for query {}", query);
+        String clientId = (String) request.getSession().getAttribute(Constants.CLIENT_ID);
         Page<StatusDTO> page = statusService.search(query, pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/statuses");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        List<StatusDTO> statusDTOList = page.getContent().stream().filter(statusDTO -> statusDTO.getClientId().equals(clientId)).collect(Collectors.toList());
+        Page<StatusDTO> statusDTOPage = new PageImpl<>(statusDTOList, pageable, statusDTOList.size());
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, statusDTOPage, "/api/_search/statuses");
+        return new ResponseEntity<>(statusDTOPage.getContent(), headers, HttpStatus.OK);
     }
 
     /**
