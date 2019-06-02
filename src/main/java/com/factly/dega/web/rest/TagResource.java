@@ -28,6 +28,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -165,11 +166,14 @@ public class TagResource {
      */
     @GetMapping("/_search/tags")
     @Timed
-    public ResponseEntity<List<TagDTO>> searchTags(@RequestParam String query, Pageable pageable) {
+    public ResponseEntity<List<TagDTO>> searchTags(@RequestParam String query, Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to search for a page of Tags for query {}", query);
+        String clientId = (String) request.getSession().getAttribute(Constants.CLIENT_ID);
         Page<TagDTO> page = tagService.search(query, pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/tags");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        List<TagDTO> tagDTOList = page.getContent().stream().filter(tagDTO -> tagDTO.getClientId().equals(clientId)).collect(Collectors.toList());
+        Page<TagDTO> tagDTOPage = new PageImpl<>(tagDTOList, pageable, tagDTOList.size());
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, tagDTOPage, "/api/_search/tags");
+        return new ResponseEntity<>(tagDTOPage.getContent(), headers, HttpStatus.OK);
     }
 
     /**
