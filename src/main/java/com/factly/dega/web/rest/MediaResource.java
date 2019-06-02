@@ -37,6 +37,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -240,11 +241,14 @@ public class MediaResource {
      */
     @GetMapping("/_search/media")
     @Timed
-    public ResponseEntity<List<MediaDTO>> searchMedia(@RequestParam String query, Pageable pageable) {
+    public ResponseEntity<List<MediaDTO>> searchMedia(@RequestParam String query, Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to search for a page of Media for query {}", query);
+        String clientId = (String) request.getSession().getAttribute(Constants.CLIENT_ID);
         Page<MediaDTO> page = mediaService.search(query, pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/media");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        List<MediaDTO> mediaDTOList = page.getContent().stream().filter(mediaDTO -> mediaDTO.getClientId().equals(clientId)).collect(Collectors.toList());
+        Page<MediaDTO> mediaDTOPage = new PageImpl<>(mediaDTOList, pageable, mediaDTOList.size());
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, mediaDTOPage, "/api/_search/media");
+        return new ResponseEntity<>(mediaDTOPage.getContent(), headers, HttpStatus.OK);
     }
 
     /**
