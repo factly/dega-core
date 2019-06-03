@@ -205,7 +205,10 @@ public class RoleResource {
         log.debug("REST request to search for a page of Roles for query {}", query);
         String clientId = (String) request.getSession().getAttribute(Constants.CLIENT_ID);
         Page<RoleDTO> page = roleService.search(query, pageable);
-        List<RoleDTO> roleDTOList = page.getContent().stream().filter(roleDTO -> roleDTO.getClientId().equals(clientId)).collect(Collectors.toList());
+        List<RoleDTO> roleDTOList = page.getContent()
+            .stream()
+            .filter(roleDTO -> roleDTO.getClientId().equals(clientId)|| roleDTO.getClientId().equals(Constants.DEFAULT_CLIENTID))
+            .collect(Collectors.toList());
         Page<RoleDTO> roleDTOPage = new PageImpl<>(roleDTOList, pageable, roleDTOList.size());
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, roleDTOPage, "/api/_search/roles");
         return new ResponseEntity<>(roleDTOPage.getContent(), headers, HttpStatus.OK);

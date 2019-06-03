@@ -170,7 +170,10 @@ public class StatusResource {
         log.debug("REST request to search for a page of Statuses for query {}", query);
         String clientId = (String) request.getSession().getAttribute(Constants.CLIENT_ID);
         Page<StatusDTO> page = statusService.search(query, pageable);
-        List<StatusDTO> statusDTOList = page.getContent().stream().filter(statusDTO -> statusDTO.getClientId().equals(clientId)).collect(Collectors.toList());
+        List<StatusDTO> statusDTOList = page.getContent()
+            .stream()
+            .filter(statusDTO -> statusDTO.getClientId().equals(clientId) || statusDTO.getClientId().equals(Constants.DEFAULT_CLIENTID))
+            .collect(Collectors.toList());
         Page<StatusDTO> statusDTOPage = new PageImpl<>(statusDTOList, pageable, statusDTOList.size());
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, statusDTOPage, "/api/_search/statuses");
         return new ResponseEntity<>(statusDTOPage.getContent(), headers, HttpStatus.OK);

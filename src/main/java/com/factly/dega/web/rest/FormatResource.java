@@ -170,7 +170,10 @@ public class FormatResource {
         log.debug("REST request to search for a page of Formats for query {}", query);
         String clientId = (String) request.getSession().getAttribute(Constants.CLIENT_ID);
         Page<FormatDTO> page = formatService.search(query, pageable);
-        List<FormatDTO> formatDTOList = page.getContent().stream().filter(formatDTO -> formatDTO.getClientId().equals(clientId)).collect(Collectors.toList());
+        List<FormatDTO> formatDTOList = page.getContent()
+            .stream()
+            .filter(formatDTO -> formatDTO.getClientId().equals(clientId) || formatDTO.getClientId().equals(Constants.DEFAULT_CLIENTID))
+            .collect(Collectors.toList());
         Page<FormatDTO> formatDTOPage = new PageImpl<>(formatDTOList, pageable, formatDTOList.size());
         HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, formatDTOPage, "/api/_search/formats");
         return new ResponseEntity<>(formatDTOPage.getContent(), headers, HttpStatus.OK);
