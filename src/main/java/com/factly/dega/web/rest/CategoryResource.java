@@ -28,6 +28,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -164,11 +165,14 @@ public class CategoryResource {
      */
     @GetMapping("/_search/categories")
     @Timed
-    public ResponseEntity<List<CategoryDTO>> searchCategories(@RequestParam String query, Pageable pageable) {
+    public ResponseEntity<List<CategoryDTO>> searchCategories(@RequestParam String query, Pageable pageable, HttpServletRequest request) {
         log.debug("REST request to search for a page of Categories for query {}", query);
+        String clientId = (String) request.getSession().getAttribute(Constants.CLIENT_ID);
         Page<CategoryDTO> page = categoryService.search(query, pageable);
-        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, page, "/api/_search/categories");
-        return new ResponseEntity<>(page.getContent(), headers, HttpStatus.OK);
+        List<CategoryDTO> categoriesByClientId = page.getContent().stream().filter(categories -> categories.getClientId().equals(clientId)).collect(Collectors.toList());
+        Page<CategoryDTO> categoryDTOPage = new PageImpl<>(categoriesByClientId, pageable, categoriesByClientId.size());
+        HttpHeaders headers = PaginationUtil.generateSearchPaginationHttpHeaders(query, categoryDTOPage, "/api/_search/categories");
+        return new ResponseEntity<>(categoryDTOPage.getContent(), headers, HttpStatus.OK);
     }
 
     /**
