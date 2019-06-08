@@ -1,5 +1,6 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.service.StorageService;
 import com.factly.dega.web.rest.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,34 +18,18 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
-@Service
-public class FileStorageService {
+
+public class FileStorageServiceImpl implements StorageService {
 
     private final String mediaStorageRootDir;
 
-    @Autowired
-    public FileStorageService(@Value("${dega.media.upload-dir}") String uploadDir) {
-        this.mediaStorageRootDir = uploadDir;
+    public FileStorageServiceImpl(String mediaStorageRootDir) {
+        this.mediaStorageRootDir = mediaStorageRootDir;
     }
 
-    private Path createDirs(String clientID, int year, int month) {
-        String fileSep = System.getProperty("file.separator");
-        String clientDir = (mediaStorageRootDir.endsWith(fileSep)) ?
-            mediaStorageRootDir + clientID + fileSep + year + fileSep + month :
-            mediaStorageRootDir + fileSep  + clientID + fileSep + year + fileSep + month + fileSep;
-
-        Path clientPath = Paths.get(clientDir).toAbsolutePath().normalize();
-        try {
-            Files.createDirectories(clientPath);
-        } catch (Exception ex) {
-            throw new RuntimeException("Could not create the directory where the uploaded files will be stored.", ex);
-        }
-        return clientPath;
-    }
-
-    public String storeFile(MultipartFile file, Object client, int year, int month) {
+    @Override
+    public String storeFile(MultipartFile file, String client, int year, int month) {
         // Normalize file name
         String name = StringUtils.cleanPath(file.getOriginalFilename());
         // remove all chars except a-z, 0-9
@@ -57,7 +42,7 @@ public class FileStorageService {
             }
 
             // Copy file to the target location (Replacing existing file with the same name)
-            Path clientPath = createDirs((String) client, year, month);
+            Path clientPath = createDirs(client, year, month);
 
             Map<String, Path> fileMap = new HashMap<>();
             Files.list(clientPath).forEach(p -> {
@@ -113,5 +98,22 @@ public class FileStorageService {
         } catch (MalformedURLException ex) {
             throw new RuntimeException("File not found " + fileName, ex);
         }
+    }
+
+    private Path createDirs(String clientID, int year, int month) {
+        String fileSep = System.getProperty("file.separator");
+
+        String rootDir = "." + fileSep + mediaStorageRootDir;
+        String clientDir = (rootDir.endsWith(fileSep)) ?
+            rootDir + clientID + fileSep + year + fileSep + month :
+            rootDir + fileSep  + clientID + fileSep + year + fileSep + month + fileSep;
+
+        Path clientPath = Paths.get(clientDir).toAbsolutePath().normalize();
+        try {
+            Files.createDirectories(clientPath);
+        } catch (Exception ex) {
+            throw new RuntimeException("Could not create the directory where the uploaded files will be stored.", ex);
+        }
+        return clientPath;
     }
 }

@@ -130,3 +130,8 @@ jhipster:
 keycloak:
     api:
         uri: http://localhost:9080/auth/admin/realms/dega/users
+
+dega:
+    media:
+        # valid values for storage local, gcs for Google cloud storge
+        storage: gcs
