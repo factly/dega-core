@@ -1,10 +1,11 @@
 package com.factly.dega.web.rest;
 
 import com.factly.dega.service.MediaService;
-import com.factly.dega.service.impl.FileStorageService;
+import com.factly.dega.service.impl.FileStorageServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,12 +26,11 @@ public class DegaContentResource {
 
 
     private final MediaService mediaService;
+    private final String mediaStorageRootDir;
 
-    @Autowired
-    private FileStorageService fileStorageService;
-
-    public DegaContentResource(MediaService mediaService) {
+    public DegaContentResource(MediaService mediaService, @Value("${dega.media.upload-dir}") String mediaStorageRootDir) {
         this.mediaService = mediaService;
+        this.mediaStorageRootDir = mediaStorageRootDir;
     }
 
     @GetMapping("/{clientId}/{year}/{month}/{fileName:.+}")
@@ -43,7 +43,7 @@ public class DegaContentResource {
         // Load file as Resource
         int yr = Integer.parseInt(year);
         int mon = Integer.parseInt(month);
-        Resource resource = fileStorageService.loadFileAsResource(fileName, clientId, yr, mon);
+        Resource resource = new FileStorageServiceImpl(mediaStorageRootDir).loadFileAsResource(fileName, clientId, yr, mon);
 
         // Try to determine file's content type
         String contentType = null;

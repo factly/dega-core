@@ -172,4 +172,12 @@ jhipster:
 # application:
 dega:
     media:
-        upload-dir: ./dega-content
+        upload-dir: dega-content
+        # valid values for storage: local, gcs(Google cloud storge)
+        storage: gcs
+        hostname: http://localhost:8080/core
+
+google:
+    cloud:
+        storage:
+            bucketname: shashibucketstoragenode
