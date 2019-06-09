@@ -3,7 +3,10 @@ package com.factly.dega.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.config.Constants;
 import com.factly.dega.service.MediaService;
-import com.factly.dega.service.impl.FileStorageService;
+import com.factly.dega.service.StorageService;
+import com.factly.dega.service.impl.CloudStorageServiceImpl;
+import com.factly.dega.service.impl.FileStorageServiceImpl;
+import com.factly.dega.utils.FileNameUtils;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
@@ -13,13 +16,12 @@ import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,9 +40,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Media.
@@ -54,12 +53,27 @@ public class MediaResource {
     private static final String ENTITY_NAME = "coreMedia";
 
     private final MediaService mediaService;
+    private final String bucketName;
+    private final FileNameUtils fileNameUtils;
+    private final String hostName;
+    private final String mediaStorageRootDir;
+    private final String storageType;
 
-    @Autowired
-    private FileStorageService fileStorageService;
 
-    public MediaResource(MediaService mediaService) {
+    private StorageService storageService;
+
+
+
+    public MediaResource(MediaService mediaService, @Value("${google.cloud.storage.bucketname}") String bucketName,
+                         FileNameUtils fileNameUtils, @Value("${dega.media.hostname}") String hostName,
+                         @Value("${dega.media.upload-dir}") String mediaStorageRootDir,
+                         @Value("${dega.media.storage}") String storageType) {
         this.mediaService = mediaService;
+        this.bucketName = bucketName;
+        this.fileNameUtils = fileNameUtils;
+        this.hostName = hostName;
+        this.mediaStorageRootDir = mediaStorageRootDir;
+        this.storageType = storageType;
     }
 
     /**
@@ -99,17 +113,17 @@ public class MediaResource {
     @Timed
     @RequestMapping(value = "/media/upload", method = RequestMethod.POST, consumes = {"multipart/form-data"})
     public ResponseEntity<MediaDTO> uploadMedia(@RequestParam("file") @Valid @NotNull @NotBlank MultipartFile file,
-                                                HttpServletRequest request) throws URISyntaxException {
+                                                HttpServletRequest request) throws URISyntaxException, IOException {
         MediaDTO mediaDTO = new MediaDTO();
         log.debug("REST request to save Media : {}", mediaDTO);
-        Object client = request.getSession().getAttribute(Constants.CLIENT_ID);
+        String client = (String)request.getSession().getAttribute(Constants.CLIENT_ID);
 
         Date date = new Date();
         LocalDate localDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
         int year  = localDate.getYear();
         int month = localDate.getMonthValue();
         String originalFileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf('.'));
-        String fileName = fileStorageService.storeFile(file, client, year, month);
+        String fileName = getStorageService(storageType).storeFile(file, client, year, month);
         mediaDTO.setName(fileName);
 
         // set the default slug by removing all special chars except letters and numbers
@@ -118,12 +132,13 @@ public class MediaResource {
         mediaDTO.setAltText(originalFileName);
 
         String fileSep = System.getProperty("file.separator");
-        String clientStr = (String) client;
-        String filePath = fileSep + "dega-content" + fileSep + clientStr + fileSep + year + fileSep + month + fileSep;
-        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
-            .path(filePath)
-            .path(fileName)
-            .toUriString();
+        String filePath = "dega-content" + fileSep + client + fileSep + year + fileSep + month;
+        String fileDownloadUri;
+        if (storageType.equals("gcs")) {
+            fileDownloadUri = fileName;
+        } else {
+            fileDownloadUri = hostName + fileSep + filePath + fileSep + fileName;
+        }
         mediaDTO.setUrl(fileDownloadUri);
         //mediaDTO.setSlug(fileDownloadUri);
 
@@ -287,6 +302,15 @@ public class MediaResource {
             return createSlug(clientId, slug, tempSlug, slugExtention);
         }
         return slug;
+    }
+
+    private StorageService getStorageService(String storageType) {
+        if (storageType.equals("gcs")) {
+            storageService = new CloudStorageServiceImpl(bucketName, fileNameUtils);
+        } else {
+            storageService = new FileStorageServiceImpl(mediaStorageRootDir);
+        }
+        return storageService;
     }
 
 }

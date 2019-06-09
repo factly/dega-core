@@ -215,6 +215,7 @@ dependencies {
     }
     compile "io.springfox:springfox-bean-validators"
     compile "org.mapstruct:mapstruct-jdk8:${mapstruct_version}"
+    compile 'com.google.cloud:google-cloud-storage:1.77.0'
     annotationProcessor "org.mapstruct:mapstruct-processor:${mapstruct_version}"
     annotationProcessor ("org.springframework.boot:spring-boot-configuration-processor") {
         exclude group: 'com.vaadin.external.google', module: 'android-json'
