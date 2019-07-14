@@ -94,11 +94,25 @@ public class TagResource {
         if (tagDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        tagDTO.setClientId(null);
+
+        Optional<TagDTO> savedTagData = tagService.findOne(tagDTO.getId());
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            tagDTO.setClientId((String) obj);
+
+        if (savedTagData.isPresent()) {
+            if (savedTagData.get().getClientId() != obj){
+                throw new BadRequestAlertException("You are not allowed to update this client entries", ENTITY_NAME, "invalidclient");
+            }
+            tagDTO.setClientId(savedTagData.get().getClientId());
+        } else {
+            throw new BadRequestAlertException("Post does not exist", ENTITY_NAME, "invalidpost");
         }
+
+        // If a slug is updated from client.
+        if (!tagDTO.getSlug().equals(savedTagData.get().getSlug())) {
+            // Slug needs to be verified in db, if a slug exists with the same text then add auto extension of digit.
+            tagDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(tagDTO.getSlug())));
+        }
+
         tagDTO.setLastUpdatedDate(ZonedDateTime.now());
         TagDTO result = tagService.save(tagDTO);
         return ResponseEntity.ok()

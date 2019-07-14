@@ -94,11 +94,23 @@ public class CategoryResource {
         if (categoryDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        categoryDTO.setClientId(null);
+        Optional<CategoryDTO> savedCategoryData = categoryService.findOne(categoryDTO.getId());
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            categoryDTO.setClientId((String) obj);
+        if (savedCategoryData.isPresent()) {
+            if (savedCategoryData.get().getClientId() != obj){
+                throw new BadRequestAlertException("You are not allowed to update this client entries", ENTITY_NAME, "invalidclient");
+            }
+            categoryDTO.setClientId(savedCategoryData.get().getClientId());
+        } else {
+            throw new BadRequestAlertException("Category does not exist", ENTITY_NAME, "invalidcategory");
         }
+
+        // If a slug is updated from client.
+        if (!categoryDTO.getSlug().equals(savedCategoryData.get().getSlug())){
+            // Slug needs to be verified in db, if a slug exists with the same text then add auto extension of digit.
+            categoryDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(categoryDTO.getSlug())));
+        }
+
         categoryDTO.setLastUpdatedDate(ZonedDateTime.now());
         CategoryDTO result = categoryService.save(categoryDTO);
         return ResponseEntity.ok()
