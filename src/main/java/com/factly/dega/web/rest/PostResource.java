@@ -70,13 +70,17 @@ public class PostResource {
             throw new BadRequestAlertException("A new post cannot already have an ID", ENTITY_NAME, "idexists");
         }
         Optional<StatusDTO> status = statusService.findOneByName(postDTO.getStatusName());
-        if (status.isPresent() && status.get() != null) {
+        if (status.isPresent()) {
             postDTO.setStatusId(status.get().getId());
+        } else {
+            throw new BadRequestAlertException("Invalid statusId", ENTITY_NAME, "idinvalid");
         }
         postDTO.setClientId(null);
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (obj != null) {
             postDTO.setClientId((String) obj);
+        } else {
+            throw new BadRequestAlertException("ClientID not found", ENTITY_NAME, "cliendIDinvalid");
         }
         postDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(postDTO.getTitle())));
         postDTO.setCreatedDate(ZonedDateTime.now());
@@ -108,14 +112,29 @@ public class PostResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
         Optional<StatusDTO> status = statusService.findOneByName(postDTO.getStatusName());
-        if (status.get() != null) {
+        if (status.isPresent()) {
             postDTO.setStatusId(status.get().getId());
+        } else {
+            throw new BadRequestAlertException("Invalid statusId", ENTITY_NAME, "idinvalid");
         }
-        postDTO.setClientId(null);
+        Optional<PostDTO> savedPostData = postService.findOne(postDTO.getId());
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
-        if (obj != null) {
-            postDTO.setClientId((String) obj);
+        if (savedPostData.isPresent()) {
+            if (savedPostData.get().getClientId() != obj){
+                throw new BadRequestAlertException("You are not allowed to update this client entries", ENTITY_NAME, "invalidclient");
+            }
+            postDTO.setClientId(savedPostData.get().getClientId());
+        } else {
+            throw new BadRequestAlertException("Post does not exist", ENTITY_NAME, "invalidpost");
         }
+
+        // If a slug is updated from client.
+        if (!postDTO.getSlug().equals(savedPostData.get().getSlug())) {
+            // Slug needs to be verified in db, if a slug exists with the same text then add auto extension of digit.
+            postDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(postDTO.getSlug())));
+        }
+
+        //(TODO) Publish date logic needs to be modified, anytime anyone would update a post, publish date would get updated, which is not desired.
         postDTO.setPublishedDate(ZonedDateTime.now());
         postDTO.setLastUpdatedDate(ZonedDateTime.now());
         PostDTO result = postService.save(postDTO);
@@ -127,7 +146,7 @@ public class PostResource {
     /**
      * GET  /posts : get all the posts.
      *
-     * @param pageable the pagination information
+     * @param pageable  the pagination information
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
      * @return the ResponseEntity with status 200 (OK) and the list of posts in body
      */
@@ -178,7 +197,7 @@ public class PostResource {
      * SEARCH  /_search/posts?query=:query : search for the post corresponding
      * to the query.
      *
-     * @param query the query of the post search
+     * @param query    the query of the post search
      * @param pageable the pagination information
      * @return the result of the search
      */
@@ -214,17 +233,17 @@ public class PostResource {
         return postDTO;
     }
 
-    public String getSlug(String clientId, String title){
-        if(clientId != null && title != null){
+    public String getSlug(String clientId, String title) {
+        if (clientId != null && title != null) {
             int slugExtention = 0;
             return createSlug(clientId, title, title, slugExtention);
         }
         return null;
     }
 
-    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention){
+    public String createSlug(String clientId, String slug, String tempSlug, int slugExtention) {
         Optional<PostDTO> postDTO = postService.findByClientIdAndSlug(clientId, slug);
-        if(postDTO.isPresent()){
+        if (postDTO.isPresent()) {
             slugExtention += 1;
             slug = tempSlug + slugExtention;
             return createSlug(clientId, slug, tempSlug, slugExtention);
