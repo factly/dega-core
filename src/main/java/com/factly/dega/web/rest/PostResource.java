@@ -118,12 +118,23 @@ public class PostResource {
             throw new BadRequestAlertException("Invalid statusId", ENTITY_NAME, "idinvalid");
         }
         Optional<PostDTO> savedPostData = postService.findOne(postDTO.getId());
+        Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (savedPostData.isPresent()) {
+            if (savedPostData.get().getClientId() != obj){
+                throw new BadRequestAlertException("You are not allowed to update this client entries", ENTITY_NAME, "invalidclient");
+            }
             postDTO.setClientId(savedPostData.get().getClientId());
         } else {
             throw new BadRequestAlertException("Post does not exist", ENTITY_NAME, "invalidpost");
         }
 
+        // If a slug is updated from client.
+        if (!postDTO.getSlug().equals(savedPostData.get().getSlug())) {
+            // Slug needs to be verified in db, if a slug exists with the same text then add auto extension of digit.
+            postDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(postDTO.getSlug())));
+        }
+
+        //(TODO) Publish date logic needs to be modified, anytime anyone would update a post, publish date would get updated, which is not desired.
         postDTO.setPublishedDate(ZonedDateTime.now());
         postDTO.setLastUpdatedDate(ZonedDateTime.now());
         PostDTO result = postService.save(postDTO);
