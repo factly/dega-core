@@ -97,7 +97,7 @@ public class CategoryResource {
         Optional<CategoryDTO> savedCategoryData = categoryService.findOne(categoryDTO.getId());
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (savedCategoryData.isPresent()) {
-            if (savedCategoryData.get().getClientId() != obj){
+            if (!savedCategoryData.get().getClientId().equals(obj)){
                 throw new BadRequestAlertException("You are not allowed to update this client entries", ENTITY_NAME, "invalidclient");
             }
             categoryDTO.setClientId(savedCategoryData.get().getClientId());

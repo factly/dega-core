@@ -99,7 +99,7 @@ public class TagResource {
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
 
         if (savedTagData.isPresent()) {
-            if (savedTagData.get().getClientId() != obj){
+            if (!savedTagData.get().getClientId().equals(obj)){
                 throw new BadRequestAlertException("You are not allowed to update this client entries", ENTITY_NAME, "invalidclient");
             }
             tagDTO.setClientId(savedTagData.get().getClientId());
