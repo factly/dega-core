@@ -120,7 +120,7 @@ public class PostResource {
         Optional<PostDTO> savedPostData = postService.findOne(postDTO.getId());
         Object obj = request.getSession().getAttribute(Constants.CLIENT_ID);
         if (savedPostData.isPresent()) {
-            if (savedPostData.get().getClientId() != obj){
+            if (!savedPostData.get().getClientId().equals(obj)){
                 throw new BadRequestAlertException("You are not allowed to update this client entries", ENTITY_NAME, "invalidclient");
             }
             postDTO.setClientId(savedPostData.get().getClientId());
