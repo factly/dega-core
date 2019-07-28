@@ -2,7 +2,10 @@ package com.factly.dega.service.impl;
 
 import com.factly.dega.service.StorageService;
 import com.factly.dega.utils.FileNameUtils;
+import com.factly.dega.web.rest.MediaResource;
 import com.google.auth.oauth2.GoogleCredentials;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -26,13 +29,14 @@ import java.util.Arrays;
 public class CloudStorageServiceImpl implements StorageService {
 
     private static Storage storage = null;
+    private final Logger log = LoggerFactory.getLogger(CloudStorageServiceImpl.class);
+
     static {
         try {
-            GoogleCredentials credentials = GoogleCredentials.fromStream(
-                new FileInputStream(new File(CloudStorageServiceImpl.class.getClassLoader().getResource("cloud-storage-credentials.json").getFile())))
-                .createScoped(Lists.newArrayList("https://www.googleapis.com/auth/cloud-platform"));
-            storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        } catch(Exception e) { }
+            storage = StorageOptions.getDefaultInstance().getService();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private String bucketName;
@@ -55,11 +59,10 @@ public class CloudStorageServiceImpl implements StorageService {
                     // Modify access list to allow all users with link to read file
                     .setAcl(new ArrayList<>(Arrays.asList(Acl.of(User.ofAllUsers(), Role.READER))))
                     .build(),
-                     file.getInputStream());
+                file.getBytes());
 
         // return the public download link
         return blobInfo.getMediaLink();
-
     }
 
 }

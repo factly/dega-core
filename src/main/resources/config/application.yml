@@ -180,4 +180,4 @@ dega:
 google:
     cloud:
         storage:
-            bucketname: shashibucketstoragenode
+            bucketname: storage.factly.in
