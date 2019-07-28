@@ -1,19 +1,28 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.domain.Role;
 import com.factly.dega.service.OrganizationService;
 import com.factly.dega.domain.Organization;
 import com.factly.dega.repository.OrganizationRepository;
 import com.factly.dega.repository.search.OrganizationSearchRepository;
+import com.factly.dega.service.RoleMappingService;
+import com.factly.dega.service.RoleService;
 import com.factly.dega.service.dto.OrganizationDTO;
+import com.factly.dega.service.dto.RoleDTO;
+import com.factly.dega.service.dto.RoleMappingDTO;
 import com.factly.dega.service.mapper.OrganizationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
@@ -31,10 +40,17 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationSearchRepository organizationSearchRepository;
 
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper, OrganizationSearchRepository organizationSearchRepository) {
+    private final RoleService roleService;
+
+    private final RoleMappingService roleMappingService;
+
+    public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper, OrganizationSearchRepository organizationSearchRepository,
+                                   RoleService roleService, RoleMappingService roleMappingService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.organizationSearchRepository = organizationSearchRepository;
+        this.roleService = roleService;
+        this.roleMappingService = roleMappingService;
     }
 
     /**
@@ -51,7 +67,22 @@ public class OrganizationServiceImpl implements OrganizationService {
         organization = organizationRepository.save(organization);
         OrganizationDTO result = organizationMapper.toDto(organization);
         organizationSearchRepository.save(organization);
+        createRoleMappings(result, roleService, roleMappingService);
         return result;
+    }
+
+    private void createRoleMappings(OrganizationDTO organizationDTO, RoleService roleService, RoleMappingService roleMappingService) {
+        List<RoleDTO> roles = roleService.findAll(PageRequest.of(0, 10)).getContent();
+        List<RoleMappingDTO> roleMappings = roles.stream().filter(role -> !role.getName().equalsIgnoreCase("Super Admin")).map(role -> {
+            RoleMappingDTO roleMapping = new RoleMappingDTO();
+            roleMapping.setName(organizationDTO.getName() + " - " + role.getName());
+            roleMapping.setOrganizationId(organizationDTO.getId());
+            roleMapping.setOrganizationName(organizationDTO.getName());
+            roleMapping.setRoleId(role.getId());
+            roleMapping.setRoleName(role.getName());
+            return roleMapping;
+        }).collect(Collectors.toList());
+        roleMappingService.saveAll(roleMappings);
     }
 
     /**
