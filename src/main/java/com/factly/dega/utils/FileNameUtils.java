@@ -32,5 +32,4 @@ public class FileNameUtils {
             + FILE_SEPARATOR + year + FILE_SEPARATOR + month + FILE_SEPARATOR + System.currentTimeMillis() + "-" + cleanFileName;
         return path;
     }
-
 }
