@@ -113,6 +113,12 @@ public class DegaUserResourceIntTest {
     private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
+    private static final String DEFAULT_KEYCLOAK_ID = "AAAAAAAAAA";
+    private static final String UPDATED_KEYCLOAK_ID = "BBBBBBBBBB";
+
+    private static final Boolean DEFAULT_IS_SUPER_ADMIN = false;
+    private static final Boolean UPDATED_IS_SUPER_ADMIN = true;
+
     @Autowired
     private DegaUserRepository degaUserRepository;
 
@@ -201,11 +207,9 @@ public class DegaUserResourceIntTest {
             .enabled(DEFAULT_ENABLED)
             .emailVerified(DEFAULT_EMAIL_VERIFIED)
             .email(DEFAULT_EMAIL)
-            .createdDate(DEFAULT_CREATED_DATE);
-        // Add required entity
-        Role role = RoleResourceIntTest.createEntity();
-        role.setId("fixed-id-for-tests");
-        degaUser.setRole(role);
+            .createdDate(DEFAULT_CREATED_DATE)
+            .keycloakId(DEFAULT_KEYCLOAK_ID)
+            .isSuperAdmin(DEFAULT_IS_SUPER_ADMIN);
         // Add required entity
         Organization organization = OrganizationResourceIntTest.createEntity();
         organization.setId("fixed-id-for-tests");
@@ -262,6 +266,8 @@ public class DegaUserResourceIntTest {
         assertThat(testDegaUser.isEmailVerified()).isEqualTo(DEFAULT_EMAIL_VERIFIED);
         assertThat(testDegaUser.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testDegaUser.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testDegaUser.getKeycloakId()).isEqualTo(DEFAULT_KEYCLOAK_ID);
+        assertThat(testDegaUser.isIsSuperAdmin()).isEqualTo(DEFAULT_IS_SUPER_ADMIN);
 
         // Validate the DegaUser in Elasticsearch
         verify(mockDegaUserSearchRepository, times(1)).save(testDegaUser);
@@ -405,7 +411,9 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.[*].enabled").value(hasItem(DEFAULT_ENABLED.booleanValue())))
             .andExpect(jsonPath("$.[*].emailVerified").value(hasItem(DEFAULT_EMAIL_VERIFIED.booleanValue())))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].keycloakId").value(hasItem(DEFAULT_KEYCLOAK_ID.toString())))
+            .andExpect(jsonPath("$.[*].isSuperAdmin").value(hasItem(DEFAULT_IS_SUPER_ADMIN.booleanValue())));
     }
 
     public void getAllDegaUsersWithEagerRelationshipsIsEnabled() throws Exception {
@@ -464,7 +472,9 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.enabled").value(DEFAULT_ENABLED.booleanValue()))
             .andExpect(jsonPath("$.emailVerified").value(DEFAULT_EMAIL_VERIFIED.booleanValue()))
             .andExpect(jsonPath("$.email").value(DEFAULT_EMAIL.toString()))
-            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+            .andExpect(jsonPath("$.keycloakId").value(DEFAULT_KEYCLOAK_ID.toString()))
+            .andExpect(jsonPath("$.isSuperAdmin").value(DEFAULT_IS_SUPER_ADMIN.booleanValue()));
     }
 
     @Test
@@ -499,7 +509,9 @@ public class DegaUserResourceIntTest {
             .enabled(UPDATED_ENABLED)
             .emailVerified(UPDATED_EMAIL_VERIFIED)
             .email(UPDATED_EMAIL)
-            .createdDate(UPDATED_CREATED_DATE);
+            .createdDate(UPDATED_CREATED_DATE)
+            .keycloakId(UPDATED_KEYCLOAK_ID)
+            .isSuperAdmin(UPDATED_IS_SUPER_ADMIN);
         DegaUserDTO degaUserDTO = degaUserMapper.toDto(updatedDegaUser);
 
         restDegaUserMockMvc.perform(put("/api/dega-users")
@@ -527,6 +539,8 @@ public class DegaUserResourceIntTest {
         assertThat(testDegaUser.isEmailVerified()).isEqualTo(UPDATED_EMAIL_VERIFIED);
         assertThat(testDegaUser.getEmail()).isEqualTo(UPDATED_EMAIL);
         assertThat(testDegaUser.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
+        assertThat(testDegaUser.getKeycloakId()).isEqualTo(UPDATED_KEYCLOAK_ID);
+        assertThat(testDegaUser.isIsSuperAdmin()).isEqualTo(UPDATED_IS_SUPER_ADMIN);
 
         // Validate the DegaUser in Elasticsearch
         verify(mockDegaUserSearchRepository, times(1)).save(testDegaUser);
@@ -599,7 +613,9 @@ public class DegaUserResourceIntTest {
             .andExpect(jsonPath("$.[*].enabled").value(hasItem(DEFAULT_ENABLED.booleanValue())))
             .andExpect(jsonPath("$.[*].emailVerified").value(hasItem(DEFAULT_EMAIL_VERIFIED.booleanValue())))
             .andExpect(jsonPath("$.[*].email").value(hasItem(DEFAULT_EMAIL.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].keycloakId").value(hasItem(DEFAULT_KEYCLOAK_ID.toString())))
+            .andExpect(jsonPath("$.[*].isSuperAdmin").value(hasItem(DEFAULT_IS_SUPER_ADMIN.booleanValue())));
     }
 
     @Test

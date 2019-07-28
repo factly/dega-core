@@ -129,20 +129,17 @@
                         </small>
                     </div>
                 </div>
-
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="coreApp.coreDegaUser.role" for="field_role">Role</label>
-                    <select class="form-control" id="field_role" name="role" [(ngModel)]="degaUser.roleId"  required>
-                        <option *ngIf="!editForm.value.role" [ngValue]="null" selected></option>
-                        <option [ngValue]="roleOption.id" *ngFor="let roleOption of roles; trackBy: trackRoleById">{{roleOption.name}}</option>
-                    </select>
+                    <label class="form-control-label" jhiTranslate="coreApp.coreDegaUser.keycloakId" for="field_keycloakId">Keycloak Id</label>
+                    <input type="text" class="form-control" name="keycloakId" id="field_keycloakId"
+                        [(ngModel)]="degaUser.keycloakId" />
                 </div>
-                <div [hidden]="!(editForm.controls.role?.dirty && editForm.controls.role?.invalid)">
-                    <small class="form-text text-danger"
-                        [hidden]="!editForm.controls.role?.errors?.required" jhiTranslate="entity.validation.required">
-                        This field is required.
-                    </small>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreDegaUser.isSuperAdmin" for="field_isSuperAdmin">Is Super Admin</label>
+                    <input type="checkbox" class="form-control" name="isSuperAdmin" id="field_isSuperAdmin"
+                        [(ngModel)]="degaUser.isSuperAdmin" />
                 </div>
+
                 <div class="form-group">
                     <label jhiTranslate="coreApp.coreDegaUser.organization" for="field_organization">Organization</label>
                     <select class="form-control" id="field_organization" multiple name="organization" [(ngModel)]="degaUser.organizations" required>
@@ -192,6 +189,13 @@
                         [hidden]="!editForm.controls.roleMapping?.errors?.required" jhiTranslate="entity.validation.required">
                         This field is required.
                     </small>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreDegaUser.media" for="field_media">Media</label>
+                    <select class="form-control" id="field_media" name="media" [(ngModel)]="degaUser.mediaId" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="mediaOption.id" *ngFor="let mediaOption of media; trackBy: trackMediaById">{{mediaOption.id}}</option>
+                    </select>
                 </div>
             </div>
             <div>

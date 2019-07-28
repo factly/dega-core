@@ -79,10 +79,11 @@ public class DegaUser implements Serializable {
     @Field("created_date")
     private ZonedDateTime createdDate;
 
-    @DBRef
-    @Field("role")
-    @JsonIgnoreProperties("degaUsers")
-    private Role role;
+    @Field("keycloak_id")
+    private String keycloakId;
+
+    @Field("is_super_admin")
+    private Boolean isSuperAdmin;
 
     @DBRef
     @Field("organizations")
@@ -106,6 +107,11 @@ public class DegaUser implements Serializable {
     @DBRef
     @Field("roleMappings")
     private Set<RoleMapping> roleMappings = new HashSet<>();
+
+    @DBRef
+    @Field("media")
+    @JsonIgnoreProperties("")
+    private Media media;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -324,17 +330,30 @@ public class DegaUser implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public Role getRole() {
-        return role;
+    public String getKeycloakId() {
+        return keycloakId;
     }
 
-    public DegaUser role(Role role) {
-        this.role = role;
+    public DegaUser keycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
         return this;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
+    public Boolean isIsSuperAdmin() {
+        return isSuperAdmin;
+    }
+
+    public DegaUser isSuperAdmin(Boolean isSuperAdmin) {
+        this.isSuperAdmin = isSuperAdmin;
+        return this;
+    }
+
+    public void setIsSuperAdmin(Boolean isSuperAdmin) {
+        this.isSuperAdmin = isSuperAdmin;
     }
 
     public Set<Organization> getOrganizations() {
@@ -437,6 +456,19 @@ public class DegaUser implements Serializable {
     public void setRoleMappings(Set<RoleMapping> roleMappings) {
         this.roleMappings = roleMappings;
     }
+
+    public Media getMedia() {
+        return media;
+    }
+
+    public DegaUser media(Media media) {
+        this.media = media;
+        return this;
+    }
+
+    public void setMedia(Media media) {
+        this.media = media;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -479,6 +511,8 @@ public class DegaUser implements Serializable {
             ", emailVerified='" + isEmailVerified() + "'" +
             ", email='" + getEmail() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", keycloakId='" + getKeycloakId() + "'" +
+            ", isSuperAdmin='" + isIsSuperAdmin() + "'" +
             "}";
     }
 }

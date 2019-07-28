@@ -46,9 +46,11 @@
             <th jhiSortBy="emailVerified"><span jhiTranslate="coreApp.coreDegaUser.emailVerified">Email Verified</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="email"><span jhiTranslate="coreApp.coreDegaUser.email">Email</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="createdDate"><span jhiTranslate="coreApp.coreDegaUser.createdDate">Created Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="roleName"><span jhiTranslate="coreApp.coreDegaUser.role">Role</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="keycloakId"><span jhiTranslate="coreApp.coreDegaUser.keycloakId">Keycloak Id</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="isSuperAdmin"><span jhiTranslate="coreApp.coreDegaUser.isSuperAdmin">Is Super Admin</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="organizationDefaultName"><span jhiTranslate="coreApp.coreDegaUser.organizationDefault">Organization Default</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="organizationCurrentName"><span jhiTranslate="coreApp.coreDegaUser.organizationCurrent">Organization Current</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mediaId"><span jhiTranslate="coreApp.coreDegaUser.media">Media</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -71,11 +73,8 @@
                 <td>{{degaUser.emailVerified}}</td>
                 <td>{{degaUser.email}}</td>
                 <td>{{degaUser.createdDate | date:'medium'}}</td>
-                <td>
-                    <div *ngIf="degaUser.roleId">
-                        <a [routerLink]="['../role', degaUser.roleId , 'view' ]" >{{degaUser.roleName}}</a>
-                    </div>
-                </td>
+                <td>{{degaUser.keycloakId}}</td>
+                <td>{{degaUser.isSuperAdmin}}</td>
                 <td>
                     <div *ngIf="degaUser.organizationDefaultId">
                         <a [routerLink]="['../organization', degaUser.organizationDefaultId , 'view' ]" >{{degaUser.organizationDefaultName}}</a>
@@ -84,6 +83,11 @@
                 <td>
                     <div *ngIf="degaUser.organizationCurrentId">
                         <a [routerLink]="['../organization', degaUser.organizationCurrentId , 'view' ]" >{{degaUser.organizationCurrentName}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="degaUser.mediaId">
+                        <a [routerLink]="['../media', degaUser.mediaId , 'view' ]" >{{degaUser.mediaId}}</a>
                     </div>
                 </td>
                 <td class="text-right">

@@ -69,11 +69,13 @@
                 <dd>
                     <span>{{degaUser.createdDate}}</span>
                 </dd>
-                <dt><span jhiTranslate="coreApp.coreDegaUser.role">Role</span></dt>
+                <dt><span jhiTranslate="coreApp.coreDegaUser.keycloakId">Keycloak Id</span></dt>
                 <dd>
-                    <div *ngIf="degaUser.roleId">
-                        <a [routerLink]="['/role', degaUser.roleId, 'view']">{{degaUser.roleName}}</a>
-                    </div>
+                    <span>{{degaUser.keycloakId}}</span>
+                </dd>
+                <dt><span jhiTranslate="coreApp.coreDegaUser.isSuperAdmin">Is Super Admin</span></dt>
+                <dd>
+                    <span>{{degaUser.isSuperAdmin}}</span>
                 </dd>
                 <dt><span jhiTranslate="coreApp.coreDegaUser.organization">Organization</span></dt>
                 <dd>
@@ -98,6 +100,12 @@
                     <span *ngFor="let roleMapping of degaUser.roleMappings; let last = last">
                         <a [routerLink]="['/role-mapping', roleMapping?.id, 'view' ]">{{roleMapping.name}}</a>{{last ? '' : ', '}}
                     </span>
+                </dd>
+                <dt><span jhiTranslate="coreApp.coreDegaUser.media">Media</span></dt>
+                <dd>
+                    <div *ngIf="degaUser.mediaId">
+                        <a [routerLink]="['/media', degaUser.mediaId, 'view']">{{degaUser.mediaId}}</a>
+                    </div>
                 </dd>
             </dl>
 

@@ -150,17 +150,17 @@ public class Role implements Serializable {
         return this;
     }
 
-    public Role addDegaUser(DegaUser degaUser) {
-        this.degaUsers.add(degaUser);
-        degaUser.setRole(this);
-        return this;
-    }
-
-    public Role removeDegaUser(DegaUser degaUser) {
-        this.degaUsers.remove(degaUser);
-        degaUser.setRole(null);
-        return this;
-    }
+//    public Role addDegaUser(DegaUser degaUser) {
+//        this.degaUsers.add(degaUser);
+//        degaUser.setRole(this);
+//        return this;
+//    }
+//
+//    public Role removeDegaUser(DegaUser degaUser) {
+//        this.degaUsers.remove(degaUser);
+//        degaUser.setRole(null);
+//        return this;
+//    }
 
     public void setDegaUsers(Set<DegaUser> degaUsers) {
         this.degaUsers = degaUsers;

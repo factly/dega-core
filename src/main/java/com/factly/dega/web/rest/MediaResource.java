@@ -69,7 +69,7 @@ public class MediaResource {
                          FileNameUtils fileNameUtils, @Value("${dega.media.hostname}") String hostName,
                          @Value("${dega.media.upload-dir}") String mediaStorageRootDir,
                          @Value("${dega.media.storage}") String storageType,
-                         @Value("${google.cloud.storage.url}") String storageURL) {
+                         @Value("${google.cloud.storage.hostname}") String storageURL) {
         this.mediaService = mediaService;
         this.bucketName = bucketName;
         this.fileNameUtils = fileNameUtils;

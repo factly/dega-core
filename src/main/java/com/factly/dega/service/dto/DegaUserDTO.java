@@ -49,9 +49,9 @@ public class DegaUserDTO implements Serializable {
 
     private ZonedDateTime createdDate;
 
-    private String roleId;
+    private String keycloakId;
 
-    private String roleName;
+    private Boolean isSuperAdmin;
 
     private Set<OrganizationDTO> organizations = new HashSet<>();
 
@@ -84,6 +84,8 @@ public class DegaUserDTO implements Serializable {
     private OrganizationDTO organizationDefault;
 
     private OrganizationDTO organizationCurrent;
+
+    private String mediaId;
 
     public String getId() {
         return id;
@@ -221,20 +223,20 @@ public class DegaUserDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
-    public String getRoleId() {
-        return roleId;
+    public String getKeycloakId() {
+        return keycloakId;
     }
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public Boolean isIsSuperAdmin() {
+        return isSuperAdmin;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setIsSuperAdmin(Boolean isSuperAdmin) {
+        this.isSuperAdmin = isSuperAdmin;
     }
 
     public Set<OrganizationDTO> getOrganizations() {
@@ -285,6 +287,14 @@ public class DegaUserDTO implements Serializable {
         this.roleMappings = roleMappings;
     }
 
+    public String getMediaId() {
+        return mediaId;
+    }
+
+    public void setMediaId(String mediaId) {
+        this.mediaId = mediaId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -326,12 +336,13 @@ public class DegaUserDTO implements Serializable {
             ", emailVerified='" + isEmailVerified() + "'" +
             ", email='" + getEmail() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
-            ", role=" + getRoleId() +
-            ", role='" + getRoleName() + "'" +
+            ", keycloakId='" + getKeycloakId() + "'" +
+            ", isSuperAdmin='" + isIsSuperAdmin() + "'" +
             ", organizationDefault=" + getOrganizationDefaultId() +
             ", organizationDefault='" + getOrganizationDefaultName() + "'" +
             ", organizationCurrent=" + getOrganizationCurrentId() +
             ", organizationCurrent='" + getOrganizationCurrentName() + "'" +
+            ", media=" + getMediaId() +
             "}";
     }
 }

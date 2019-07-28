@@ -181,4 +181,7 @@ google:
     cloud:
         storage:
             bucketname: storage.factly.in
-            url: https://storage.factly.in/
+            hostname: https://storage.factly.in/
+imgproxy:
+    enable: true
+    hostname: https://images.factly.in/
