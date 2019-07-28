@@ -22,7 +22,7 @@
             "slug": "Slug",
             "createdDate": "Created Date",
             "lastUpdatedDate": "Last Updated Date",
-            "degaUser": "Dega User",
+            "keycloakId": "Keycloak Id",
             "roleMapping": "Role Mapping"
         }
     }

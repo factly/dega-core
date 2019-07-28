@@ -1,5 +1,4 @@
 import { Moment } from 'moment';
-import { IDegaUser } from 'app/shared/model/core/dega-user.model';
 import { IRoleMapping } from 'app/shared/model/core/role-mapping.model';
 
 export interface IRole {
@@ -10,7 +9,7 @@ export interface IRole {
     slug?: string;
     createdDate?: Moment;
     lastUpdatedDate?: Moment;
-    degaUsers?: IDegaUser[];
+    keycloakId?: string;
     roleMappings?: IRoleMapping[];
 }
 
@@ -23,7 +22,7 @@ export class Role implements IRole {
         public slug?: string,
         public createdDate?: Moment,
         public lastUpdatedDate?: Moment,
-        public degaUsers?: IDegaUser[],
+        public keycloakId?: string,
         public roleMappings?: IRoleMapping[]
     ) {
         this.isDefault = this.isDefault || false;

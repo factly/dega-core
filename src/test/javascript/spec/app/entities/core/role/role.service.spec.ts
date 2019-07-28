@@ -25,7 +25,7 @@ describe('Service Tests', () => {
             httpMock = injector.get(HttpTestingController);
             currentDate = moment();
 
-            elemDefault = new Role('ID', 'AAAAAAA', 'AAAAAAA', false, 'AAAAAAA', currentDate, currentDate);
+            elemDefault = new Role('ID', 'AAAAAAA', 'AAAAAAA', false, 'AAAAAAA', currentDate, currentDate, 'AAAAAAA');
         });
 
         describe('Service methods', async () => {
@@ -78,7 +78,8 @@ describe('Service Tests', () => {
                         isDefault: true,
                         slug: 'BBBBBB',
                         createdDate: currentDate.format(DATE_TIME_FORMAT),
-                        lastUpdatedDate: currentDate.format(DATE_TIME_FORMAT)
+                        lastUpdatedDate: currentDate.format(DATE_TIME_FORMAT),
+                        keycloakId: 'BBBBBB'
                     },
                     elemDefault
                 );
@@ -106,7 +107,8 @@ describe('Service Tests', () => {
                         isDefault: true,
                         slug: 'BBBBBB',
                         createdDate: currentDate.format(DATE_TIME_FORMAT),
-                        lastUpdatedDate: currentDate.format(DATE_TIME_FORMAT)
+                        lastUpdatedDate: currentDate.format(DATE_TIME_FORMAT),
+                        keycloakId: 'BBBBBB'
                     },
                     elemDefault
                 );
