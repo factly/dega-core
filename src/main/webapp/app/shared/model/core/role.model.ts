@@ -10,6 +10,7 @@ export interface IRole {
     createdDate?: Moment;
     lastUpdatedDate?: Moment;
     keycloakId?: string;
+    keycloakName?: string;
     roleMappings?: IRoleMapping[];
 }
 
@@ -23,6 +24,7 @@ export class Role implements IRole {
         public createdDate?: Moment,
         public lastUpdatedDate?: Moment,
         public keycloakId?: string,
+        public keycloakName?: string,
         public roleMappings?: IRoleMapping[]
     ) {
         this.isDefault = this.isDefault || false;

@@ -37,6 +37,7 @@
             <th jhiSortBy="createdDate"><span jhiTranslate="coreApp.coreRole.createdDate">Created Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="lastUpdatedDate"><span jhiTranslate="coreApp.coreRole.lastUpdatedDate">Last Updated Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="keycloakId"><span jhiTranslate="coreApp.coreRole.keycloakId">Keycloak Id</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="keycloakName"><span jhiTranslate="coreApp.coreRole.keycloakName">Keycloak Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -50,6 +51,7 @@
                 <td>{{role.createdDate | date:'medium'}}</td>
                 <td>{{role.lastUpdatedDate | date:'medium'}}</td>
                 <td>{{role.keycloakId}}</td>
+                <td>{{role.keycloakName}}</td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"

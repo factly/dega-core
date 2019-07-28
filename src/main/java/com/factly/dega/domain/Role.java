@@ -51,6 +51,9 @@ public class Role implements Serializable {
     @Field("keycloak_id")
     private String keycloakId;
 
+    @Field("keycloak_name")
+    private String keycloakName;
+
     @DBRef
     @Field("roleMapping")
     private Set<RoleMapping> roleMappings = new HashSet<>();
@@ -154,6 +157,19 @@ public class Role implements Serializable {
         this.keycloakId = keycloakId;
     }
 
+    public String getKeycloakName() {
+        return keycloakName;
+    }
+
+    public Role keycloakName(String keycloakName) {
+        this.keycloakName = keycloakName;
+        return this;
+    }
+
+    public void setKeycloakName(String keycloakName) {
+        this.keycloakName = keycloakName;
+    }
+
     public Set<RoleMapping> getRoleMappings() {
         return roleMappings;
     }
@@ -211,6 +227,7 @@ public class Role implements Serializable {
             ", createdDate='" + getCreatedDate() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             ", keycloakId='" + getKeycloakId() + "'" +
+            ", keycloakName='" + getKeycloakName() + "'" +
             "}";
     }
 }

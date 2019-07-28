@@ -52,6 +52,10 @@
         {
             "fieldName": "keycloakId",
             "fieldType": "String"
+        },
+        {
+            "fieldName": "keycloakName",
+            "fieldType": "String"
         }
     ],
     "dto": "mapstruct",
