@@ -15,84 +15,84 @@ import { IMedia } from 'app/shared/model/core/media.model';
 
 @Injectable({ providedIn: 'root' })
 export class MediaResolve implements Resolve<IMedia> {
-  constructor(private service: MediaService) {}
+    constructor(private service: MediaService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Media> {
-    const id = route.params['id'] ? route.params['id'] : null;
-    if (id) {
-      return this.service.find(id).pipe(
-        filter((response: HttpResponse<Media>) => response.ok),
-        map((media: HttpResponse<Media>) => media.body)
-      );
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Media> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<Media>) => response.ok),
+                map((media: HttpResponse<Media>) => media.body)
+            );
+        }
+        return of(new Media());
     }
-    return of(new Media());
-  }
 }
 
 export const mediaRoute: Routes = [
-  {
-    path: 'media',
-    component: MediaComponent,
-    resolve: {
-      pagingParams: JhiResolvePagingParams
+    {
+        path: 'media',
+        component: MediaComponent,
+        resolve: {
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'coreApp.coreMedia.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     },
-    data: {
-      authorities: ['ROLE_USER'],
-      defaultSort: 'id,asc',
-      pageTitle: 'coreApp.coreMedia.home.title'
+    {
+        path: 'media/:id/view',
+        component: MediaDetailComponent,
+        resolve: {
+            media: MediaResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.coreMedia.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'media/:id/view',
-    component: MediaDetailComponent,
-    resolve: {
-      media: MediaResolve
+    {
+        path: 'media/new',
+        component: MediaUpdateComponent,
+        resolve: {
+            media: MediaResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.coreMedia.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.coreMedia.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'media/new',
-    component: MediaUpdateComponent,
-    resolve: {
-      media: MediaResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.coreMedia.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'media/:id/edit',
-    component: MediaUpdateComponent,
-    resolve: {
-      media: MediaResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.coreMedia.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  }
+    {
+        path: 'media/:id/edit',
+        component: MediaUpdateComponent,
+        resolve: {
+            media: MediaResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.coreMedia.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    }
 ];
 
 export const mediaPopupRoute: Routes = [
-  {
-    path: 'media/:id/delete',
-    component: MediaDeletePopupComponent,
-    resolve: {
-      media: MediaResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.coreMedia.home.title'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
+    {
+        path: 'media/:id/delete',
+        component: MediaDeletePopupComponent,
+        resolve: {
+            media: MediaResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.coreMedia.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
+    }
 ];

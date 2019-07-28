@@ -1,7 +1,44 @@
 {
     "fluentMethods": true,
     "clientRootFolder": "core",
-    "relationships": [],
+    "relationships": [
+        {
+            "relationshipName": "post",
+            "otherEntityName": "post",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "media"
+        },
+        {
+            "relationshipName": "degaUser",
+            "otherEntityName": "degaUser",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "media"
+        },
+        {
+            "relationshipName": "organizationLogo",
+            "otherEntityName": "organization",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "mediaLogo"
+        },
+        {
+            "relationshipName": "organizationMobileLogo",
+            "otherEntityName": "organization",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "mediaMobileLogo"
+        },
+        {
+            "relationshipName": "organizationFavicon",
+            "otherEntityName": "organization",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "mediaFavicon"
+        },
+        {
+            "relationshipName": "organizationMobileIcon",
+            "otherEntityName": "organization",
+            "relationshipType": "one-to-many",
+            "otherEntityRelationshipName": "mediaMobileIcon"
+        }
+    ],
     "fields": [
         {
             "fieldName": "name",
@@ -89,6 +126,14 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "relativeURL",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "sourceURL",
+            "fieldType": "String"
         }
     ],
     "dto": "mapstruct",

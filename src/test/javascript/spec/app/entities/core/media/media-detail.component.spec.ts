@@ -8,33 +8,33 @@ import { MediaDetailComponent } from 'app/entities/core/media/media-detail.compo
 import { Media } from 'app/shared/model/core/media.model';
 
 describe('Component Tests', () => {
-  describe('Media Management Detail Component', () => {
-    let comp: MediaDetailComponent;
-    let fixture: ComponentFixture<MediaDetailComponent>;
-    const route = ({ data: of({ media: new Media('123') }) } as any) as ActivatedRoute;
+    describe('Media Management Detail Component', () => {
+        let comp: MediaDetailComponent;
+        let fixture: ComponentFixture<MediaDetailComponent>;
+        const route = ({ data: of({ media: new Media('123') }) } as any) as ActivatedRoute;
 
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [CoreTestModule],
-        declarations: [MediaDetailComponent],
-        providers: [{ provide: ActivatedRoute, useValue: route }]
-      })
-        .overrideTemplate(MediaDetailComponent, '')
-        .compileComponents();
-      fixture = TestBed.createComponent(MediaDetailComponent);
-      comp = fixture.componentInstance;
+        beforeEach(() => {
+            TestBed.configureTestingModule({
+                imports: [CoreTestModule],
+                declarations: [MediaDetailComponent],
+                providers: [{ provide: ActivatedRoute, useValue: route }]
+            })
+                .overrideTemplate(MediaDetailComponent, '')
+                .compileComponents();
+            fixture = TestBed.createComponent(MediaDetailComponent);
+            comp = fixture.componentInstance;
+        });
+
+        describe('OnInit', () => {
+            it('Should call load all on init', () => {
+                // GIVEN
+
+                // WHEN
+                comp.ngOnInit();
+
+                // THEN
+                expect(comp.media).toEqual(jasmine.objectContaining({ id: '123' }));
+            });
+        });
     });
-
-    describe('OnInit', () => {
-      it('Should call load all on init', () => {
-        // GIVEN
-
-        // WHEN
-        comp.ngOnInit();
-
-        // THEN
-        expect(comp.media).toEqual(jasmine.objectContaining({ id: '123' }));
-      });
-    });
-  });
 });

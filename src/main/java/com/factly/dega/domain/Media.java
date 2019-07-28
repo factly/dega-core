@@ -1,5 +1,6 @@
 package com.factly.dega.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,6 +9,8 @@ import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -76,6 +79,30 @@ public class Media implements Serializable {
     @Field("created_date")
     private ZonedDateTime createdDate;
 
+    @Field("relative_url")
+    private String relativeURL;
+
+    @Field("source_url")
+    private String sourceURL;
+
+    @DBRef
+    @Field("post")
+    private Set<Post> posts = new HashSet<>();
+    @DBRef
+    @Field("degaUser")
+    private Set<DegaUser> degaUsers = new HashSet<>();
+    @DBRef
+    @Field("organizationLogo")
+    private Set<Organization> organizationLogos = new HashSet<>();
+    @DBRef
+    @Field("organizationMobileLogo")
+    private Set<Organization> organizationMobileLogos = new HashSet<>();
+    @DBRef
+    @Field("organizationFavicon")
+    private Set<Organization> organizationFavicons = new HashSet<>();
+    @DBRef
+    @Field("organizationMobileIcon")
+    private Set<Organization> organizationMobileIcons = new HashSet<>();
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -279,6 +306,182 @@ public class Media implements Serializable {
     public void setCreatedDate(ZonedDateTime createdDate) {
         this.createdDate = createdDate;
     }
+
+    public String getRelativeURL() {
+        return relativeURL;
+    }
+
+    public Media relativeURL(String relativeURL) {
+        this.relativeURL = relativeURL;
+        return this;
+    }
+
+    public void setRelativeURL(String relativeURL) {
+        this.relativeURL = relativeURL;
+    }
+
+    public String getSourceURL() {
+        return sourceURL;
+    }
+
+    public Media sourceURL(String sourceURL) {
+        this.sourceURL = sourceURL;
+        return this;
+    }
+
+    public void setSourceURL(String sourceURL) {
+        this.sourceURL = sourceURL;
+    }
+
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public Media posts(Set<Post> posts) {
+        this.posts = posts;
+        return this;
+    }
+
+    public Media addPost(Post post) {
+        this.posts.add(post);
+        post.setMedia(this);
+        return this;
+    }
+
+    public Media removePost(Post post) {
+        this.posts.remove(post);
+        post.setMedia(null);
+        return this;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
+
+    public Set<DegaUser> getDegaUsers() {
+        return degaUsers;
+    }
+
+    public Media degaUsers(Set<DegaUser> degaUsers) {
+        this.degaUsers = degaUsers;
+        return this;
+    }
+
+    public Media addDegaUser(DegaUser degaUser) {
+        this.degaUsers.add(degaUser);
+        degaUser.setMedia(this);
+        return this;
+    }
+
+    public Media removeDegaUser(DegaUser degaUser) {
+        this.degaUsers.remove(degaUser);
+        degaUser.setMedia(null);
+        return this;
+    }
+
+    public void setDegaUsers(Set<DegaUser> degaUsers) {
+        this.degaUsers = degaUsers;
+    }
+
+    public Set<Organization> getOrganizationLogos() {
+        return organizationLogos;
+    }
+
+    public Media organizationLogos(Set<Organization> organizations) {
+        this.organizationLogos = organizations;
+        return this;
+    }
+
+    public Media addOrganizationLogo(Organization organization) {
+        this.organizationLogos.add(organization);
+        organization.setMediaLogo(this);
+        return this;
+    }
+
+    public Media removeOrganizationLogo(Organization organization) {
+        this.organizationLogos.remove(organization);
+        organization.setMediaLogo(null);
+        return this;
+    }
+
+    public void setOrganizationLogos(Set<Organization> organizations) {
+        this.organizationLogos = organizations;
+    }
+
+    public Set<Organization> getOrganizationMobileLogos() {
+        return organizationMobileLogos;
+    }
+
+    public Media organizationMobileLogos(Set<Organization> organizations) {
+        this.organizationMobileLogos = organizations;
+        return this;
+    }
+
+    public Media addOrganizationMobileLogo(Organization organization) {
+        this.organizationMobileLogos.add(organization);
+        organization.setMediaMobileLogo(this);
+        return this;
+    }
+
+    public Media removeOrganizationMobileLogo(Organization organization) {
+        this.organizationMobileLogos.remove(organization);
+        organization.setMediaMobileLogo(null);
+        return this;
+    }
+
+    public void setOrganizationMobileLogos(Set<Organization> organizations) {
+        this.organizationMobileLogos = organizations;
+    }
+
+    public Set<Organization> getOrganizationFavicons() {
+        return organizationFavicons;
+    }
+
+    public Media organizationFavicons(Set<Organization> organizations) {
+        this.organizationFavicons = organizations;
+        return this;
+    }
+
+    public Media addOrganizationFavicon(Organization organization) {
+        this.organizationFavicons.add(organization);
+        organization.setMediaFavicon(this);
+        return this;
+    }
+
+    public Media removeOrganizationFavicon(Organization organization) {
+        this.organizationFavicons.remove(organization);
+        organization.setMediaFavicon(null);
+        return this;
+    }
+
+    public void setOrganizationFavicons(Set<Organization> organizations) {
+        this.organizationFavicons = organizations;
+    }
+
+    public Set<Organization> getOrganizationMobileIcons() {
+        return organizationMobileIcons;
+    }
+
+    public Media organizationMobileIcons(Set<Organization> organizations) {
+        this.organizationMobileIcons = organizations;
+        return this;
+    }
+
+    public Media addOrganizationMobileIcon(Organization organization) {
+        this.organizationMobileIcons.add(organization);
+        organization.setMediaMobileIcon(this);
+        return this;
+    }
+
+    public Media removeOrganizationMobileIcon(Organization organization) {
+        this.organizationMobileIcons.remove(organization);
+        organization.setMediaMobileIcon(null);
+        return this;
+    }
+
+    public void setOrganizationMobileIcons(Set<Organization> organizations) {
+        this.organizationMobileIcons = organizations;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -320,6 +523,8 @@ public class Media implements Serializable {
             ", slug='" + getSlug() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", relativeURL='" + getRelativeURL() + "'" +
+            ", sourceURL='" + getSourceURL() + "'" +
             "}";
     }
 }

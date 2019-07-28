@@ -8,58 +8,58 @@ import { IMedia } from 'app/shared/model/core/media.model';
 import { MediaService } from './media.service';
 
 @Component({
-  selector: 'jhi-media-delete-dialog',
-  templateUrl: './media-delete-dialog.component.html'
+    selector: 'jhi-media-delete-dialog',
+    templateUrl: './media-delete-dialog.component.html'
 })
 export class MediaDeleteDialogComponent {
-  media: IMedia;
+    media: IMedia;
 
-  constructor(private mediaService: MediaService, public activeModal: NgbActiveModal, private eventManager: JhiEventManager) {}
+    constructor(private mediaService: MediaService, public activeModal: NgbActiveModal, private eventManager: JhiEventManager) {}
 
-  clear() {
-    this.activeModal.dismiss('cancel');
-  }
+    clear() {
+        this.activeModal.dismiss('cancel');
+    }
 
-  confirmDelete(id: string) {
-    this.mediaService.delete(id).subscribe(response => {
-      this.eventManager.broadcast({
-        name: 'mediaListModification',
-        content: 'Deleted an media'
-      });
-      this.activeModal.dismiss(true);
-    });
-  }
+    confirmDelete(id: string) {
+        this.mediaService.delete(id).subscribe(response => {
+            this.eventManager.broadcast({
+                name: 'mediaListModification',
+                content: 'Deleted an media'
+            });
+            this.activeModal.dismiss(true);
+        });
+    }
 }
 
 @Component({
-  selector: 'jhi-media-delete-popup',
-  template: ''
+    selector: 'jhi-media-delete-popup',
+    template: ''
 })
 export class MediaDeletePopupComponent implements OnInit, OnDestroy {
-  private ngbModalRef: NgbModalRef;
+    private ngbModalRef: NgbModalRef;
 
-  constructor(private activatedRoute: ActivatedRoute, private router: Router, private modalService: NgbModal) {}
+    constructor(private activatedRoute: ActivatedRoute, private router: Router, private modalService: NgbModal) {}
 
-  ngOnInit() {
-    this.activatedRoute.data.subscribe(({ media }) => {
-      setTimeout(() => {
-        this.ngbModalRef = this.modalService.open(MediaDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
-        this.ngbModalRef.componentInstance.media = media;
-        this.ngbModalRef.result.then(
-          result => {
-            this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
-            this.ngbModalRef = null;
-          },
-          reason => {
-            this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
-            this.ngbModalRef = null;
-          }
-        );
-      }, 0);
-    });
-  }
+    ngOnInit() {
+        this.activatedRoute.data.subscribe(({ media }) => {
+            setTimeout(() => {
+                this.ngbModalRef = this.modalService.open(MediaDeleteDialogComponent as Component, { size: 'lg', backdrop: 'static' });
+                this.ngbModalRef.componentInstance.media = media;
+                this.ngbModalRef.result.then(
+                    result => {
+                        this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
+                        this.ngbModalRef = null;
+                    },
+                    reason => {
+                        this.router.navigate([{ outlets: { popup: null } }], { replaceUrl: true, queryParamsHandling: 'merge' });
+                        this.ngbModalRef = null;
+                    }
+                );
+            }, 0);
+        });
+    }
 
-  ngOnDestroy() {
-    this.ngbModalRef = null;
-  }
+    ngOnDestroy() {
+        this.ngbModalRef = null;
+    }
 }
