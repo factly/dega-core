@@ -99,6 +99,12 @@ public class MediaResourceIntTest {
     private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
+    private static final String DEFAULT_RELATIVE_URL = "AAAAAAAAAA";
+    private static final String UPDATED_RELATIVE_URL = "BBBBBBBBBB";
+
+    private static final String DEFAULT_SOURCE_URL = "AAAAAAAAAA";
+    private static final String UPDATED_SOURCE_URL = "BBBBBBBBBB";
+
     @Autowired
     private MediaRepository mediaRepository;
 
@@ -165,7 +171,9 @@ public class MediaResourceIntTest {
             .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE)
             .slug(DEFAULT_SLUG)
             .clientId(DEFAULT_CLIENT_ID)
-            .createdDate(DEFAULT_CREATED_DATE);
+            .createdDate(DEFAULT_CREATED_DATE)
+            .relativeURL(DEFAULT_RELATIVE_URL)
+            .sourceURL(DEFAULT_SOURCE_URL);
         return media;
     }
 
@@ -205,6 +213,8 @@ public class MediaResourceIntTest {
         assertThat(testMedia.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testMedia.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testMedia.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
+        assertThat(testMedia.getRelativeURL()).isEqualTo(DEFAULT_RELATIVE_URL);
+        assertThat(testMedia.getSourceURL()).isEqualTo(DEFAULT_SOURCE_URL);
 
         // Validate the Media in Elasticsearch
         verify(mockMediaSearchRepository, times(1)).save(testMedia);
@@ -396,18 +406,6 @@ public class MediaResourceIntTest {
 
     @Test
     public void getAllMedia() throws Exception {
-
-        media.setId("existing_id");
-        MediaDTO mediaDTO = mediaMapper.toDto(media);
-        List<MediaDTO> posts = new ArrayList<>();
-        posts.add(mediaDTO);
-        MediaResource mediaResource = new MediaResource(mediaServiceMock);
-        this.restMediaMockMvc = MockMvcBuilders.standaloneSetup(mediaResource)
-                .setCustomArgumentResolvers(pageableArgumentResolver)
-                .setControllerAdvice(exceptionTranslator)
-                .setConversionService(createFormattingConversionService())
-                .setMessageConverters(jacksonMessageConverter).build();
-        when(mediaServiceMock.findByClientId(any(), any())).thenReturn(new PageImpl(posts));
         // Initialize the database
         mediaRepository.save(media);
 
@@ -430,7 +428,9 @@ public class MediaResourceIntTest {
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].relativeURL").value(hasItem(DEFAULT_RELATIVE_URL.toString())))
+            .andExpect(jsonPath("$.[*].sourceURL").value(hasItem(DEFAULT_SOURCE_URL.toString())));
     }
 
     @Test
@@ -457,7 +457,9 @@ public class MediaResourceIntTest {
             .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.clientId").value(DEFAULT_CLIENT_ID.toString()))
-            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
+            .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
+            .andExpect(jsonPath("$.relativeURL").value(DEFAULT_RELATIVE_URL.toString()))
+            .andExpect(jsonPath("$.sourceURL").value(DEFAULT_SOURCE_URL.toString()));
     }
 
     @Test
@@ -491,7 +493,9 @@ public class MediaResourceIntTest {
             .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE)
             .slug(UPDATED_SLUG)
             .clientId(UPDATED_CLIENT_ID)
-            .createdDate(UPDATED_CREATED_DATE);
+            .createdDate(UPDATED_CREATED_DATE)
+            .relativeURL(UPDATED_RELATIVE_URL)
+            .sourceURL(UPDATED_SOURCE_URL);
         MediaDTO mediaDTO = mediaMapper.toDto(updatedMedia);
 
         restMediaMockMvc.perform(put("/api/media")
@@ -518,6 +522,8 @@ public class MediaResourceIntTest {
         assertThat(testMedia.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testMedia.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
         assertThat(testMedia.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
+        assertThat(testMedia.getRelativeURL()).isEqualTo(UPDATED_RELATIVE_URL);
+        assertThat(testMedia.getSourceURL()).isEqualTo(UPDATED_SOURCE_URL);
 
         // Validate the Media in Elasticsearch
         verify(mockMediaSearchRepository, times(1)).save(testMedia);
@@ -589,7 +595,9 @@ public class MediaResourceIntTest {
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].clientId").value(hasItem(DEFAULT_CLIENT_ID.toString())))
-            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
+            .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
+            .andExpect(jsonPath("$.[*].relativeURL").value(hasItem(DEFAULT_RELATIVE_URL.toString())))
+            .andExpect(jsonPath("$.[*].sourceURL").value(hasItem(DEFAULT_SOURCE_URL.toString())));
     }
 
     @Test

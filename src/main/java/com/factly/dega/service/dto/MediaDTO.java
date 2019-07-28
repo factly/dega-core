@@ -48,6 +48,10 @@ public class MediaDTO implements Serializable {
 
     private ZonedDateTime createdDate;
 
+    private String relativeURL;
+
+    private String sourceURL;
+
     public String getId() {
         return id;
     }
@@ -176,6 +180,22 @@ public class MediaDTO implements Serializable {
         this.createdDate = createdDate;
     }
 
+    public String getRelativeURL() {
+        return relativeURL;
+    }
+
+    public void setRelativeURL(String relativeURL) {
+        this.relativeURL = relativeURL;
+    }
+
+    public String getSourceURL() {
+        return sourceURL;
+    }
+
+    public void setSourceURL(String sourceURL) {
+        this.sourceURL = sourceURL;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -216,6 +236,8 @@ public class MediaDTO implements Serializable {
             ", slug='" + getSlug() + "'" +
             ", clientId='" + getClientId() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
+            ", relativeURL='" + getRelativeURL() + "'" +
+            ", sourceURL='" + getSourceURL() + "'" +
             "}";
     }
 }

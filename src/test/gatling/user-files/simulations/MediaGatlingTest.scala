@@ -116,6 +116,8 @@ class MediaGatlingTest extends Simulation {
                 , "slug":"SAMPLE_TEXT"
                 , "clientId":"SAMPLE_TEXT"
                 , "createdDate":"2020-01-01T00:00:00.000Z"
+                , "relativeURL":"SAMPLE_TEXT"
+                , "sourceURL":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_media_url"))).exitHereIfFailed
