@@ -26,6 +26,30 @@
             "otherEntityName": "roleMapping",
             "relationshipType": "one-to-many",
             "otherEntityRelationshipName": "organization"
+        },
+        {
+            "relationshipName": "mediaLogo",
+            "otherEntityName": "media",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "mediaMobileLogo",
+            "otherEntityName": "media",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "mediaFavicon",
+            "otherEntityName": "media",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
+        },
+        {
+            "relationshipName": "mediaMobileIcon",
+            "otherEntityName": "media",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
         }
     ],
     "fields": [

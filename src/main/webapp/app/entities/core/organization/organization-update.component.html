@@ -299,6 +299,34 @@
                         [(ngModel)]="organization.enableFactchecking" />
                 </div>
 
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.mediaLogo" for="field_mediaLogo">Media Logo</label>
+                    <select class="form-control" id="field_mediaLogo" name="mediaLogo" [(ngModel)]="organization.mediaLogoId" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="mediaOption.id" *ngFor="let mediaOption of media; trackBy: trackMediaById">{{mediaOption.id}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.mediaMobileLogo" for="field_mediaMobileLogo">Media Mobile Logo</label>
+                    <select class="form-control" id="field_mediaMobileLogo" name="mediaMobileLogo" [(ngModel)]="organization.mediaMobileLogoId" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="mediaOption.id" *ngFor="let mediaOption of media; trackBy: trackMediaById">{{mediaOption.id}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.mediaFavicon" for="field_mediaFavicon">Media Favicon</label>
+                    <select class="form-control" id="field_mediaFavicon" name="mediaFavicon" [(ngModel)]="organization.mediaFaviconId" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="mediaOption.id" *ngFor="let mediaOption of media; trackBy: trackMediaById">{{mediaOption.id}}</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreOrganization.mediaMobileIcon" for="field_mediaMobileIcon">Media Mobile Icon</label>
+                    <select class="form-control" id="field_mediaMobileIcon" name="mediaMobileIcon" [(ngModel)]="organization.mediaMobileIconId" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="mediaOption.id" *ngFor="let mediaOption of media; trackBy: trackMediaById">{{mediaOption.id}}</option>
+                    </select>
+                </div>
             </div>
             <div>
                 <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">

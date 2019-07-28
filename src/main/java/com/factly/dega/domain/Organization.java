@@ -1,6 +1,7 @@
 package com.factly.dega.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -149,7 +150,6 @@ public class Organization implements Serializable {
     private String slug;
 
     @NotNull
-    /*@Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")*/
     @Field("email")
     private String email;
 
@@ -182,6 +182,26 @@ public class Organization implements Serializable {
     @DBRef
     @Field("roleMapping")
     private Set<RoleMapping> roleMappings = new HashSet<>();
+    @DBRef
+    @Field("mediaLogo")
+    @JsonIgnoreProperties("organizationLogos")
+    private Media mediaLogo;
+
+    @DBRef
+    @Field("mediaMobileLogo")
+    @JsonIgnoreProperties("organizationMobileLogos")
+    private Media mediaMobileLogo;
+
+    @DBRef
+    @Field("mediaFavicon")
+    @JsonIgnoreProperties("organizationFavicons")
+    private Media mediaFavicon;
+
+    @DBRef
+    @Field("mediaMobileIcon")
+    @JsonIgnoreProperties("organizationMobileIcons")
+    private Media mediaMobileIcon;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
         return id;
@@ -874,6 +894,58 @@ public class Organization implements Serializable {
 
     public void setRoleMappings(Set<RoleMapping> roleMappings) {
         this.roleMappings = roleMappings;
+    }
+
+    public Media getMediaLogo() {
+        return mediaLogo;
+    }
+
+    public Organization mediaLogo(Media media) {
+        this.mediaLogo = media;
+        return this;
+    }
+
+    public void setMediaLogo(Media media) {
+        this.mediaLogo = media;
+    }
+
+    public Media getMediaMobileLogo() {
+        return mediaMobileLogo;
+    }
+
+    public Organization mediaMobileLogo(Media media) {
+        this.mediaMobileLogo = media;
+        return this;
+    }
+
+    public void setMediaMobileLogo(Media media) {
+        this.mediaMobileLogo = media;
+    }
+
+    public Media getMediaFavicon() {
+        return mediaFavicon;
+    }
+
+    public Organization mediaFavicon(Media media) {
+        this.mediaFavicon = media;
+        return this;
+    }
+
+    public void setMediaFavicon(Media media) {
+        this.mediaFavicon = media;
+    }
+
+    public Media getMediaMobileIcon() {
+        return mediaMobileIcon;
+    }
+
+    public Organization mediaMobileIcon(Media media) {
+        this.mediaMobileIcon = media;
+        return this;
+    }
+
+    public void setMediaMobileIcon(Media media) {
+        this.mediaMobileIcon = media;
     }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
