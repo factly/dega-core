@@ -48,9 +48,9 @@ public class Role implements Serializable {
     @Field("last_updated_date")
     private ZonedDateTime lastUpdatedDate;
 
-    @DBRef
-    @Field("degaUser")
-    private Set<DegaUser> degaUsers = new HashSet<>();
+    @Field("keycloak_id")
+    private String keycloakId;
+
     @DBRef
     @Field("roleMapping")
     private Set<RoleMapping> roleMappings = new HashSet<>();
@@ -141,29 +141,17 @@ public class Role implements Serializable {
         this.lastUpdatedDate = lastUpdatedDate;
     }
 
-    public Set<DegaUser> getDegaUsers() {
-        return degaUsers;
+    public String getKeycloakId() {
+        return keycloakId;
     }
 
-    public Role degaUsers(Set<DegaUser> degaUsers) {
-        this.degaUsers = degaUsers;
+    public Role keycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
         return this;
     }
 
-//    public Role addDegaUser(DegaUser degaUser) {
-//        this.degaUsers.add(degaUser);
-//        degaUser.setRole(this);
-//        return this;
-//    }
-//
-//    public Role removeDegaUser(DegaUser degaUser) {
-//        this.degaUsers.remove(degaUser);
-//        degaUser.setRole(null);
-//        return this;
-//    }
-
-    public void setDegaUsers(Set<DegaUser> degaUsers) {
-        this.degaUsers = degaUsers;
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
     }
 
     public Set<RoleMapping> getRoleMappings() {
@@ -222,6 +210,7 @@ public class Role implements Serializable {
             ", slug='" + getSlug() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
+            ", keycloakId='" + getKeycloakId() + "'" +
             "}";
     }
 }

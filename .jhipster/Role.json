@@ -3,12 +3,6 @@
     "clientRootFolder": "core",
     "relationships": [
         {
-            "relationshipName": "degaUser",
-            "otherEntityName": "degaUser",
-            "relationshipType": "one-to-many",
-            "otherEntityRelationshipName": "role"
-        },
-        {
             "relationshipName": "roleMapping",
             "otherEntityName": "roleMapping",
             "relationshipType": "one-to-many",
@@ -54,6 +48,10 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "keycloakId",
+            "fieldType": "String"
         }
     ],
     "dto": "mapstruct",

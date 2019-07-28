@@ -25,6 +25,8 @@ public class RoleDTO implements Serializable {
 
     private ZonedDateTime lastUpdatedDate;
 
+    private String keycloakId;
+
     public String getId() {
         return id;
     }
@@ -81,6 +83,14 @@ public class RoleDTO implements Serializable {
         this.lastUpdatedDate = lastUpdatedDate;
     }
 
+    public String getKeycloakId() {
+        return keycloakId;
+    }
+
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -112,6 +122,7 @@ public class RoleDTO implements Serializable {
             ", slug='" + getSlug() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
+            ", keycloakId='" + getKeycloakId() + "'" +
             "}";
     }
 }

@@ -70,6 +70,9 @@ public class RoleResourceIntTest {
     private static final ZonedDateTime DEFAULT_LAST_UPDATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_LAST_UPDATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);
 
+    private static final String DEFAULT_KEYCLOAK_ID = "AAAAAAAAAA";
+    private static final String UPDATED_KEYCLOAK_ID = "BBBBBBBBBB";
+
     @Autowired
     private RoleRepository roleRepository;
 
@@ -126,7 +129,8 @@ public class RoleResourceIntTest {
             .isDefault(DEFAULT_IS_DEFAULT)
             .slug(DEFAULT_SLUG)
             .createdDate(DEFAULT_CREATED_DATE)
-            .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE);
+            .lastUpdatedDate(DEFAULT_LAST_UPDATED_DATE)
+            .keycloakId(DEFAULT_KEYCLOAK_ID);
         return role;
     }
 
@@ -157,6 +161,7 @@ public class RoleResourceIntTest {
         assertThat(testRole.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testRole.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
         assertThat(testRole.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
+        assertThat(testRole.getKeycloakId()).isEqualTo(DEFAULT_KEYCLOAK_ID);
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);
@@ -289,7 +294,8 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
-            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
+            .andExpect(jsonPath("$.[*].keycloakId").value(hasItem(DEFAULT_KEYCLOAK_ID.toString())));
     }
 
     @Test
@@ -307,7 +313,8 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.isDefault").value(DEFAULT_IS_DEFAULT.booleanValue()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)))
-            .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)));
+            .andExpect(jsonPath("$.lastUpdatedDate").value(sameInstant(DEFAULT_LAST_UPDATED_DATE)))
+            .andExpect(jsonPath("$.keycloakId").value(DEFAULT_KEYCLOAK_ID.toString()));
     }
 
     @Test
@@ -332,7 +339,8 @@ public class RoleResourceIntTest {
             .isDefault(UPDATED_IS_DEFAULT)
             .slug(UPDATED_SLUG)
             .createdDate(UPDATED_CREATED_DATE)
-            .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE);
+            .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE)
+            .keycloakId(UPDATED_KEYCLOAK_ID);
         RoleDTO roleDTO = roleMapper.toDto(updatedRole);
 
         restRoleMockMvc.perform(put("/api/roles")
@@ -350,6 +358,7 @@ public class RoleResourceIntTest {
         assertThat(testRole.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testRole.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
         assertThat(testRole.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
+        assertThat(testRole.getKeycloakId()).isEqualTo(UPDATED_KEYCLOAK_ID);
 
         // Validate the Role in Elasticsearch
         verify(mockRoleSearchRepository, times(1)).save(testRole);
@@ -412,7 +421,8 @@ public class RoleResourceIntTest {
             .andExpect(jsonPath("$.[*].isDefault").value(hasItem(DEFAULT_IS_DEFAULT.booleanValue())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
-            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
+            .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))))
+            .andExpect(jsonPath("$.[*].keycloakId").value(hasItem(DEFAULT_KEYCLOAK_ID.toString())));
     }
 
     @Test
