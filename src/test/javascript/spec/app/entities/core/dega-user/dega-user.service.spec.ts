@@ -42,7 +42,9 @@ describe('Service Tests', () => {
                 false,
                 false,
                 'AAAAAAA',
-                currentDate
+                currentDate,
+                'AAAAAAA',
+                false
             );
         });
 
@@ -103,7 +105,9 @@ describe('Service Tests', () => {
                         enabled: true,
                         emailVerified: true,
                         email: 'BBBBBB',
-                        createdDate: currentDate.format(DATE_TIME_FORMAT)
+                        createdDate: currentDate.format(DATE_TIME_FORMAT),
+                        keycloakId: 'BBBBBB',
+                        isSuperAdmin: true
                     },
                     elemDefault
                 );
@@ -140,7 +144,9 @@ describe('Service Tests', () => {
                         enabled: true,
                         emailVerified: true,
                         email: 'BBBBBB',
-                        createdDate: currentDate.format(DATE_TIME_FORMAT)
+                        createdDate: currentDate.format(DATE_TIME_FORMAT),
+                        keycloakId: 'BBBBBB',
+                        isSuperAdmin: true
                     },
                     elemDefault
                 );

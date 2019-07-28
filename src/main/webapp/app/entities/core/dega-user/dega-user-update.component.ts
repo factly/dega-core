@@ -8,14 +8,14 @@ import { JhiAlertService } from 'ng-jhipster';
 
 import { IDegaUser } from 'app/shared/model/core/dega-user.model';
 import { DegaUserService } from './dega-user.service';
-import { IRole } from 'app/shared/model/core/role.model';
-import { RoleService } from 'app/entities/core/role';
 import { IOrganization } from 'app/shared/model/core/organization.model';
 import { OrganizationService } from 'app/entities/core/organization';
 import { IPost } from 'app/shared/model/core/post.model';
 import { PostService } from 'app/entities/core/post';
 import { IRoleMapping } from 'app/shared/model/core/role-mapping.model';
 import { RoleMappingService } from 'app/entities/core/role-mapping';
+import { IMedia } from 'app/shared/model/core/media.model';
+import { MediaService } from 'app/entities/core/media';
 
 @Component({
     selector: 'jhi-dega-user-update',
@@ -25,22 +25,22 @@ export class DegaUserUpdateComponent implements OnInit {
     degaUser: IDegaUser;
     isSaving: boolean;
 
-    roles: IRole[];
-
     organizations: IOrganization[];
 
     posts: IPost[];
 
     rolemappings: IRoleMapping[];
+
+    media: IMedia[];
     createdDate: string;
 
     constructor(
         private jhiAlertService: JhiAlertService,
         private degaUserService: DegaUserService,
-        private roleService: RoleService,
         private organizationService: OrganizationService,
         private postService: PostService,
         private roleMappingService: RoleMappingService,
+        private mediaService: MediaService,
         private activatedRoute: ActivatedRoute
     ) {}
 
@@ -50,12 +50,6 @@ export class DegaUserUpdateComponent implements OnInit {
             this.degaUser = degaUser;
             this.createdDate = this.degaUser.createdDate != null ? this.degaUser.createdDate.format(DATE_TIME_FORMAT) : null;
         });
-        this.roleService.query().subscribe(
-            (res: HttpResponse<IRole[]>) => {
-                this.roles = res.body;
-            },
-            (res: HttpErrorResponse) => this.onError(res.message)
-        );
         this.organizationService.query().subscribe(
             (res: HttpResponse<IOrganization[]>) => {
                 this.organizations = res.body;
@@ -71,6 +65,12 @@ export class DegaUserUpdateComponent implements OnInit {
         this.roleMappingService.query().subscribe(
             (res: HttpResponse<IRoleMapping[]>) => {
                 this.rolemappings = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.mediaService.query().subscribe(
+            (res: HttpResponse<IMedia[]>) => {
+                this.media = res.body;
             },
             (res: HttpErrorResponse) => this.onError(res.message)
         );
@@ -107,10 +107,6 @@ export class DegaUserUpdateComponent implements OnInit {
         this.jhiAlertService.error(errorMessage, null, null);
     }
 
-    trackRoleById(index: number, item: IRole) {
-        return item.id;
-    }
-
     trackOrganizationById(index: number, item: IOrganization) {
         return item.id;
     }
@@ -120,6 +116,10 @@ export class DegaUserUpdateComponent implements OnInit {
     }
 
     trackRoleMappingById(index: number, item: IRoleMapping) {
+        return item.id;
+    }
+
+    trackMediaById(index: number, item: IMedia) {
         return item.id;
     }
 

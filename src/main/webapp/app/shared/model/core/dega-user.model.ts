@@ -21,8 +21,8 @@ export interface IDegaUser {
     emailVerified?: boolean;
     email?: string;
     createdDate?: Moment;
-    roleName?: string;
-    roleId?: string;
+    keycloakId?: string;
+    isSuperAdmin?: boolean;
     organizations?: IOrganization[];
     organizationDefaultName?: string;
     organizationDefaultId?: string;
@@ -30,6 +30,7 @@ export interface IDegaUser {
     organizationCurrentId?: string;
     posts?: IPost[];
     roleMappings?: IRoleMapping[];
+    mediaId?: string;
 }
 
 export class DegaUser implements IDegaUser {
@@ -51,17 +52,19 @@ export class DegaUser implements IDegaUser {
         public emailVerified?: boolean,
         public email?: string,
         public createdDate?: Moment,
-        public roleName?: string,
-        public roleId?: string,
+        public keycloakId?: string,
+        public isSuperAdmin?: boolean,
         public organizations?: IOrganization[],
         public organizationDefaultName?: string,
         public organizationDefaultId?: string,
         public organizationCurrentName?: string,
         public organizationCurrentId?: string,
         public posts?: IPost[],
-        public roleMappings?: IRoleMapping[]
+        public roleMappings?: IRoleMapping[],
+        public mediaId?: string
     ) {
         this.enabled = this.enabled || false;
         this.emailVerified = this.emailVerified || false;
+        this.isSuperAdmin = this.isSuperAdmin || false;
     }
 }

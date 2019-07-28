@@ -32,12 +32,14 @@
             "emailVerified": "Email Verified",
             "email": "Email",
             "createdDate": "Created Date",
-            "role": "Role",
+            "keycloakId": "Keycloak Id",
+            "isSuperAdmin": "Is Super Admin",
             "organization": "Organization",
             "organizationDefault": "Organization Default",
             "organizationCurrent": "Organization Current",
             "post": "Post",
-            "roleMapping": "Role Mapping"
+            "roleMapping": "Role Mapping",
+            "media": "Media"
         }
     }
 }

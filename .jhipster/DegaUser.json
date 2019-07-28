@@ -3,15 +3,6 @@
     "clientRootFolder": "core",
     "relationships": [
         {
-            "relationshipName": "role",
-            "otherEntityName": "role",
-            "relationshipType": "many-to-one",
-            "relationshipValidateRules": [
-                "required"
-            ],
-            "otherEntityField": "name"
-        },
-        {
             "relationshipName": "organization",
             "otherEntityName": "organization",
             "relationshipType": "many-to-many",
@@ -57,6 +48,12 @@
             "otherEntityField": "name",
             "ownerSide": true,
             "otherEntityRelationshipName": "degaUser"
+        },
+        {
+            "relationshipName": "media",
+            "otherEntityName": "media",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
         }
     ],
     "fields": [
@@ -142,6 +139,14 @@
             "fieldValidateRules": [
                 "required"
             ]
+        },
+        {
+            "fieldName": "keycloakId",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "isSuperAdmin",
+            "fieldType": "Boolean"
         }
     ],
     "dto": "mapstruct",
