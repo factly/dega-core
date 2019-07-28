@@ -28,6 +28,8 @@ public class KeyCloakUserDTO implements Serializable {
 
     private String username;
 
+    public KeyCloakUserDTO() {}
+
     public KeyCloakUserDTO(String id, String firstName, String lastName, @NotNull Boolean enabled, Boolean emailVerified, @NotNull String email, String username) {
         this.id = id;
         this.firstName = firstName;

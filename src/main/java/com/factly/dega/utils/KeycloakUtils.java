@@ -1,7 +1,6 @@
 package com.factly.dega.utils;
 
-import com.factly.dega.service.DegaUserService;
-import com.google.gson.JsonObject;
+import com.factly.dega.service.dto.KeyCloakUserDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +69,30 @@ public class KeycloakUtils {
             throw e;
         }
         return true;
+    }
+
+    public String getUserId(String endpoint) {
+
+        // save the user to keycloak
+        try {
+            RestTemplate restTemplate = getOauth2RestTemplate();
+            KeyCloakUserDTO[] keyCloakUsers = restTemplate.getForObject(keycloakServerURI + endpoint, KeyCloakUserDTO[].class);
+
+            if (keyCloakUsers != null && keyCloakUsers.length > 0) {
+                return keyCloakUsers[0].getId();
+            }
+        } catch (HttpClientErrorException e) {
+            if (e.getMessage().equals("403 Forbidden")) {
+                log.error("This client {} does not have required access", keycloakClientId);
+                return "NOT_FOUND";
+            }
+            // for all other errors rethrow
+            throw e;
+        } catch (Exception e) {
+            log.error("keycloak api failed with the message {}, exiting", e.getMessage());
+            throw e;
+        }
+        return "NOT_FOUND";
     }
 
     private RestTemplate getOauth2RestTemplate() {
