@@ -27,6 +27,8 @@ public class RoleDTO implements Serializable {
 
     private String keycloakId;
 
+    private String keycloakName;
+
     public String getId() {
         return id;
     }
@@ -91,6 +93,14 @@ public class RoleDTO implements Serializable {
         this.keycloakId = keycloakId;
     }
 
+    public String getKeycloakName() {
+        return keycloakName;
+    }
+
+    public void setKeycloakName(String keycloakName) {
+        this.keycloakName = keycloakName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -123,6 +133,7 @@ public class RoleDTO implements Serializable {
             ", createdDate='" + getCreatedDate() + "'" +
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             ", keycloakId='" + getKeycloakId() + "'" +
+            ", keycloakName='" + getKeycloakName() + "'" +
             "}";
     }
 }

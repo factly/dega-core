@@ -23,6 +23,7 @@
             "createdDate": "Created Date",
             "lastUpdatedDate": "Last Updated Date",
             "keycloakId": "Keycloak Id",
+            "keycloakName": "Keycloak Name",
             "roleMapping": "Role Mapping"
         }
     }
