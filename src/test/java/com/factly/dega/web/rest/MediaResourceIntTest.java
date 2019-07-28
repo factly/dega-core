@@ -9,6 +9,7 @@ import com.factly.dega.repository.search.MediaSearchRepository;
 import com.factly.dega.service.MediaService;
 import com.factly.dega.service.dto.MediaDTO;
 import com.factly.dega.service.mapper.MediaMapper;
+import com.factly.dega.utils.FileNameUtils;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -141,7 +142,7 @@ public class MediaResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MediaResource mediaResource = new MediaResource(mediaService);
+        final MediaResource mediaResource = new MediaResource(mediaService, "", new FileNameUtils(""), "", "", "", "");
         this.restMediaMockMvc = MockMvcBuilders.standaloneSetup(mediaResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

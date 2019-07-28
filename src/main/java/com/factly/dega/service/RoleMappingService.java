@@ -5,6 +5,7 @@ import com.factly.dega.service.dto.RoleMappingDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,6 +20,14 @@ public interface RoleMappingService {
      * @return the persisted entity
      */
     RoleMappingDTO save(RoleMappingDTO roleMappingDTO);
+
+    /**
+     * Save list of roleMappings.
+     *
+     * @param roleMappingDTO list the entity to save
+     * @return the persisted entity
+     */
+    List<RoleMappingDTO> saveAll(List<RoleMappingDTO> roleMappingDTO);
 
     /**
      * Get all the roleMappings.

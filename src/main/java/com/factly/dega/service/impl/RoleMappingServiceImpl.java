@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -35,6 +36,23 @@ public class RoleMappingServiceImpl implements RoleMappingService {
         this.roleMappingRepository = roleMappingRepository;
         this.roleMappingMapper = roleMappingMapper;
         this.roleMappingSearchRepository = roleMappingSearchRepository;
+    }
+
+    /**
+     * Save list of roleMappings.
+     *
+     * @param roleMappingDTO list the entity to save
+     * @return the persisted entity
+     */
+    @Override
+    public List<RoleMappingDTO> saveAll(List<RoleMappingDTO> roleMappingDTO) {
+        log.debug("Request to save RoleMapping : {}", roleMappingDTO);
+
+        List<RoleMapping> roleMapping = roleMappingMapper.toEntity(roleMappingDTO);
+        roleMapping = roleMappingRepository.saveAll(roleMapping);
+        List<RoleMappingDTO> result = roleMappingMapper.toDto(roleMapping);
+        roleMappingSearchRepository.saveAll(roleMapping);
+        return result;
     }
 
     /**
