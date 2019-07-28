@@ -383,105 +383,105 @@ public class Media implements Serializable {
         this.degaUsers = degaUsers;
     }
 
-//    public Set<Organization> getOrganizationLogos() {
-//        return organizationLogos;
-//    }
+    public Set<Organization> getOrganizationLogos() {
+        return organizationLogos;
+    }
 
-//    public Media organizationLogos(Set<Organization> organizations) {
-//        this.organizationLogos = organizations;
-//        return this;
-//    }
-//
-//    public Media addOrganizationLogo(Organization organization) {
-//        this.organizationLogos.add(organization);
-//        organization.setMediaLogo(this);
-//        return this;
-//    }
-//
-//    public Media removeOrganizationLogo(Organization organization) {
-//        this.organizationLogos.remove(organization);
-//        organization.setMediaLogo(null);
-//        return this;
-//    }
-//
-//    public void setOrganizationLogos(Set<Organization> organizations) {
-//        this.organizationLogos = organizations;
-//    }
-//
-//    public Set<Organization> getOrganizationMobileLogos() {
-//        return organizationMobileLogos;
-//    }
-//
-//    public Media organizationMobileLogos(Set<Organization> organizations) {
-//        this.organizationMobileLogos = organizations;
-//        return this;
-//    }
-//
-//    public Media addOrganizationMobileLogo(Organization organization) {
-//        this.organizationMobileLogos.add(organization);
-//        organization.setMediaMobileLogo(this);
-//        return this;
-//    }
-//
-//    public Media removeOrganizationMobileLogo(Organization organization) {
-//        this.organizationMobileLogos.remove(organization);
-//        organization.setMediaMobileLogo(null);
-//        return this;
-//    }
-//
-//    public void setOrganizationMobileLogos(Set<Organization> organizations) {
-//        this.organizationMobileLogos = organizations;
-//    }
-//
-//    public Set<Organization> getOrganizationFavicons() {
-//        return organizationFavicons;
-//    }
-//
-//    public Media organizationFavicons(Set<Organization> organizations) {
-//        this.organizationFavicons = organizations;
-//        return this;
-//    }
-//
-//    public Media addOrganizationFavicon(Organization organization) {
-//        this.organizationFavicons.add(organization);
-//        organization.setMediaFavicon(this);
-//        return this;
-//    }
-//
-//    public Media removeOrganizationFavicon(Organization organization) {
-//        this.organizationFavicons.remove(organization);
-//        organization.setMediaFavicon(null);
-//        return this;
-//    }
-//
-//    public void setOrganizationFavicons(Set<Organization> organizations) {
-//        this.organizationFavicons = organizations;
-//    }
-//
-//    public Set<Organization> getOrganizationMobileIcons() {
-//        return organizationMobileIcons;
-//    }
-//
-//    public Media organizationMobileIcons(Set<Organization> organizations) {
-//        this.organizationMobileIcons = organizations;
-//        return this;
-//    }
-//
-//    public Media addOrganizationMobileIcon(Organization organization) {
-//        this.organizationMobileIcons.add(organization);
-//        organization.setMediaMobileIcon(this);
-//        return this;
-//    }
-//
-//    public Media removeOrganizationMobileIcon(Organization organization) {
-//        this.organizationMobileIcons.remove(organization);
-//        organization.setMediaMobileIcon(null);
-//        return this;
-//    }
-//
-//    public void setOrganizationMobileIcons(Set<Organization> organizations) {
-//        this.organizationMobileIcons = organizations;
-//    }
+    public Media organizationLogos(Set<Organization> organizations) {
+        this.organizationLogos = organizations;
+        return this;
+    }
+
+    public Media addOrganizationLogo(Organization organization) {
+        this.organizationLogos.add(organization);
+        organization.setMediaLogo(this);
+        return this;
+    }
+
+    public Media removeOrganizationLogo(Organization organization) {
+        this.organizationLogos.remove(organization);
+        organization.setMediaLogo(null);
+        return this;
+    }
+
+    public void setOrganizationLogos(Set<Organization> organizations) {
+        this.organizationLogos = organizations;
+    }
+
+    public Set<Organization> getOrganizationMobileLogos() {
+        return organizationMobileLogos;
+    }
+
+    public Media organizationMobileLogos(Set<Organization> organizations) {
+        this.organizationMobileLogos = organizations;
+        return this;
+    }
+
+    public Media addOrganizationMobileLogo(Organization organization) {
+        this.organizationMobileLogos.add(organization);
+        organization.setMediaMobileLogo(this);
+        return this;
+    }
+
+    public Media removeOrganizationMobileLogo(Organization organization) {
+        this.organizationMobileLogos.remove(organization);
+        organization.setMediaMobileLogo(null);
+        return this;
+    }
+
+    public void setOrganizationMobileLogos(Set<Organization> organizations) {
+        this.organizationMobileLogos = organizations;
+    }
+
+    public Set<Organization> getOrganizationFavicons() {
+        return organizationFavicons;
+    }
+
+    public Media organizationFavicons(Set<Organization> organizations) {
+        this.organizationFavicons = organizations;
+        return this;
+    }
+
+    public Media addOrganizationFavicon(Organization organization) {
+        this.organizationFavicons.add(organization);
+        organization.setMediaFavicon(this);
+        return this;
+    }
+
+    public Media removeOrganizationFavicon(Organization organization) {
+        this.organizationFavicons.remove(organization);
+        organization.setMediaFavicon(null);
+        return this;
+    }
+
+    public void setOrganizationFavicons(Set<Organization> organizations) {
+        this.organizationFavicons = organizations;
+    }
+
+    public Set<Organization> getOrganizationMobileIcons() {
+        return organizationMobileIcons;
+    }
+
+    public Media organizationMobileIcons(Set<Organization> organizations) {
+        this.organizationMobileIcons = organizations;
+        return this;
+    }
+
+    public Media addOrganizationMobileIcon(Organization organization) {
+        this.organizationMobileIcons.add(organization);
+        organization.setMediaMobileIcon(this);
+        return this;
+    }
+
+    public Media removeOrganizationMobileIcon(Organization organization) {
+        this.organizationMobileIcons.remove(organization);
+        organization.setMediaMobileIcon(null);
+        return this;
+    }
+
+    public void setOrganizationMobileIcons(Set<Organization> organizations) {
+        this.organizationMobileIcons = organizations;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override

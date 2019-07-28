@@ -185,6 +185,30 @@
                 <dd>
                     <span>{{organization.enableFactchecking}}</span>
                 </dd>
+                <dt><span jhiTranslate="coreApp.coreOrganization.mediaLogo">Media Logo</span></dt>
+                <dd>
+                    <div *ngIf="organization.mediaLogoId">
+                        <a [routerLink]="['/media', organization.mediaLogoId, 'view']">{{organization.mediaLogoId}}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="coreApp.coreOrganization.mediaMobileLogo">Media Mobile Logo</span></dt>
+                <dd>
+                    <div *ngIf="organization.mediaMobileLogoId">
+                        <a [routerLink]="['/media', organization.mediaMobileLogoId, 'view']">{{organization.mediaMobileLogoId}}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="coreApp.coreOrganization.mediaFavicon">Media Favicon</span></dt>
+                <dd>
+                    <div *ngIf="organization.mediaFaviconId">
+                        <a [routerLink]="['/media', organization.mediaFaviconId, 'view']">{{organization.mediaFaviconId}}</a>
+                    </div>
+                </dd>
+                <dt><span jhiTranslate="coreApp.coreOrganization.mediaMobileIcon">Media Mobile Icon</span></dt>
+                <dd>
+                    <div *ngIf="organization.mediaMobileIconId">
+                        <a [routerLink]="['/media', organization.mediaMobileIconId, 'view']">{{organization.mediaMobileIconId}}</a>
+                    </div>
+                </dd>
             </dl>
 
             <button type="submit"

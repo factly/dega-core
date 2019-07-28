@@ -10,6 +10,8 @@ import { IOrganization } from 'app/shared/model/core/organization.model';
 import { OrganizationService } from './organization.service';
 import { IDegaUser } from 'app/shared/model/core/dega-user.model';
 import { DegaUserService } from 'app/entities/core/dega-user';
+import { IMedia } from 'app/shared/model/core/media.model';
+import { MediaService } from 'app/entities/core/media';
 
 @Component({
     selector: 'jhi-organization-update',
@@ -20,6 +22,8 @@ export class OrganizationUpdateComponent implements OnInit {
     isSaving: boolean;
 
     degausers: IDegaUser[];
+
+    media: IMedia[];
     createdDate: string;
     lastUpdatedDate: string;
 
@@ -27,6 +31,7 @@ export class OrganizationUpdateComponent implements OnInit {
         private jhiAlertService: JhiAlertService,
         private organizationService: OrganizationService,
         private degaUserService: DegaUserService,
+        private mediaService: MediaService,
         private activatedRoute: ActivatedRoute
     ) {}
 
@@ -41,6 +46,12 @@ export class OrganizationUpdateComponent implements OnInit {
         this.degaUserService.query().subscribe(
             (res: HttpResponse<IDegaUser[]>) => {
                 this.degausers = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.mediaService.query().subscribe(
+            (res: HttpResponse<IMedia[]>) => {
+                this.media = res.body;
             },
             (res: HttpErrorResponse) => this.onError(res.message)
         );
@@ -79,6 +90,10 @@ export class OrganizationUpdateComponent implements OnInit {
     }
 
     trackDegaUserById(index: number, item: IDegaUser) {
+        return item.id;
+    }
+
+    trackMediaById(index: number, item: IMedia) {
         return item.id;
     }
 

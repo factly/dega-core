@@ -173,8 +173,8 @@ public class OrganizationResourceIntTest {
     private static final String DEFAULT_SLUG = "AAAAAAAAAA";
     private static final String UPDATED_SLUG = "BBBBBBBBBB";
 
-    private static final String DEFAULT_EMAIL = "'9J@k.aigzweazmUStGihIpV'";
-    private static final String UPDATED_EMAIL = "'w.@O.qVa'";
+    private static final String DEFAULT_EMAIL = "'g@d.ArgNkpn'";
+    private static final String UPDATED_EMAIL = "'kb@o.gvURXa'";
 
     private static final ZonedDateTime DEFAULT_CREATED_DATE = ZonedDateTime.ofInstant(Instant.ofEpochMilli(0L), ZoneOffset.UTC);
     private static final ZonedDateTime UPDATED_CREATED_DATE = ZonedDateTime.now(ZoneId.systemDefault()).withNano(0);

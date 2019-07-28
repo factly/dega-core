@@ -75,6 +75,10 @@
             <th jhiSortBy="lastUpdatedDate"><span jhiTranslate="coreApp.coreOrganization.lastUpdatedDate">Last Updated Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="siteAddress"><span jhiTranslate="coreApp.coreOrganization.siteAddress">Site Address</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="enableFactchecking"><span jhiTranslate="coreApp.coreOrganization.enableFactchecking">Enable Factchecking</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mediaLogoId"><span jhiTranslate="coreApp.coreOrganization.mediaLogo">Media Logo</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mediaMobileLogoId"><span jhiTranslate="coreApp.coreOrganization.mediaMobileLogo">Media Mobile Logo</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mediaFaviconId"><span jhiTranslate="coreApp.coreOrganization.mediaFavicon">Media Favicon</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mediaMobileIconId"><span jhiTranslate="coreApp.coreOrganization.mediaMobileIcon">Media Mobile Icon</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -126,6 +130,26 @@
                 <td>{{organization.lastUpdatedDate | date:'medium'}}</td>
                 <td>{{organization.siteAddress}}</td>
                 <td>{{organization.enableFactchecking}}</td>
+                <td>
+                    <div *ngIf="organization.mediaLogoId">
+                        <a [routerLink]="['../media', organization.mediaLogoId , 'view' ]" >{{organization.mediaLogoId}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="organization.mediaMobileLogoId">
+                        <a [routerLink]="['../media', organization.mediaMobileLogoId , 'view' ]" >{{organization.mediaMobileLogoId}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="organization.mediaFaviconId">
+                        <a [routerLink]="['../media', organization.mediaFaviconId , 'view' ]" >{{organization.mediaFaviconId}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="organization.mediaMobileIconId">
+                        <a [routerLink]="['../media', organization.mediaMobileIconId , 'view' ]" >{{organization.mediaMobileIconId}}</a>
+                    </div>
+                </td>
                 <td class="text-right">
                     <div class="btn-group flex-btn-group-container">
                         <button type="submit"

@@ -95,7 +95,6 @@ public class OrganizationDTO implements Serializable {
     private String slug;
 
     @NotNull
-    /*@Pattern(regexp = "'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,30}$'")*/
     private String email;
 
     private ZonedDateTime createdDate;
@@ -106,6 +105,14 @@ public class OrganizationDTO implements Serializable {
     private String siteAddress;
 
     private Boolean enableFactchecking;
+
+    private String mediaLogoId;
+
+    private String mediaMobileLogoId;
+
+    private String mediaFaviconId;
+
+    private String mediaMobileIconId;
 
     public String getId() {
         return id;
@@ -475,6 +482,38 @@ public class OrganizationDTO implements Serializable {
         this.enableFactchecking = enableFactchecking;
     }
 
+    public String getMediaLogoId() {
+        return mediaLogoId;
+    }
+
+    public void setMediaLogoId(String mediaId) {
+        this.mediaLogoId = mediaId;
+    }
+
+    public String getMediaMobileLogoId() {
+        return mediaMobileLogoId;
+    }
+
+    public void setMediaMobileLogoId(String mediaId) {
+        this.mediaMobileLogoId = mediaId;
+    }
+
+    public String getMediaFaviconId() {
+        return mediaFaviconId;
+    }
+
+    public void setMediaFaviconId(String mediaId) {
+        this.mediaFaviconId = mediaId;
+    }
+
+    public String getMediaMobileIconId() {
+        return mediaMobileIconId;
+    }
+
+    public void setMediaMobileIconId(String mediaId) {
+        this.mediaMobileIconId = mediaId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -545,6 +584,10 @@ public class OrganizationDTO implements Serializable {
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             ", siteAddress='" + getSiteAddress() + "'" +
             ", enableFactchecking='" + isEnableFactchecking() + "'" +
+            ", mediaLogo=" + getMediaLogoId() +
+            ", mediaMobileLogo=" + getMediaMobileLogoId() +
+            ", mediaFavicon=" + getMediaFaviconId() +
+            ", mediaMobileIcon=" + getMediaMobileIconId() +
             "}";
     }
 }
