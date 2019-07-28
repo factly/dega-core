@@ -58,6 +58,7 @@ public class MediaResource {
     private final String hostName;
     private final String mediaStorageRootDir;
     private final String storageType;
+    private final String storageURL;
 
 
     private StorageService storageService;
@@ -67,13 +68,15 @@ public class MediaResource {
     public MediaResource(MediaService mediaService, @Value("${google.cloud.storage.bucketname}") String bucketName,
                          FileNameUtils fileNameUtils, @Value("${dega.media.hostname}") String hostName,
                          @Value("${dega.media.upload-dir}") String mediaStorageRootDir,
-                         @Value("${dega.media.storage}") String storageType) {
+                         @Value("${dega.media.storage}") String storageType,
+                         @Value("${google.cloud.storage.url}") String storageURL) {
         this.mediaService = mediaService;
         this.bucketName = bucketName;
         this.fileNameUtils = fileNameUtils;
         this.hostName = hostName;
         this.mediaStorageRootDir = mediaStorageRootDir;
         this.storageType = storageType;
+        this.storageURL = storageURL;
     }
 
     /**
@@ -306,7 +309,7 @@ public class MediaResource {
 
     private StorageService getStorageService(String storageType) {
         if (storageType.equals("gcs")) {
-            storageService = new CloudStorageServiceImpl(bucketName, fileNameUtils);
+            storageService = new CloudStorageServiceImpl(bucketName, fileNameUtils, storageURL);
         } else {
             storageService = new FileStorageServiceImpl(mediaStorageRootDir);
         }
