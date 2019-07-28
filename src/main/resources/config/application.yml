@@ -181,3 +181,4 @@ google:
     cloud:
         storage:
             bucketname: storage.factly.in
+            url: https://storage.factly.in/
