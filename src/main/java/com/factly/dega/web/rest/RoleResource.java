@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.config.Constants;
 import com.factly.dega.service.RoleService;
 import com.factly.dega.service.dto.KeyCloakRoleDTO;
+import com.factly.dega.service.dto.KeyCloakRoleMappingDTO;
 import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
@@ -28,9 +29,6 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Role.
@@ -81,13 +79,19 @@ public class RoleResource {
         roleDTO.setLastUpdatedDate(ZonedDateTime.now());
 
         // save the user to keycloak
-        JsonObject jObj = transformDTO(roleDTO);
+        String roleName = "ROLE_" + roleDTO.getName().replaceAll("\\s+", "_").toUpperCase();
+        JsonObject jObj = transformDTO(roleDTO, roleName);
         String jsonAsString = jObj.toString();
         Boolean status = keycloakUtils.create("roles", jsonAsString);
         if(status == false) {
             return null;
         }
 
+        // get keycloak role name and role id
+        String endpointUrl = "roles/"+roleName;
+        KeyCloakRoleMappingDTO keyCloakRoleMappingDTO = keycloakUtils.getRoleMapping(endpointUrl);
+        roleDTO.setKeycloakId(keyCloakRoleMappingDTO.getId());
+        roleDTO.setKeycloakName(keyCloakRoleMappingDTO.getName());
 
         RoleDTO result = roleService.save(roleDTO);
         return ResponseEntity.created(new URI("/api/roles/" + result.getId()))
@@ -95,13 +99,11 @@ public class RoleResource {
             .body(result);
     }
 
-
-    private JsonObject transformDTO(RoleDTO roleDTO) {
-        String roleName = "ROLE_" + roleDTO.getName().replaceAll("\\s+", "_").toUpperCase();
+    private JsonObject transformDTO(RoleDTO roleDTO, String roleName) {
         KeyCloakRoleDTO keyCloakRoleDTO = new KeyCloakRoleDTO(
-            String.valueOf(java.util.UUID.randomUUID()),
+            null,
             roleName,
-            roleDTO.toString(),
+            "DEGA_ROLE: "+roleDTO.getName()+"; DEGA_CLIENT: "+roleDTO.getClientId(),
             false,
             false,
             roleDTO.getClientId()

@@ -1,6 +1,9 @@
 package com.factly.dega.utils;
 
+import com.factly.dega.service.dto.KeyCloakRoleMappingDTO;
 import com.factly.dega.service.dto.KeyCloakUserDTO;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,10 @@ import org.springframework.security.oauth2.client.token.grant.client.ClientCrede
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by ntalla on 4/29/19.
@@ -72,8 +79,6 @@ public class KeycloakUtils {
     }
 
     public String getUserId(String endpoint) {
-
-        // save the user to keycloak
         try {
             RestTemplate restTemplate = getOauth2RestTemplate();
             KeyCloakUserDTO[] keyCloakUsers = restTemplate.getForObject(keycloakServerURI + endpoint, KeyCloakUserDTO[].class);
@@ -93,6 +98,62 @@ public class KeycloakUtils {
             throw e;
         }
         return "NOT_FOUND";
+    }
+
+    public KeyCloakRoleMappingDTO getRoleMapping(String endpoint) {
+        try {
+            RestTemplate restTemplate = getOauth2RestTemplate();
+            KeyCloakRoleMappingDTO keyCloakMappings =
+                restTemplate.getForObject(keycloakServerURI + endpoint, KeyCloakRoleMappingDTO.class);
+
+            if (keyCloakMappings != null) {
+                return keyCloakMappings;
+            }
+        } catch (HttpClientErrorException e) {
+            if (e.getMessage().equals("403 Forbidden")) {
+                log.error("This client {} does not have required access", keycloakClientId);
+                return null;
+            }
+            // for all other errors rethrow
+            throw e;
+        } catch (Exception e) {
+            log.error("keycloak api failed with the message {}, exiting", e.getMessage());
+            throw e;
+        }
+        return null;
+    }
+
+    public KeyCloakRoleMappingDTO getRoleMappingsDTO(String endpoint, String roleName) {
+        try {
+            RestTemplate restTemplate = getOauth2RestTemplate();
+            KeyCloakRoleMappingDTO[] keyCloakRoleMappings =
+                restTemplate.getForObject(keycloakServerURI + endpoint, KeyCloakRoleMappingDTO[].class);
+
+            if (keyCloakRoleMappings != null && keyCloakRoleMappings.length > 0) {
+                // first delete all the current dega role mappings on the user except current one if exists
+                Set<KeyCloakRoleMappingDTO> roleMappings = Arrays.stream(keyCloakRoleMappings)
+                    .filter(rm -> !rm.getName().equals(roleName) && rm.getDescription().startsWith("DEGA_ROLE"))
+                    .collect(Collectors.toSet());
+                if (roleMappings != null && roleMappings.size() > 0) {
+                    JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(roleMappings);
+                    String roleMappingAsString = jObj.toString();
+                    restTemplate.delete(keycloakServerURI + endpoint, roleMappingAsString);
+                }
+
+                return Arrays.stream(keyCloakRoleMappings).filter(rm -> rm.getName().equals(roleName)).findFirst().get();
+            }
+        } catch (HttpClientErrorException e) {
+            if (e.getMessage().equals("403 Forbidden")) {
+                log.error("This client {} does not have required access", keycloakClientId);
+                return null;
+            }
+            // for all other errors rethrow
+            throw e;
+        } catch (Exception e) {
+            log.error("keycloak api failed with the message {}, exiting", e.getMessage());
+            throw e;
+        }
+        return null;
     }
 
     private RestTemplate getOauth2RestTemplate() {

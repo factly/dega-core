@@ -1,14 +1,14 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.factly.dega.domain.RoleMapping;
 import com.factly.dega.service.DegaUserService;
-import com.factly.dega.service.dto.KeyCloakUserDTO;
+import com.factly.dega.service.dto.*;
 import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
-import com.factly.dega.service.dto.DegaUserDTO;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import io.github.jhipster.web.util.ResponseUtil;
@@ -31,6 +31,7 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -117,6 +118,33 @@ public class DegaUserResource {
         if (degaUserDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        // TODO: if super admin ignore rest of the logic
+
+        // pull role mapping for this org
+        Set<RoleMappingDTO> roleMappings = degaUserDTO.getRoleMappings();
+        RoleMappingDTO roleMapping = roleMappings
+            .stream()
+            .filter(rm -> rm.getOrganizationName().equals(degaUserDTO.getOrganizationCurrentName()))
+            .findFirst().orElse(null);
+        if (roleMapping == null) {
+            return null;
+        }
+
+        // get current user role mapping and remove current dega role mappings (if any exists)
+        String roleName = roleMapping.getRoleName();
+        String keyCloakUserId = degaUserDTO.getKeycloakId();
+        String endPoint = "users/"+keyCloakUserId+"/role-mappings/realm";
+        KeyCloakRoleMappingDTO roleMappingDTO =
+            keycloakUtils.getRoleMappingsDTO(endPoint, roleName);
+
+        if (roleMappingDTO == null) {
+            // add new role
+            JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(roleMapping);
+            String roleMappingAsString = jObj.toString();
+            keycloakUtils.create(endPoint, roleMappingAsString);
+        }
+
         DegaUserDTO result = degaUserService.save(degaUserDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, degaUserDTO.getId().toString()))
