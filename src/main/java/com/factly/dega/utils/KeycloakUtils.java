@@ -1,7 +1,6 @@
 package com.factly.dega.utils;
 
 import com.factly.dega.service.dto.KeyCloakRoleMappingDTO;
-import com.factly.dega.service.dto.KeyCloakRoleMappingDTO1;
 import com.factly.dega.service.dto.KeyCloakUserDTO;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;

@@ -5,7 +5,6 @@ import com.factly.dega.config.Constants;
 import com.factly.dega.service.RoleService;
 import com.factly.dega.service.dto.KeyCloakRoleDTO;
 import com.factly.dega.service.dto.KeyCloakRoleMappingDTO;
-import com.factly.dega.service.dto.KeyCloakRoleMappingDTO1;
 import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
@@ -30,9 +29,6 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Role.
