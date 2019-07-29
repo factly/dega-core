@@ -1,7 +1,10 @@
 package com.factly.dega.utils;
 
 import com.factly.dega.service.dto.KeyCloakRoleMappingDTO;
+import com.factly.dega.service.dto.KeyCloakRoleMappingDTO1;
 import com.factly.dega.service.dto.KeyCloakUserDTO;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,8 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Created by ntalla on 4/29/19.
@@ -99,11 +104,11 @@ public class KeycloakUtils {
     public KeyCloakRoleMappingDTO getRoleMapping(String endpoint) {
         try {
             RestTemplate restTemplate = getOauth2RestTemplate();
-            KeyCloakRoleMappingDTO[] keyCloakMappings =
-                restTemplate.getForObject(keycloakServerURI + endpoint, KeyCloakRoleMappingDTO[].class);
+            KeyCloakRoleMappingDTO keyCloakMappings =
+                restTemplate.getForObject(keycloakServerURI + endpoint, KeyCloakRoleMappingDTO.class);
 
-            if (keyCloakMappings != null && keyCloakMappings.length > 0) {
-                return keyCloakMappings[0];
+            if (keyCloakMappings != null) {
+                return keyCloakMappings;
             }
         } catch (HttpClientErrorException e) {
             if (e.getMessage().equals("403 Forbidden")) {
@@ -126,6 +131,16 @@ public class KeycloakUtils {
                 restTemplate.getForObject(keycloakServerURI + endpoint, KeyCloakRoleMappingDTO[].class);
 
             if (keyCloakRoleMappings != null && keyCloakRoleMappings.length > 0) {
+                // first delete all the current dega role mappings on the user except current one if exists
+                Set<KeyCloakRoleMappingDTO> roleMappings = Arrays.stream(keyCloakRoleMappings)
+                    .filter(rm -> !rm.getName().equals(roleName) && rm.getDescription().startsWith("DEGA_ROLE"))
+                    .collect(Collectors.toSet());
+                if (roleMappings != null && roleMappings.size() > 0) {
+                    JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(roleMappings);
+                    String roleMappingAsString = jObj.toString();
+                    restTemplate.delete(keycloakServerURI + endpoint, roleMappingAsString);
+                }
+
                 return Arrays.stream(keyCloakRoleMappings).filter(rm -> rm.getName().equals(roleName)).findFirst().get();
             }
         } catch (HttpClientErrorException e) {
