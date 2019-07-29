@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.config.Constants;
 import com.factly.dega.service.RoleService;
 import com.factly.dega.service.dto.KeyCloakRoleDTO;
+import com.factly.dega.service.dto.KeyCloakRoleMappingDTO;
 import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
@@ -87,6 +88,12 @@ public class RoleResource {
         if(status == false) {
             return null;
         }
+
+        // get keycloak role name and role id
+        String currentRoleName = "ROLE_"+roleDTO.getName().replaceAll(" ", "_").toUpperCase();
+        String endpointUrl = "roles/"+currentRoleName;
+        KeyCloakRoleMappingDTO keyCloakRoleMappingDTO = keycloakUtils.getRoleMappingsDTO(endpointUrl, currentRoleName);
+
 
 
         RoleDTO result = roleService.save(roleDTO);

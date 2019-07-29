@@ -1,8 +1,11 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
+import com.factly.dega.domain.RoleMapping;
 import com.factly.dega.service.DegaUserService;
+import com.factly.dega.service.dto.KeyCloakRoleMappingDTO;
 import com.factly.dega.service.dto.KeyCloakUserDTO;
+import com.factly.dega.service.dto.RoleMappingDTO;
 import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
@@ -31,6 +34,7 @@ import java.net.URISyntaxException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.StreamSupport;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -117,6 +121,39 @@ public class DegaUserResource {
         if (degaUserDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
+
+        // if super admin ignore rest of the logic
+
+        // pull role mapping for this org
+        Set<RoleMappingDTO> roleMappings = degaUserDTO.getRoleMappings();
+        RoleMappingDTO roleMapping = roleMappings
+            .stream()
+            .filter(rm -> rm.getOrganizationName().equals(degaUserDTO.getOrganizationCurrentName()))
+            .findFirst().orElse(null);
+
+        if (roleMapping == null) {
+            return null;
+        }
+
+        String roleName = roleMapping.getRoleName();
+        String keyCloakUserId = degaUserDTO.getKeycloakId();
+        String endPoint = keyCloakUserId+"/role-mappings/realm";
+        KeyCloakRoleMappingDTO roleMappingDTO =
+            keycloakUtils.getRoleMappingsDTO(endPoint, roleName);
+
+        if (roleMappingDTO != null) {
+            // we are good, return
+        }
+
+        JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(roleMappingDTO);
+        String roleMappingAsString = jObj.toString();
+        keycloakUtils.create(endPoint, roleMappingAsString);*/
+        // get current user role
+
+        // remove current role
+
+        // add new role
+
         DegaUserDTO result = degaUserService.save(degaUserDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, degaUserDTO.getId().toString()))
