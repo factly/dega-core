@@ -333,30 +333,30 @@ public class Media implements Serializable {
         this.sourceURL = sourceURL;
     }
 
-//    public Set<Post> getPosts() {
-//        return posts;
-//    }
-//
-//    public Media posts(Set<Post> posts) {
-//        this.posts = posts;
-//        return this;
-//    }
-//
-//    public Media addPost(Post post) {
-//        this.posts.add(post);
-//        post.setMedia(this);
-//        return this;
-//    }
-//
-//    public Media removePost(Post post) {
-//        this.posts.remove(post);
-//        post.setMedia(null);
-//        return this;
-//    }
-//
-//    public void setPosts(Set<Post> posts) {
-//        this.posts = posts;
-//    }
+    public Set<Post> getPosts() {
+        return posts;
+    }
+
+    public Media posts(Set<Post> posts) {
+        this.posts = posts;
+        return this;
+    }
+
+    public Media addPost(Post post) {
+        this.posts.add(post);
+        post.setMedia(this);
+        return this;
+    }
+
+    public Media removePost(Post post) {
+        this.posts.remove(post);
+        post.setMedia(null);
+        return this;
+    }
+
+    public void setPosts(Set<Post> posts) {
+        this.posts = posts;
+    }
 
     public Set<DegaUser> getDegaUsers() {
         return degaUsers;
