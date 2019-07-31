@@ -2,6 +2,7 @@ package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.config.Constants;
+import com.factly.dega.domain.MediaUrls;
 import com.factly.dega.service.MediaService;
 import com.factly.dega.service.StorageService;
 import com.factly.dega.service.impl.CloudStorageServiceImpl;
@@ -59,6 +60,8 @@ public class MediaResource {
     private final String mediaStorageRootDir;
     private final String storageType;
     private final String storageURL;
+    private final boolean imageProxyEnabled;
+    private final String imageProxyHost;
 
 
     private StorageService storageService;
@@ -69,7 +72,9 @@ public class MediaResource {
                          FileNameUtils fileNameUtils, @Value("${dega.media.hostname}") String hostName,
                          @Value("${dega.media.upload-dir}") String mediaStorageRootDir,
                          @Value("${dega.media.storage}") String storageType,
-                         @Value("${google.cloud.storage.hostname}") String storageURL) {
+                         @Value("${google.cloud.storage.hostname}") String storageURL,
+                         @Value("${imageproxy.enabled}") boolean imageProxyEnabled,
+                         @Value("${imageproxy.host}") String imageProxyHost) {
         this.mediaService = mediaService;
         this.bucketName = bucketName;
         this.fileNameUtils = fileNameUtils;
@@ -77,6 +82,8 @@ public class MediaResource {
         this.mediaStorageRootDir = mediaStorageRootDir;
         this.storageType = storageType;
         this.storageURL = storageURL;
+        this.imageProxyEnabled = imageProxyEnabled;
+        this.imageProxyHost = imageProxyHost;
     }
 
     /**
@@ -126,23 +133,23 @@ public class MediaResource {
         int year  = localDate.getYear();
         int month = localDate.getMonthValue();
         String originalFileName = file.getOriginalFilename().substring(0, file.getOriginalFilename().lastIndexOf('.'));
-        String fileName = getStorageService(storageType).storeFile(file, client, year, month);
-        mediaDTO.setName(fileName);
+        MediaUrls mediaUrls = getStorageService(storageType).storeFile(file, client, year, month);
+        mediaDTO.setName(mediaUrls.getUrl());
 
         // set the default slug by removing all special chars except letters and numbers
-        mediaDTO.setSlug(getSlug((String) client, originalFileName));
+        mediaDTO.setSlug(getSlug(client, originalFileName));
         mediaDTO.setTitle(originalFileName);
         mediaDTO.setAltText(originalFileName);
 
         String fileSep = System.getProperty("file.separator");
         String filePath = "dega-content" + fileSep + client + fileSep + year + fileSep + month;
-        String fileDownloadUri;
         if (storageType.equals("gcs")) {
-            fileDownloadUri = fileName;
+            mediaDTO.setUrl(mediaUrls.getUrl());
+            mediaDTO.setRelativeURL(mediaUrls.getRelativeURL());
+            mediaDTO.setSourceURL(mediaUrls.getSourceURL());
         } else {
-            fileDownloadUri = hostName + fileSep + filePath + fileSep + fileName;
+            mediaDTO.setUrl(hostName + fileSep + filePath + fileSep + mediaUrls.getUrl());
         }
-        mediaDTO.setUrl(fileDownloadUri);
         //mediaDTO.setSlug(fileDownloadUri);
 
         Object user = request.getSession().getAttribute(Constants.USER_ID);
@@ -158,7 +165,7 @@ public class MediaResource {
             throw new BadRequestAlertException("A new media cannot already have an ID", ENTITY_NAME, "idexists");
         }
         if (client != null) {
-            mediaDTO.setClientId((String) client);
+            mediaDTO.setClientId(client);
         }
         mediaDTO.setCreatedDate(ZonedDateTime.now());
         mediaDTO.setLastUpdatedDate(ZonedDateTime.now());
@@ -309,7 +316,7 @@ public class MediaResource {
 
     private StorageService getStorageService(String storageType) {
         if (storageType.equals("gcs")) {
-            storageService = new CloudStorageServiceImpl(bucketName, fileNameUtils, storageURL);
+            storageService = new CloudStorageServiceImpl(bucketName, fileNameUtils, storageURL, imageProxyEnabled, imageProxyHost);
         } else {
             storageService = new FileStorageServiceImpl(mediaStorageRootDir);
         }
