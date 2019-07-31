@@ -149,6 +149,8 @@ public class MediaResource {
             mediaDTO.setSourceURL(mediaUrls.getSourceURL());
         } else {
             mediaDTO.setUrl(hostName + fileSep + filePath + fileSep + mediaUrls.getUrl());
+            mediaDTO.setRelativeURL(filePath + fileSep + mediaUrls.getUrl());
+            mediaDTO.setSourceURL(hostName + fileSep + filePath + fileSep + mediaUrls.getUrl());
         }
         //mediaDTO.setSlug(fileDownloadUri);
 
