@@ -1,5 +1,6 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.domain.MediaUrls;
 import com.factly.dega.service.StorageService;
 import com.factly.dega.utils.FileNameUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,8 @@ public class CloudStorageServiceImpl implements StorageService {
     private String bucketName;
     private FileNameUtils fileNameUtils;
     private String storageURL;
+    private boolean imageProxyEnabled;
+    private String imageProxyHost;
 
     private static Storage storage = null;
     static {
@@ -32,14 +35,18 @@ public class CloudStorageServiceImpl implements StorageService {
         }
     }
 
-    public CloudStorageServiceImpl(String bucketName, FileNameUtils fileNameUtils, String storageURL) {
+    public CloudStorageServiceImpl(String bucketName, FileNameUtils fileNameUtils, String storageURL,
+                                   boolean imageProxyEnabled, String imageProxyHost) {
         this.bucketName = bucketName;
         this.fileNameUtils = fileNameUtils;
         this.storageURL = storageURL;
+        this.imageProxyEnabled = imageProxyEnabled;
+        this.imageProxyHost = imageProxyHost;
     }
 
     @Override
-    public String storeFile(MultipartFile file, String client, int year, int month) throws IOException {
+    public MediaUrls storeFile(MultipartFile file, String client, int year, int month) throws IOException {
+        MediaUrls mediaUrls = new MediaUrls();
         String fileName = fileNameUtils.getFileNameString(file, client, year, month);
         storage.create(
             BlobInfo
@@ -47,7 +54,14 @@ public class CloudStorageServiceImpl implements StorageService {
                 .setAcl(new ArrayList<>(Arrays.asList(Acl.of(User.ofAllUsers(), Role.READER))))
                 .build(),
             file.getBytes());
-        return storageURL + fileName;
+        mediaUrls.setUrl(storageURL + fileName);
+        mediaUrls.setRelativeURL(fileName);
+        if (imageProxyEnabled) {
+            mediaUrls.setSourceURL(imageProxyHost + fileName);
+        } else {
+            mediaUrls.setSourceURL(storageURL + fileName);
+        }
+        return mediaUrls;
     }
 
 }
