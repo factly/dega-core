@@ -18,140 +18,155 @@ import { IFormat } from 'app/shared/model/core/format.model';
 import { FormatService } from 'app/entities/core/format';
 import { IDegaUser } from 'app/shared/model/core/dega-user.model';
 import { DegaUserService } from 'app/entities/core/dega-user';
+import { IMedia } from 'app/shared/model/core/media.model';
+import { MediaService } from 'app/entities/core/media';
 
 @Component({
-  selector: 'jhi-post-update',
-  templateUrl: './post-update.component.html'
+    selector: 'jhi-post-update',
+    templateUrl: './post-update.component.html'
 })
 export class PostUpdateComponent implements OnInit {
-  post: IPost;
-  isSaving: boolean;
+    post: IPost;
+    isSaving: boolean;
 
-  tags: ITag[];
+    tags: ITag[];
 
-  categories: ICategory[];
+    categories: ICategory[];
 
-  statuses: IStatus[];
+    statuses: IStatus[];
 
-  formats: IFormat[];
+    formats: IFormat[];
 
-  degausers: IDegaUser[];
-  publishedDate: string;
-  lastUpdatedDate: string;
-  createdDate: string;
+    degausers: IDegaUser[];
 
-  constructor(
-    private jhiAlertService: JhiAlertService,
-    private postService: PostService,
-    private tagService: TagService,
-    private categoryService: CategoryService,
-    private statusService: StatusService,
-    private formatService: FormatService,
-    private degaUserService: DegaUserService,
-    private activatedRoute: ActivatedRoute
-  ) {}
+    media: IMedia[];
+    publishedDate: string;
+    lastUpdatedDate: string;
+    createdDate: string;
 
-  ngOnInit() {
-    this.isSaving = false;
-    this.activatedRoute.data.subscribe(({ post }) => {
-      this.post = post;
-      this.publishedDate = this.post.publishedDate != null ? this.post.publishedDate.format(DATE_TIME_FORMAT) : null;
-      this.lastUpdatedDate = this.post.lastUpdatedDate != null ? this.post.lastUpdatedDate.format(DATE_TIME_FORMAT) : null;
-      this.createdDate = this.post.createdDate != null ? this.post.createdDate.format(DATE_TIME_FORMAT) : null;
-    });
-    this.tagService.query().subscribe(
-      (res: HttpResponse<ITag[]>) => {
-        this.tags = res.body;
-      },
-      (res: HttpErrorResponse) => this.onError(res.message)
-    );
-    this.categoryService.query().subscribe(
-      (res: HttpResponse<ICategory[]>) => {
-        this.categories = res.body;
-      },
-      (res: HttpErrorResponse) => this.onError(res.message)
-    );
-    this.statusService.query().subscribe(
-      (res: HttpResponse<IStatus[]>) => {
-        this.statuses = res.body;
-      },
-      (res: HttpErrorResponse) => this.onError(res.message)
-    );
-    this.formatService.query().subscribe(
-      (res: HttpResponse<IFormat[]>) => {
-        this.formats = res.body;
-      },
-      (res: HttpErrorResponse) => this.onError(res.message)
-    );
-    this.degaUserService.query().subscribe(
-      (res: HttpResponse<IDegaUser[]>) => {
-        this.degausers = res.body;
-      },
-      (res: HttpErrorResponse) => this.onError(res.message)
-    );
-  }
+    constructor(
+        private jhiAlertService: JhiAlertService,
+        private postService: PostService,
+        private tagService: TagService,
+        private categoryService: CategoryService,
+        private statusService: StatusService,
+        private formatService: FormatService,
+        private degaUserService: DegaUserService,
+        private mediaService: MediaService,
+        private activatedRoute: ActivatedRoute
+    ) {}
 
-  previousState() {
-    window.history.back();
-  }
-
-  save() {
-    this.isSaving = true;
-    this.post.publishedDate = this.publishedDate != null ? moment(this.publishedDate, DATE_TIME_FORMAT) : null;
-    this.post.lastUpdatedDate = this.lastUpdatedDate != null ? moment(this.lastUpdatedDate, DATE_TIME_FORMAT) : null;
-    this.post.createdDate = this.createdDate != null ? moment(this.createdDate, DATE_TIME_FORMAT) : null;
-    if (this.post.id !== undefined) {
-      this.subscribeToSaveResponse(this.postService.update(this.post));
-    } else {
-      this.subscribeToSaveResponse(this.postService.create(this.post));
+    ngOnInit() {
+        this.isSaving = false;
+        this.activatedRoute.data.subscribe(({ post }) => {
+            this.post = post;
+            this.publishedDate = this.post.publishedDate != null ? this.post.publishedDate.format(DATE_TIME_FORMAT) : null;
+            this.lastUpdatedDate = this.post.lastUpdatedDate != null ? this.post.lastUpdatedDate.format(DATE_TIME_FORMAT) : null;
+            this.createdDate = this.post.createdDate != null ? this.post.createdDate.format(DATE_TIME_FORMAT) : null;
+        });
+        this.tagService.query().subscribe(
+            (res: HttpResponse<ITag[]>) => {
+                this.tags = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.categoryService.query().subscribe(
+            (res: HttpResponse<ICategory[]>) => {
+                this.categories = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.statusService.query().subscribe(
+            (res: HttpResponse<IStatus[]>) => {
+                this.statuses = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.formatService.query().subscribe(
+            (res: HttpResponse<IFormat[]>) => {
+                this.formats = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.degaUserService.query().subscribe(
+            (res: HttpResponse<IDegaUser[]>) => {
+                this.degausers = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
+        this.mediaService.query().subscribe(
+            (res: HttpResponse<IMedia[]>) => {
+                this.media = res.body;
+            },
+            (res: HttpErrorResponse) => this.onError(res.message)
+        );
     }
-  }
 
-  private subscribeToSaveResponse(result: Observable<HttpResponse<IPost>>) {
-    result.subscribe((res: HttpResponse<IPost>) => this.onSaveSuccess(), (res: HttpErrorResponse) => this.onSaveError());
-  }
+    previousState() {
+        window.history.back();
+    }
 
-  private onSaveSuccess() {
-    this.isSaving = false;
-    this.previousState();
-  }
-
-  private onSaveError() {
-    this.isSaving = false;
-  }
-
-  private onError(errorMessage: string) {
-    this.jhiAlertService.error(errorMessage, null, null);
-  }
-
-  trackTagById(index: number, item: ITag) {
-    return item.id;
-  }
-
-  trackCategoryById(index: number, item: ICategory) {
-    return item.id;
-  }
-
-  trackStatusById(index: number, item: IStatus) {
-    return item.id;
-  }
-
-  trackFormatById(index: number, item: IFormat) {
-    return item.id;
-  }
-
-  trackDegaUserById(index: number, item: IDegaUser) {
-    return item.id;
-  }
-
-  getSelected(selectedVals: Array<any>, option: any) {
-    if (selectedVals) {
-      for (let i = 0; i < selectedVals.length; i++) {
-        if (option.id === selectedVals[i].id) {
-          return selectedVals[i];
+    save() {
+        this.isSaving = true;
+        this.post.publishedDate = this.publishedDate != null ? moment(this.publishedDate, DATE_TIME_FORMAT) : null;
+        this.post.lastUpdatedDate = this.lastUpdatedDate != null ? moment(this.lastUpdatedDate, DATE_TIME_FORMAT) : null;
+        this.post.createdDate = this.createdDate != null ? moment(this.createdDate, DATE_TIME_FORMAT) : null;
+        if (this.post.id !== undefined) {
+            this.subscribeToSaveResponse(this.postService.update(this.post));
+        } else {
+            this.subscribeToSaveResponse(this.postService.create(this.post));
         }
-      }
     }
-    return option;
-  }
+
+    private subscribeToSaveResponse(result: Observable<HttpResponse<IPost>>) {
+        result.subscribe((res: HttpResponse<IPost>) => this.onSaveSuccess(), (res: HttpErrorResponse) => this.onSaveError());
+    }
+
+    private onSaveSuccess() {
+        this.isSaving = false;
+        this.previousState();
+    }
+
+    private onSaveError() {
+        this.isSaving = false;
+    }
+
+    private onError(errorMessage: string) {
+        this.jhiAlertService.error(errorMessage, null, null);
+    }
+
+    trackTagById(index: number, item: ITag) {
+        return item.id;
+    }
+
+    trackCategoryById(index: number, item: ICategory) {
+        return item.id;
+    }
+
+    trackStatusById(index: number, item: IStatus) {
+        return item.id;
+    }
+
+    trackFormatById(index: number, item: IFormat) {
+        return item.id;
+    }
+
+    trackDegaUserById(index: number, item: IDegaUser) {
+        return item.id;
+    }
+
+    trackMediaById(index: number, item: IMedia) {
+        return item.id;
+    }
+
+    getSelected(selectedVals: Array<any>, option: any) {
+        if (selectedVals) {
+            for (let i = 0; i < selectedVals.length; i++) {
+                if (option.id === selectedVals[i].id) {
+                    return selectedVals[i];
+                }
+            }
+        }
+        return option;
+    }
 }

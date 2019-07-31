@@ -94,7 +94,6 @@ public class PostResource {
             .body(result);
     }
 
-
     /**
      * PUT  /posts : Updates an existing post.
      *
@@ -146,7 +145,7 @@ public class PostResource {
     /**
      * GET  /posts : get all the posts.
      *
-     * @param pageable  the pagination information
+     * @param pageable the pagination information
      * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many)
      * @return the ResponseEntity with status 200 (OK) and the list of posts in body
      */
@@ -197,7 +196,7 @@ public class PostResource {
      * SEARCH  /_search/posts?query=:query : search for the post corresponding
      * to the query.
      *
-     * @param query    the query of the post search
+     * @param query the query of the post search
      * @param pageable the pagination information
      * @return the result of the search
      */
