@@ -63,9 +63,6 @@ public class Post implements Serializable {
     @Field("password")
     private String password;
 
-    @Field("featured_media")
-    private String featuredMedia;
-
     @Field("sub_title")
     private String subTitle;
 
@@ -93,6 +90,11 @@ public class Post implements Serializable {
     @DBRef
     @Field("degaUsers")
     private Set<DegaUser> degaUsers = new HashSet<>();
+
+    @DBRef
+    @Field("media")
+    @JsonIgnoreProperties("")
+    private Media media;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove
     public String getId() {
@@ -246,19 +248,6 @@ public class Post implements Serializable {
         this.password = password;
     }
 
-    public String getFeaturedMedia() {
-        return featuredMedia;
-    }
-
-    public Post featuredMedia(String featuredMedia) {
-        this.featuredMedia = featuredMedia;
-        return this;
-    }
-
-    public void setFeaturedMedia(String featuredMedia) {
-        this.featuredMedia = featuredMedia;
-    }
-
     public String getSubTitle() {
         return subTitle;
     }
@@ -385,6 +374,19 @@ public class Post implements Serializable {
     public void setDegaUsers(Set<DegaUser> degaUsers) {
         this.degaUsers = degaUsers;
     }
+
+    public Media getMedia() {
+        return media;
+    }
+
+    public Post media(Media media) {
+        this.media = media;
+        return this;
+    }
+
+    public void setMedia(Media media) {
+        this.media = media;
+    }
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here, do not remove
 
     @Override
@@ -422,7 +424,6 @@ public class Post implements Serializable {
             ", updates='" + getUpdates() + "'" +
             ", slug='" + getSlug() + "'" +
             ", password='" + getPassword() + "'" +
-            ", featuredMedia='" + getFeaturedMedia() + "'" +
             ", subTitle='" + getSubTitle() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
             "}";

@@ -41,11 +41,11 @@
             <th jhiSortBy="updates"><span jhiTranslate="coreApp.corePost.updates">Updates</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="slug"><span jhiTranslate="coreApp.corePost.slug">Slug</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="password"><span jhiTranslate="coreApp.corePost.password">Password</span> <fa-icon [icon]="'sort'"></fa-icon></th>
-            <th jhiSortBy="featuredMedia"><span jhiTranslate="coreApp.corePost.featuredMedia">Featured Media</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="subTitle"><span jhiTranslate="coreApp.corePost.subTitle">Sub Title</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="createdDate"><span jhiTranslate="coreApp.corePost.createdDate">Created Date</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="statusName"><span jhiTranslate="coreApp.corePost.status">Status</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="formatName"><span jhiTranslate="coreApp.corePost.format">Format</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="mediaId"><span jhiTranslate="coreApp.corePost.media">Media</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
             </tr>
             </thead>
@@ -63,7 +63,6 @@
                 <td>{{post.updates}}</td>
                 <td>{{post.slug}}</td>
                 <td>{{post.password}}</td>
-                <td>{{post.featuredMedia}}</td>
                 <td>{{post.subTitle}}</td>
                 <td>{{post.createdDate | date:'medium'}}</td>
                 <td>
@@ -74,6 +73,11 @@
                 <td>
                     <div *ngIf="post.formatId">
                         <a [routerLink]="['../format', post.formatId , 'view' ]" >{{post.formatName}}</a>
+                    </div>
+                </td>
+                <td>
+                    <div *ngIf="post.mediaId">
+                        <a [routerLink]="['../media', post.mediaId , 'view' ]" >{{post.mediaId}}</a>
                     </div>
                 </td>
                 <td class="text-right">
