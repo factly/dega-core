@@ -12,7 +12,7 @@ import org.mapstruct.*;
 public interface MediaMapper extends EntityMapper<MediaDTO, Media> {
 
 
-//    @Mapping(target = "posts", ignore = true)
+    @Mapping(target = "posts", ignore = true)
     @Mapping(target = "degaUsers", ignore = true)
     @Mapping(target = "organizationLogos", ignore = true)
     @Mapping(target = "organizationMobileLogos", ignore = true)

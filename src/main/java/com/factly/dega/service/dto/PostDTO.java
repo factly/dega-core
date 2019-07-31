@@ -38,8 +38,6 @@ public class PostDTO implements Serializable {
 
     private String password;
 
-    private String featuredMedia;
-
     private String subTitle;
 
     private ZonedDateTime createdDate;
@@ -57,6 +55,8 @@ public class PostDTO implements Serializable {
     private String formatName;
 
     private Set<DegaUserDTO> degaUsers = new HashSet<>();
+
+    private String mediaId;
 
     public String getId() {
         return id;
@@ -154,14 +154,6 @@ public class PostDTO implements Serializable {
         this.password = password;
     }
 
-    public String getFeaturedMedia() {
-        return featuredMedia;
-    }
-
-    public void setFeaturedMedia(String featuredMedia) {
-        this.featuredMedia = featuredMedia;
-    }
-
     public String getSubTitle() {
         return subTitle;
     }
@@ -234,6 +226,14 @@ public class PostDTO implements Serializable {
         this.degaUsers = degaUsers;
     }
 
+    public String getMediaId() {
+        return mediaId;
+    }
+
+    public void setMediaId(String mediaId) {
+        this.mediaId = mediaId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -270,13 +270,13 @@ public class PostDTO implements Serializable {
             ", updates='" + getUpdates() + "'" +
             ", slug='" + getSlug() + "'" +
             ", password='" + getPassword() + "'" +
-            ", featuredMedia='" + getFeaturedMedia() + "'" +
             ", subTitle='" + getSubTitle() + "'" +
             ", createdDate='" + getCreatedDate() + "'" +
             ", status=" + getStatusId() +
             ", status='" + getStatusName() + "'" +
             ", format=" + getFormatId() +
             ", format='" + getFormatName() + "'" +
+            ", media=" + getMediaId() +
             "}";
     }
 }

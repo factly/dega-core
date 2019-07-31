@@ -90,9 +90,6 @@ public class PostResourceIntTest {
     private static final String DEFAULT_PASSWORD = "AAAAAAAAAA";
     private static final String UPDATED_PASSWORD = "BBBBBBBBBB";
 
-    private static final String DEFAULT_FEATURED_MEDIA = "AAAAAAAAAA";
-    private static final String UPDATED_FEATURED_MEDIA = "BBBBBBBBBB";
-
     private static final String DEFAULT_SUB_TITLE = "AAAAAAAAAA";
     private static final String UPDATED_SUB_TITLE = "BBBBBBBBBB";
 
@@ -172,7 +169,6 @@ public class PostResourceIntTest {
             .updates(DEFAULT_UPDATES)
             .slug(DEFAULT_SLUG)
             .password(DEFAULT_PASSWORD)
-            .featuredMedia(DEFAULT_FEATURED_MEDIA)
             .subTitle(DEFAULT_SUB_TITLE)
             .createdDate(DEFAULT_CREATED_DATE);
         // Add required entity
@@ -222,7 +218,6 @@ public class PostResourceIntTest {
         assertThat(testPost.getUpdates()).isEqualTo(DEFAULT_UPDATES);
         assertThat(testPost.getSlug()).isEqualTo(DEFAULT_SLUG);
         assertThat(testPost.getPassword()).isEqualTo(DEFAULT_PASSWORD);
-        assertThat(testPost.getFeaturedMedia()).isEqualTo(DEFAULT_FEATURED_MEDIA);
         assertThat(testPost.getSubTitle()).isEqualTo(DEFAULT_SUB_TITLE);
         assertThat(testPost.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
 
@@ -411,7 +406,6 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.[*].updates").value(hasItem(DEFAULT_UPDATES.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].password").value(hasItem(DEFAULT_PASSWORD.toString())))
-            .andExpect(jsonPath("$.[*].featuredMedia").value(hasItem(DEFAULT_FEATURED_MEDIA.toString())))
             .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }
@@ -468,7 +462,6 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.updates").value(DEFAULT_UPDATES.toString()))
             .andExpect(jsonPath("$.slug").value(DEFAULT_SLUG.toString()))
             .andExpect(jsonPath("$.password").value(DEFAULT_PASSWORD.toString()))
-            .andExpect(jsonPath("$.featuredMedia").value(DEFAULT_FEATURED_MEDIA.toString()))
             .andExpect(jsonPath("$.subTitle").value(DEFAULT_SUB_TITLE.toString()))
             .andExpect(jsonPath("$.createdDate").value(sameInstant(DEFAULT_CREATED_DATE)));
     }
@@ -501,7 +494,6 @@ public class PostResourceIntTest {
             .updates(UPDATED_UPDATES)
             .slug(UPDATED_SLUG)
             .password(UPDATED_PASSWORD)
-            .featuredMedia(UPDATED_FEATURED_MEDIA)
             .subTitle(UPDATED_SUB_TITLE)
             .createdDate(UPDATED_CREATED_DATE);
         PostDTO postDTO = postMapper.toDto(updatedPost);
@@ -526,7 +518,6 @@ public class PostResourceIntTest {
         assertThat(testPost.getUpdates()).isEqualTo(UPDATED_UPDATES);
         assertThat(testPost.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testPost.getPassword()).isEqualTo(UPDATED_PASSWORD);
-        assertThat(testPost.getFeaturedMedia()).isEqualTo(UPDATED_FEATURED_MEDIA);
         assertThat(testPost.getSubTitle()).isEqualTo(UPDATED_SUB_TITLE);
         assertThat(testPost.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
 
@@ -597,7 +588,6 @@ public class PostResourceIntTest {
             .andExpect(jsonPath("$.[*].updates").value(hasItem(DEFAULT_UPDATES.toString())))
             .andExpect(jsonPath("$.[*].slug").value(hasItem(DEFAULT_SLUG.toString())))
             .andExpect(jsonPath("$.[*].password").value(hasItem(DEFAULT_PASSWORD.toString())))
-            .andExpect(jsonPath("$.[*].featuredMedia").value(hasItem(DEFAULT_FEATURED_MEDIA.toString())))
             .andExpect(jsonPath("$.[*].subTitle").value(hasItem(DEFAULT_SUB_TITLE.toString())))
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))));
     }

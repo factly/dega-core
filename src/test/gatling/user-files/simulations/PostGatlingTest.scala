@@ -112,7 +112,6 @@ class PostGatlingTest extends Simulation {
                 , "updates":"SAMPLE_TEXT"
                 , "slug":"SAMPLE_TEXT"
                 , "password":"SAMPLE_TEXT"
-                , "featuredMedia":"SAMPLE_TEXT"
                 , "subTitle":"SAMPLE_TEXT"
                 , "createdDate":"2020-01-01T00:00:00.000Z"
                 }""")).asJSON
