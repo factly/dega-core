@@ -74,7 +74,7 @@ public class MediaResource {
                          @Value("${dega.media.storage}") String storageType,
                          @Value("${google.cloud.storage.hostname}") String storageURL,
                          @Value("${imageproxy.enabled}") boolean imageProxyEnabled,
-                         @Value("${imageproxy.host}") String imageProxyHost) {
+                         @Value("${imageproxy.hostname}") String imageProxyHost) {
         this.mediaService = mediaService;
         this.bucketName = bucketName;
         this.fileNameUtils = fileNameUtils;
