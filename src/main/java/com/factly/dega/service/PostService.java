@@ -34,7 +34,7 @@ public interface PostService {
      * @return the list of entities
      */
     Page<PostDTO> findAllWithEagerRelationships(Pageable pageable);
-    
+
     /**
      * Get the "id" post.
      *
@@ -54,9 +54,26 @@ public interface PostService {
      * Search for the post corresponding to the query.
      *
      * @param query the query of the search
-     * 
+     *
      * @param pageable the pagination information
      * @return the list of entities
      */
     Page<PostDTO> search(String query, Pageable pageable);
+    /**
+     * Get all the posts by client id.
+     *
+     * @param clientId the client id
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    Page<PostDTO> findByClientId(String clientId, Pageable pageable);
+
+    /**
+     * Get the post by clientId and slug.
+     *
+     * @param clientId the clientId of the postDTO
+     * @param slug the slug of the PostDTO
+     * @return Optional<PostDTO> post by clientId and slug
+     */
+    Optional<PostDTO> findByClientIdAndSlug(String clientId, String slug);
 }
