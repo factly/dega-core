@@ -126,3 +126,18 @@ jhipster:
 keycloak:
     api:
         uri: http://localhost:9080/auth/admin/realms/dega/
+dega:
+    media:
+        upload-dir: dega-content
+        # valid values for storage: local, gcs(Google cloud storge)
+        storage: local
+        hostname: http://localhost:8080/core
+
+google:
+    cloud:
+        storage:
+            bucketname: storage.factly.in
+            hostname: https://storage.factly.in/
+imageproxy:
+    enabled: false
+    hostname: https://images.factly.in/
