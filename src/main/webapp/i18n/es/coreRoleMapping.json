@@ -17,6 +17,8 @@
                 "title": "Role Mapping"
             },
             "name": "Name",
+            "keycloakId": "Keycloak Id",
+            "keycloakName": "Keycloak Name",
             "organization": "Organization",
             "role": "Role",
             "degaUser": "Dega User"

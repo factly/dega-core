@@ -29,6 +29,14 @@ public class RoleMapping implements Serializable {
     @Field("name")
     private String name;
 
+    @NotNull
+    @Field("keycloak_id")
+    private String keycloakId;
+
+    @NotNull
+    @Field("keycloak_name")
+    private String keycloakName;
+
     @DBRef
     @Field("organization")
     @JsonIgnoreProperties("roleMappings")
@@ -64,6 +72,32 @@ public class RoleMapping implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getKeycloakId() {
+        return keycloakId;
+    }
+
+    public RoleMapping keycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+        return this;
+    }
+
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
+    public String getKeycloakName() {
+        return keycloakName;
+    }
+
+    public RoleMapping keycloakName(String keycloakName) {
+        this.keycloakName = keycloakName;
+        return this;
+    }
+
+    public void setKeycloakName(String keycloakName) {
+        this.keycloakName = keycloakName;
     }
 
     public Organization getOrganization() {
@@ -143,6 +177,8 @@ public class RoleMapping implements Serializable {
         return "RoleMapping{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", keycloakId='" + getKeycloakId() + "'" +
+            ", keycloakName='" + getKeycloakName() + "'" +
             "}";
     }
 }

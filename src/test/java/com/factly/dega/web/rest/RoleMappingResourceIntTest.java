@@ -51,6 +51,12 @@ public class RoleMappingResourceIntTest {
     private static final String DEFAULT_NAME = "AAAAAAAAAA";
     private static final String UPDATED_NAME = "BBBBBBBBBB";
 
+    private static final String DEFAULT_KEYCLOAK_ID = "AAAAAAAAAA";
+    private static final String UPDATED_KEYCLOAK_ID = "BBBBBBBBBB";
+
+    private static final String DEFAULT_KEYCLOAK_NAME = "AAAAAAAAAA";
+    private static final String UPDATED_KEYCLOAK_NAME = "BBBBBBBBBB";
+
     @Autowired
     private RoleMappingRepository roleMappingRepository;
 
@@ -100,7 +106,9 @@ public class RoleMappingResourceIntTest {
      */
     public static RoleMapping createEntity() {
         RoleMapping roleMapping = new RoleMapping()
-            .name(DEFAULT_NAME);
+            .name(DEFAULT_NAME)
+            .keycloakId(DEFAULT_KEYCLOAK_ID)
+            .keycloakName(DEFAULT_KEYCLOAK_NAME);
         // Add required entity
         Organization organization = OrganizationResourceIntTest.createEntity();
         organization.setId("fixed-id-for-tests");
@@ -134,6 +142,8 @@ public class RoleMappingResourceIntTest {
         assertThat(roleMappingList).hasSize(databaseSizeBeforeCreate + 1);
         RoleMapping testRoleMapping = roleMappingList.get(roleMappingList.size() - 1);
         assertThat(testRoleMapping.getName()).isEqualTo(DEFAULT_NAME);
+        assertThat(testRoleMapping.getKeycloakId()).isEqualTo(DEFAULT_KEYCLOAK_ID);
+        assertThat(testRoleMapping.getKeycloakName()).isEqualTo(DEFAULT_KEYCLOAK_NAME);
 
         // Validate the RoleMapping in Elasticsearch
         verify(mockRoleMappingSearchRepository, times(1)).save(testRoleMapping);
@@ -180,6 +190,42 @@ public class RoleMappingResourceIntTest {
     }
 
     @Test
+    public void checkKeycloakIdIsRequired() throws Exception {
+        int databaseSizeBeforeTest = roleMappingRepository.findAll().size();
+        // set the field null
+        roleMapping.setKeycloakId(null);
+
+        // Create the RoleMapping, which fails.
+        RoleMappingDTO roleMappingDTO = roleMappingMapper.toDto(roleMapping);
+
+        restRoleMappingMockMvc.perform(post("/api/role-mappings")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(roleMappingDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<RoleMapping> roleMappingList = roleMappingRepository.findAll();
+        assertThat(roleMappingList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    public void checkKeycloakNameIsRequired() throws Exception {
+        int databaseSizeBeforeTest = roleMappingRepository.findAll().size();
+        // set the field null
+        roleMapping.setKeycloakName(null);
+
+        // Create the RoleMapping, which fails.
+        RoleMappingDTO roleMappingDTO = roleMappingMapper.toDto(roleMapping);
+
+        restRoleMappingMockMvc.perform(post("/api/role-mappings")
+            .contentType(TestUtil.APPLICATION_JSON_UTF8)
+            .content(TestUtil.convertObjectToJsonBytes(roleMappingDTO)))
+            .andExpect(status().isBadRequest());
+
+        List<RoleMapping> roleMappingList = roleMappingRepository.findAll();
+        assertThat(roleMappingList).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
     public void getAllRoleMappings() throws Exception {
         // Initialize the database
         roleMappingRepository.save(roleMapping);
@@ -189,7 +235,9 @@ public class RoleMappingResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(roleMapping.getId())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].keycloakId").value(hasItem(DEFAULT_KEYCLOAK_ID.toString())))
+            .andExpect(jsonPath("$.[*].keycloakName").value(hasItem(DEFAULT_KEYCLOAK_NAME.toString())));
     }
     
     @Test
@@ -202,7 +250,9 @@ public class RoleMappingResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.id").value(roleMapping.getId()))
-            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()));
+            .andExpect(jsonPath("$.name").value(DEFAULT_NAME.toString()))
+            .andExpect(jsonPath("$.keycloakId").value(DEFAULT_KEYCLOAK_ID.toString()))
+            .andExpect(jsonPath("$.keycloakName").value(DEFAULT_KEYCLOAK_NAME.toString()));
     }
 
     @Test
@@ -222,7 +272,9 @@ public class RoleMappingResourceIntTest {
         // Update the roleMapping
         RoleMapping updatedRoleMapping = roleMappingRepository.findById(roleMapping.getId()).get();
         updatedRoleMapping
-            .name(UPDATED_NAME);
+            .name(UPDATED_NAME)
+            .keycloakId(UPDATED_KEYCLOAK_ID)
+            .keycloakName(UPDATED_KEYCLOAK_NAME);
         RoleMappingDTO roleMappingDTO = roleMappingMapper.toDto(updatedRoleMapping);
 
         restRoleMappingMockMvc.perform(put("/api/role-mappings")
@@ -235,6 +287,8 @@ public class RoleMappingResourceIntTest {
         assertThat(roleMappingList).hasSize(databaseSizeBeforeUpdate);
         RoleMapping testRoleMapping = roleMappingList.get(roleMappingList.size() - 1);
         assertThat(testRoleMapping.getName()).isEqualTo(UPDATED_NAME);
+        assertThat(testRoleMapping.getKeycloakId()).isEqualTo(UPDATED_KEYCLOAK_ID);
+        assertThat(testRoleMapping.getKeycloakName()).isEqualTo(UPDATED_KEYCLOAK_NAME);
 
         // Validate the RoleMapping in Elasticsearch
         verify(mockRoleMappingSearchRepository, times(1)).save(testRoleMapping);
@@ -292,7 +346,9 @@ public class RoleMappingResourceIntTest {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(roleMapping.getId())))
-            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())));
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME.toString())))
+            .andExpect(jsonPath("$.[*].keycloakId").value(hasItem(DEFAULT_KEYCLOAK_ID.toString())))
+            .andExpect(jsonPath("$.[*].keycloakName").value(hasItem(DEFAULT_KEYCLOAK_NAME.toString())));
     }
 
     @Test

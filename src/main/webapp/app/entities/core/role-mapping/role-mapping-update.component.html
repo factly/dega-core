@@ -20,6 +20,28 @@
                         </small>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreRoleMapping.keycloakId" for="field_keycloakId">Keycloak Id</label>
+                    <input type="text" class="form-control" name="keycloakId" id="field_keycloakId"
+                        [(ngModel)]="roleMapping.keycloakId" required/>
+                    <div [hidden]="!(editForm.controls.keycloakId?.dirty && editForm.controls.keycloakId?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.keycloakId?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.coreRoleMapping.keycloakName" for="field_keycloakName">Keycloak Name</label>
+                    <input type="text" class="form-control" name="keycloakName" id="field_keycloakName"
+                        [(ngModel)]="roleMapping.keycloakName" required/>
+                    <div [hidden]="!(editForm.controls.keycloakName?.dirty && editForm.controls.keycloakName?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.keycloakName?.errors?.required" jhiTranslate="entity.validation.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
 
                 <div class="form-group">
                     <label class="form-control-label" jhiTranslate="coreApp.coreRoleMapping.organization" for="field_organization">Organization</label>

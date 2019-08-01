@@ -9,6 +9,14 @@
                 <dd>
                     <span>{{roleMapping.name}}</span>
                 </dd>
+                <dt><span jhiTranslate="coreApp.coreRoleMapping.keycloakId">Keycloak Id</span></dt>
+                <dd>
+                    <span>{{roleMapping.keycloakId}}</span>
+                </dd>
+                <dt><span jhiTranslate="coreApp.coreRoleMapping.keycloakName">Keycloak Name</span></dt>
+                <dd>
+                    <span>{{roleMapping.keycloakName}}</span>
+                </dd>
                 <dt><span jhiTranslate="coreApp.coreRoleMapping.organization">Organization</span></dt>
                 <dd>
                     <div *ngIf="roleMapping.organizationId">
