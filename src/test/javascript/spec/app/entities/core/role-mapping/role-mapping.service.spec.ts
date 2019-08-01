@@ -21,7 +21,7 @@ describe('Service Tests', () => {
             service = injector.get(RoleMappingService);
             httpMock = injector.get(HttpTestingController);
 
-            elemDefault = new RoleMapping('ID', 'AAAAAAA');
+            elemDefault = new RoleMapping('ID', 'AAAAAAA', 'AAAAAAA', 'AAAAAAA');
         });
 
         describe('Service methods', async () => {
@@ -55,7 +55,9 @@ describe('Service Tests', () => {
             it('should update a RoleMapping', async () => {
                 const returnedFromService = Object.assign(
                     {
-                        name: 'BBBBBB'
+                        name: 'BBBBBB',
+                        keycloakId: 'BBBBBB',
+                        keycloakName: 'BBBBBB'
                     },
                     elemDefault
                 );
@@ -72,7 +74,9 @@ describe('Service Tests', () => {
             it('should return a list of RoleMapping', async () => {
                 const returnedFromService = Object.assign(
                     {
-                        name: 'BBBBBB'
+                        name: 'BBBBBB',
+                        keycloakId: 'BBBBBB',
+                        keycloakName: 'BBBBBB'
                     },
                     elemDefault
                 );

@@ -14,6 +14,12 @@ public class RoleMappingDTO implements Serializable {
     @NotNull
     private String name;
 
+    @NotNull
+    private String keycloakId;
+
+    @NotNull
+    private String keycloakName;
+
     private String organizationId;
 
     private String organizationName;
@@ -36,6 +42,22 @@ public class RoleMappingDTO implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getKeycloakId() {
+        return keycloakId;
+    }
+
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
+    public String getKeycloakName() {
+        return keycloakName;
+    }
+
+    public void setKeycloakName(String keycloakName) {
+        this.keycloakName = keycloakName;
     }
 
     public String getOrganizationId() {
@@ -96,6 +118,8 @@ public class RoleMappingDTO implements Serializable {
         return "RoleMappingDTO{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", keycloakId='" + getKeycloakId() + "'" +
+            ", keycloakName='" + getKeycloakName() + "'" +
             ", organization=" + getOrganizationId() +
             ", organization='" + getOrganizationName() + "'" +
             ", role=" + getRoleId() +
