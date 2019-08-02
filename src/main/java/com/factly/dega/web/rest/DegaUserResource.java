@@ -29,11 +29,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.StreamSupport;
 
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
@@ -94,6 +94,27 @@ public class DegaUserResource {
         // set slug
         degaUserDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(degaUserDTO.getDisplayName())));
 
+        // pull role mapping for this org
+        Set<RoleMappingDTO> roleMappings = degaUserDTO.getRoleMappings();
+        Set<RoleMappingDTO> currentOrgsRoleMappings = roleMappings
+            .stream()
+            .filter(rm -> !rm.getId().equals(degaUserDTO.getOrganizationCurrentId()))
+            .collect(toSet());
+
+        // transform
+        KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO = new KeyCloakRoleMappingsDTO();
+        List<KeyCloakRoleMappingDTO> keyCloakOrgsRoleMappings =
+            currentOrgsRoleMappings.stream().map(rm -> transformRoleMapping(rm)).collect(toList());
+        keyCloakRoleMappingsDTO.setKeyCloakRoleMappingsDTO(keyCloakOrgsRoleMappings);
+
+        // add new roles
+        String endPoint = "users/"+keyCloakId+"/role-mappings/realm";
+        JsonObject jObj1 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO);
+        String roleMappingAsString = jObj1.get("keyCloakRoleMappingsDTO").toString();
+        boolean createStatus = keycloakUtils.create(endPoint, roleMappingAsString);
+        if (!createStatus) {
+            return null;
+        }
         // save the user to mongo database
         log.info("Keycloak user creation is successful, adding user to dega backend");
         DegaUserDTO result = degaUserService.save(degaUserDTO);
@@ -123,26 +144,43 @@ public class DegaUserResource {
 
         // pull role mapping for this org
         Set<RoleMappingDTO> roleMappings = degaUserDTO.getRoleMappings();
-        RoleMappingDTO roleMapping = roleMappings
+        List<RoleMappingDTO> currentOrgRoleMappings = roleMappings
             .stream()
-            .filter(rm -> rm.getOrganizationName().equals(degaUserDTO.getOrganizationCurrentName()))
-            .findFirst().orElse(null);
-        if (roleMapping == null) {
+            .filter(rm -> rm.getOrganizationId().equals(degaUserDTO.getOrganizationCurrentId()))
+            .collect(toList());
+        List<KeyCloakRoleMappingDTO> keyCloakOrgsRoleMappings =
+            currentOrgRoleMappings.stream().map(rm -> transformRoleMapping(rm)).collect(toList());
+
+        // get current user role mapping and remove current dega role mappings (if any exists)
+        String keyCloakUserId = degaUserDTO.getKeycloakId();
+        String endPoint = "users/"+keyCloakUserId+"/role-mappings/realm";
+        KeyCloakRoleMappingDTO[] roleMappingsDTO = keycloakUtils.getRoleMappingsDTO(endPoint);
+
+        // Delete all the dega roles
+        List<KeyCloakRoleMappingDTO> rolesToBeRemoved = Arrays.stream(roleMappingsDTO)
+            .filter(rm -> rm.getDescription().startsWith("DEGA_ROLE"))
+            .collect(toList());
+        KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO1 = new KeyCloakRoleMappingsDTO();
+        keyCloakRoleMappingsDTO1.setKeyCloakRoleMappingsDTO(rolesToBeRemoved);
+        JsonObject jObj1 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO1);
+        String rolesToBeRemovedAsString = jObj1.get("keyCloakRoleMappingsDTO").toString();
+        boolean deleteStatus = keycloakUtils.delete(endPoint, rolesToBeRemovedAsString);
+        if (!deleteStatus) {
             return null;
         }
 
-        // get current user role mapping and remove current dega role mappings (if any exists)
-        String roleName = roleMapping.getRoleName();
-        String keyCloakUserId = degaUserDTO.getKeycloakId();
-        String endPoint = "users/"+keyCloakUserId+"/role-mappings/realm";
-        KeyCloakRoleMappingDTO roleMappingDTO =
-            keycloakUtils.getRoleMappingsDTO(endPoint, roleName);
-
-        if (roleMappingDTO == null) {
-            // add new role
-            JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(roleMapping);
-            String roleMappingAsString = jObj.toString();
-            keycloakUtils.create(endPoint, roleMappingAsString);
+        // Add new roles on the current org
+        List<KeyCloakRoleMappingDTO> newRoles = Arrays.stream(roleMappingsDTO)
+            .filter(rm -> !rm.getDescription().startsWith("DEGA_ROLE"))
+            .collect(toList());
+        newRoles.addAll(keyCloakOrgsRoleMappings);
+        KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO2 = new KeyCloakRoleMappingsDTO();
+        keyCloakRoleMappingsDTO2.setKeyCloakRoleMappingsDTO(newRoles);
+        JsonObject jObj2 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO2);
+        String roleMappingAsString = jObj2.get("keyCloakRoleMappingsDTO").toString();
+        boolean createStatus = keycloakUtils.create(endPoint, roleMappingAsString);
+        if (!createStatus) {
+            return null;
         }
 
         DegaUserDTO result = degaUserService.save(degaUserDTO);
@@ -229,6 +267,16 @@ public class DegaUserResource {
         log.debug("REST request to get DegaUser by Email : {}", email);
         Optional<DegaUserDTO> degaUserDTO = degaUserService.findByEmailId(email);
         return ResponseUtil.wrapOrNotFound(degaUserDTO);
+    }
+
+    private KeyCloakRoleMappingDTO transformRoleMapping(RoleMappingDTO roleMappingDTO) {
+        KeyCloakRoleMappingDTO keyCloakRoleMappingDTO = new KeyCloakRoleMappingDTO();
+        keyCloakRoleMappingDTO.setName(roleMappingDTO.getKeycloakName());
+        keyCloakRoleMappingDTO.setId(roleMappingDTO.getKeycloakId());
+        keyCloakRoleMappingDTO.setClientRole(false);
+        keyCloakRoleMappingDTO.setComposite(false);
+        keyCloakRoleMappingDTO.setContainerId("dega");
+        return keyCloakRoleMappingDTO;
     }
 
     private JsonObject transformDTO(DegaUserDTO degaUserDTO) {

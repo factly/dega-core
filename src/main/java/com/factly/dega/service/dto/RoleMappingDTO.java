@@ -14,10 +14,8 @@ public class RoleMappingDTO implements Serializable {
     @NotNull
     private String name;
 
-    @NotNull
     private String keycloakId;
 
-    @NotNull
     private String keycloakName;
 
     private String organizationId;

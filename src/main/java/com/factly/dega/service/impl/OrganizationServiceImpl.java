@@ -79,6 +79,8 @@ public class OrganizationServiceImpl implements OrganizationService {
             roleMapping.setOrganizationName(organizationDTO.getName());
             roleMapping.setRoleId(role.getId());
             roleMapping.setRoleName(role.getName());
+            roleMapping.setKeycloakId(role.getKeycloakId());
+            roleMapping.setKeycloakName(role.getKeycloakName());
             return roleMapping;
         }).collect(Collectors.toList());
         roleMappingService.saveAll(roleMappings);
