@@ -30,8 +30,6 @@ public class KeyCloakRoleMappingDTO {
     private Boolean clientRole;
     @JsonProperty("containerId")
     private String containerId;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("id")
     public String getId() {

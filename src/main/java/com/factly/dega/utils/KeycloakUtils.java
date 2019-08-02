@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.client.token.grant.client.ClientCredentialsResourceDetails;
@@ -51,7 +52,6 @@ public class KeycloakUtils {
     }
 
     public Boolean create(String usersEndPoint, String jsonAsString) {
-
         // save the user to keycloak
         try {
             RestTemplate restTemplate = getOauth2RestTemplate();
@@ -60,6 +60,33 @@ public class KeycloakUtils {
             log.debug("Keycloak entity request body {}", jsonAsString);
             HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
             restTemplate.postForObject(keycloakServerURI + usersEndPoint, httpEntity, String.class);
+        } catch (HttpClientErrorException e) {
+            if (e.getMessage().equals("403 Forbidden")) {
+                log.error("This client {} does not have required access", keycloakClientId);
+                return false;
+            }
+            if (e.getMessage().equals("409 Conflict")) {
+                log.error("409-Conflict: An entity already exists");
+                return false;
+            }
+            // for all other errors rethrow
+            throw e;
+        } catch (Exception e) {
+            log.error("keycloak api failed with the message {}, exiting", e.getMessage());
+            throw e;
+        }
+        return true;
+    }
+
+    public Boolean delete(String usersEndPoint, String jsonAsString) {
+        // save the user to keycloak
+        try {
+            RestTemplate restTemplate = getOauth2RestTemplate();
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+            log.debug("Keycloak entity request body {}", jsonAsString);
+            HttpEntity<String> httpEntity = new HttpEntity(jsonAsString, httpHeaders);
+            restTemplate.exchange(keycloakServerURI + usersEndPoint, HttpMethod.DELETE, httpEntity, String.class);
         } catch (HttpClientErrorException e) {
             if (e.getMessage().equals("403 Forbidden")) {
                 log.error("This client {} does not have required access", keycloakClientId);
@@ -123,25 +150,13 @@ public class KeycloakUtils {
         return null;
     }
 
-    public KeyCloakRoleMappingDTO getRoleMappingsDTO(String endpoint, String roleName) {
+    public KeyCloakRoleMappingDTO[] getRoleMappingsDTO(String endpoint) {
         try {
             RestTemplate restTemplate = getOauth2RestTemplate();
             KeyCloakRoleMappingDTO[] keyCloakRoleMappings =
                 restTemplate.getForObject(keycloakServerURI + endpoint, KeyCloakRoleMappingDTO[].class);
 
-            if (keyCloakRoleMappings != null && keyCloakRoleMappings.length > 0) {
-                // first delete all the current dega role mappings on the user except current one if exists
-                Set<KeyCloakRoleMappingDTO> roleMappings = Arrays.stream(keyCloakRoleMappings)
-                    .filter(rm -> !rm.getName().equals(roleName) && rm.getDescription().startsWith("DEGA_ROLE"))
-                    .collect(Collectors.toSet());
-                if (roleMappings != null && roleMappings.size() > 0) {
-                    JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(roleMappings);
-                    String roleMappingAsString = jObj.toString();
-                    restTemplate.delete(keycloakServerURI + endpoint, roleMappingAsString);
-                }
-
-                return Arrays.stream(keyCloakRoleMappings).filter(rm -> rm.getName().equals(roleName)).findFirst().get();
-            }
+            return keyCloakRoleMappings;
         } catch (HttpClientErrorException e) {
             if (e.getMessage().equals("403 Forbidden")) {
                 log.error("This client {} does not have required access", keycloakClientId);
@@ -153,7 +168,6 @@ public class KeycloakUtils {
             log.error("keycloak api failed with the message {}, exiting", e.getMessage());
             throw e;
         }
-        return null;
     }
 
     private RestTemplate getOauth2RestTemplate() {
