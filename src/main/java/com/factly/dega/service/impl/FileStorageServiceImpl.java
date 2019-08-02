@@ -1,5 +1,6 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.domain.MediaUrls;
 import com.factly.dega.service.StorageService;
 import com.factly.dega.web.rest.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,8 @@ public class FileStorageServiceImpl implements StorageService {
     }
 
     @Override
-    public String storeFile(MultipartFile file, String client, int year, int month) {
+    public MediaUrls storeFile(MultipartFile file, String client, int year, int month) {
+        MediaUrls mediaUrls = new MediaUrls();
         // Normalize file name
         String name = StringUtils.cleanPath(file.getOriginalFilename());
         // remove all chars except a-z, 0-9
@@ -55,8 +57,9 @@ public class FileStorageServiceImpl implements StorageService {
 
             Path targetLocation = clientPath.resolve(fileName);
             Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            mediaUrls.setUrl(fileName);
 
-            return fileName;
+            return mediaUrls;
         } catch (IOException ex) {
             throw new RuntimeException("Could not store file " + cleanFileName + ". Please try again!", ex);
         }

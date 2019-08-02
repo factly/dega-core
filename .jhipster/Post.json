@@ -46,6 +46,12 @@
             "otherEntityField": "displayName",
             "ownerSide": true,
             "otherEntityRelationshipName": "post"
+        },
+        {
+            "relationshipName": "media",
+            "otherEntityName": "media",
+            "relationshipType": "many-to-one",
+            "otherEntityField": "id"
         }
     ],
     "fields": [
@@ -109,10 +115,6 @@
         },
         {
             "fieldName": "password",
-            "fieldType": "String"
-        },
-        {
-            "fieldName": "featuredMedia",
             "fieldType": "String"
         },
         {

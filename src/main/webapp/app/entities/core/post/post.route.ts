@@ -15,84 +15,84 @@ import { IPost } from 'app/shared/model/core/post.model';
 
 @Injectable({ providedIn: 'root' })
 export class PostResolve implements Resolve<IPost> {
-  constructor(private service: PostService) {}
+    constructor(private service: PostService) {}
 
-  resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Post> {
-    const id = route.params['id'] ? route.params['id'] : null;
-    if (id) {
-      return this.service.find(id).pipe(
-        filter((response: HttpResponse<Post>) => response.ok),
-        map((post: HttpResponse<Post>) => post.body)
-      );
+    resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Post> {
+        const id = route.params['id'] ? route.params['id'] : null;
+        if (id) {
+            return this.service.find(id).pipe(
+                filter((response: HttpResponse<Post>) => response.ok),
+                map((post: HttpResponse<Post>) => post.body)
+            );
+        }
+        return of(new Post());
     }
-    return of(new Post());
-  }
 }
 
 export const postRoute: Routes = [
-  {
-    path: 'post',
-    component: PostComponent,
-    resolve: {
-      pagingParams: JhiResolvePagingParams
+    {
+        path: 'post',
+        component: PostComponent,
+        resolve: {
+            pagingParams: JhiResolvePagingParams
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            defaultSort: 'id,asc',
+            pageTitle: 'coreApp.corePost.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     },
-    data: {
-      authorities: ['ROLE_USER'],
-      defaultSort: 'id,asc',
-      pageTitle: 'coreApp.corePost.home.title'
+    {
+        path: 'post/:id/view',
+        component: PostDetailComponent,
+        resolve: {
+            post: PostResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.corePost.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'post/:id/view',
-    component: PostDetailComponent,
-    resolve: {
-      post: PostResolve
+    {
+        path: 'post/new',
+        component: PostUpdateComponent,
+        resolve: {
+            post: PostResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.corePost.home.title'
+        },
+        canActivate: [UserRouteAccessService]
     },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.corePost.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'post/new',
-    component: PostUpdateComponent,
-    resolve: {
-      post: PostResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.corePost.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  },
-  {
-    path: 'post/:id/edit',
-    component: PostUpdateComponent,
-    resolve: {
-      post: PostResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.corePost.home.title'
-    },
-    canActivate: [UserRouteAccessService]
-  }
+    {
+        path: 'post/:id/edit',
+        component: PostUpdateComponent,
+        resolve: {
+            post: PostResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.corePost.home.title'
+        },
+        canActivate: [UserRouteAccessService]
+    }
 ];
 
 export const postPopupRoute: Routes = [
-  {
-    path: 'post/:id/delete',
-    component: PostDeletePopupComponent,
-    resolve: {
-      post: PostResolve
-    },
-    data: {
-      authorities: ['ROLE_USER'],
-      pageTitle: 'coreApp.corePost.home.title'
-    },
-    canActivate: [UserRouteAccessService],
-    outlet: 'popup'
-  }
+    {
+        path: 'post/:id/delete',
+        component: PostDeletePopupComponent,
+        resolve: {
+            post: PostResolve
+        },
+        data: {
+            authorities: ['ROLE_USER'],
+            pageTitle: 'coreApp.corePost.home.title'
+        },
+        canActivate: [UserRouteAccessService],
+        outlet: 'popup'
+    }
 ];

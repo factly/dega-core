@@ -142,7 +142,7 @@ public class MediaResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final MediaResource mediaResource = new MediaResource(mediaService, "", new FileNameUtils(""), "", "", "", "");
+        final MediaResource mediaResource = new MediaResource(mediaService, "", new FileNameUtils(""), "", "", "", "", true, "");
         this.restMediaMockMvc = MockMvcBuilders.standaloneSetup(mediaResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)

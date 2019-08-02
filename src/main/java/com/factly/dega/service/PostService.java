@@ -59,7 +59,6 @@ public interface PostService {
      * @return the list of entities
      */
     Page<PostDTO> search(String query, Pageable pageable);
-
     /**
      * Get all the posts by client id.
      *

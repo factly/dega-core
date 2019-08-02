@@ -42,6 +42,22 @@ public class RoleMappingDTO implements Serializable {
         this.name = name;
     }
 
+    public String getKeycloakId() {
+        return keycloakId;
+    }
+
+    public void setKeycloakId(String keycloakId) {
+        this.keycloakId = keycloakId;
+    }
+
+    public String getKeycloakName() {
+        return keycloakName;
+    }
+
+    public void setKeycloakName(String keycloakName) {
+        this.keycloakName = keycloakName;
+    }
+
     public String getOrganizationId() {
         return organizationId;
     }
@@ -100,6 +116,8 @@ public class RoleMappingDTO implements Serializable {
         return "RoleMappingDTO{" +
             "id=" + getId() +
             ", name='" + getName() + "'" +
+            ", keycloakId='" + getKeycloakId() + "'" +
+            ", keycloakName='" + getKeycloakName() + "'" +
             ", organization=" + getOrganizationId() +
             ", organization='" + getOrganizationName() + "'" +
             ", role=" + getRoleId() +

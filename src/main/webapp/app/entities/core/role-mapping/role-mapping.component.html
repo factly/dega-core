@@ -31,6 +31,8 @@
             <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="transition.bind(this)">
             <th jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="name"><span jhiTranslate="coreApp.coreRoleMapping.name">Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="keycloakId"><span jhiTranslate="coreApp.coreRoleMapping.keycloakId">Keycloak Id</span> <fa-icon [icon]="'sort'"></fa-icon></th>
+            <th jhiSortBy="keycloakName"><span jhiTranslate="coreApp.coreRoleMapping.keycloakName">Keycloak Name</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="organizationName"><span jhiTranslate="coreApp.coreRoleMapping.organization">Organization</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th jhiSortBy="roleName"><span jhiTranslate="coreApp.coreRoleMapping.role">Role</span> <fa-icon [icon]="'sort'"></fa-icon></th>
             <th></th>
@@ -40,6 +42,8 @@
             <tr *ngFor="let roleMapping of roleMappings ;trackBy: trackId">
                 <td><a [routerLink]="['/role-mapping', roleMapping.id, 'view' ]">{{roleMapping.id}}</a></td>
                 <td>{{roleMapping.name}}</td>
+                <td>{{roleMapping.keycloakId}}</td>
+                <td>{{roleMapping.keycloakName}}</td>
                 <td>
                     <div *ngIf="roleMapping.organizationId">
                         <a [routerLink]="['../organization', roleMapping.organizationId , 'view' ]" >{{roleMapping.organizationName}}</a>

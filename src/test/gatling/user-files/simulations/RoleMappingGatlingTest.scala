@@ -102,6 +102,8 @@ class RoleMappingGatlingTest extends Simulation {
             .body(StringBody("""{
                 "id":null
                 , "name":"SAMPLE_TEXT"
+                , "keycloakId":"SAMPLE_TEXT"
+                , "keycloakName":"SAMPLE_TEXT"
                 }""")).asJSON
             .check(status.is(201))
             .check(headerRegex("Location", "(.*)").saveAs("new_roleMapping_url"))).exitHereIfFailed

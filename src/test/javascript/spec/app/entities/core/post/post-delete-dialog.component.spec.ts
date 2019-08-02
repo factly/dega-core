@@ -9,44 +9,44 @@ import { PostDeleteDialogComponent } from 'app/entities/core/post/post-delete-di
 import { PostService } from 'app/entities/core/post/post.service';
 
 describe('Component Tests', () => {
-  describe('Post Management Delete Component', () => {
-    let comp: PostDeleteDialogComponent;
-    let fixture: ComponentFixture<PostDeleteDialogComponent>;
-    let service: PostService;
-    let mockEventManager: any;
-    let mockActiveModal: any;
+    describe('Post Management Delete Component', () => {
+        let comp: PostDeleteDialogComponent;
+        let fixture: ComponentFixture<PostDeleteDialogComponent>;
+        let service: PostService;
+        let mockEventManager: any;
+        let mockActiveModal: any;
 
-    beforeEach(() => {
-      TestBed.configureTestingModule({
-        imports: [CoreTestModule],
-        declarations: [PostDeleteDialogComponent]
-      })
-        .overrideTemplate(PostDeleteDialogComponent, '')
-        .compileComponents();
-      fixture = TestBed.createComponent(PostDeleteDialogComponent);
-      comp = fixture.componentInstance;
-      service = fixture.debugElement.injector.get(PostService);
-      mockEventManager = fixture.debugElement.injector.get(JhiEventManager);
-      mockActiveModal = fixture.debugElement.injector.get(NgbActiveModal);
+        beforeEach(() => {
+            TestBed.configureTestingModule({
+                imports: [CoreTestModule],
+                declarations: [PostDeleteDialogComponent]
+            })
+                .overrideTemplate(PostDeleteDialogComponent, '')
+                .compileComponents();
+            fixture = TestBed.createComponent(PostDeleteDialogComponent);
+            comp = fixture.componentInstance;
+            service = fixture.debugElement.injector.get(PostService);
+            mockEventManager = fixture.debugElement.injector.get(JhiEventManager);
+            mockActiveModal = fixture.debugElement.injector.get(NgbActiveModal);
+        });
+
+        describe('confirmDelete', () => {
+            it('Should call delete service on confirmDelete', inject(
+                [],
+                fakeAsync(() => {
+                    // GIVEN
+                    spyOn(service, 'delete').and.returnValue(of({}));
+
+                    // WHEN
+                    comp.confirmDelete('123');
+                    tick();
+
+                    // THEN
+                    expect(service.delete).toHaveBeenCalledWith('123');
+                    expect(mockActiveModal.dismissSpy).toHaveBeenCalled();
+                    expect(mockEventManager.broadcastSpy).toHaveBeenCalled();
+                })
+            ));
+        });
     });
-
-    describe('confirmDelete', () => {
-      it('Should call delete service on confirmDelete', inject(
-        [],
-        fakeAsync(() => {
-          // GIVEN
-          spyOn(service, 'delete').and.returnValue(of({}));
-
-          // WHEN
-          comp.confirmDelete('123');
-          tick();
-
-          // THEN
-          expect(service.delete).toHaveBeenCalledWith('123');
-          expect(mockActiveModal.dismissSpy).toHaveBeenCalled();
-          expect(mockEventManager.broadcastSpy).toHaveBeenCalled();
-        })
-      ));
-    });
-  });
 });

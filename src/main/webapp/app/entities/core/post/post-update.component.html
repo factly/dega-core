@@ -113,11 +113,6 @@
                         [(ngModel)]="post.password" />
                 </div>
                 <div class="form-group">
-                    <label class="form-control-label" jhiTranslate="coreApp.corePost.featuredMedia" for="field_featuredMedia">Featured Media</label>
-                    <input type="text" class="form-control" name="featuredMedia" id="field_featuredMedia"
-                        [(ngModel)]="post.featuredMedia" />
-                </div>
-                <div class="form-group">
                     <label class="form-control-label" jhiTranslate="coreApp.corePost.subTitle" for="field_subTitle">Sub Title</label>
                     <input type="text" class="form-control" name="subTitle" id="field_subTitle"
                         [(ngModel)]="post.subTitle" />
@@ -189,6 +184,13 @@
                         [hidden]="!editForm.controls.degaUser?.errors?.required" jhiTranslate="entity.validation.required">
                         This field is required.
                     </small>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="coreApp.corePost.media" for="field_media">Media</label>
+                    <select class="form-control" id="field_media" name="media" [(ngModel)]="post.mediaId" >
+                        <option [ngValue]="null"></option>
+                        <option [ngValue]="mediaOption.id" *ngFor="let mediaOption of media; trackBy: trackMediaById">{{mediaOption.id}}</option>
+                    </select>
                 </div>
             </div>
             <div>
