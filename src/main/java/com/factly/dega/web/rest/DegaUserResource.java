@@ -3,6 +3,7 @@ package com.factly.dega.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.domain.RoleMapping;
 import com.factly.dega.service.DegaUserService;
+import com.factly.dega.service.OrganizationService;
 import com.factly.dega.service.dto.*;
 import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
@@ -30,6 +31,7 @@ import java.net.URISyntaxException;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static java.util.stream.Collectors.toList;
@@ -51,13 +53,17 @@ public class DegaUserResource {
 
     private KeycloakUtils keycloakUtils;
 
+    private final OrganizationService organizationService;
+
     @Autowired
     public DegaUserResource(
         DegaUserService degaUserService,
         RestTemplate restTemplate,
-        KeycloakUtils keycloakUtils) {
+        KeycloakUtils keycloakUtils,
+        OrganizationService organizationService) {
         this.degaUserService = degaUserService;
         this.keycloakUtils = keycloakUtils;
+        this.organizationService = organizationService;
     }
 
     /**
@@ -211,8 +217,8 @@ public class DegaUserResource {
         roles.add(keyCloakRoleMappingDTO);
         KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO2 = new KeyCloakRoleMappingsDTO();
         keyCloakRoleMappingsDTO2.setKeyCloakRoleMappingsDTO(roles);
-        JsonObject jObj2 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO2);
-        String roleMappingAsString = jObj2.get("keyCloakRoleMappingsDTO").toString();
+        JsonObject jObj = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO2);
+        String roleMappingAsString = jObj.get("keyCloakRoleMappingsDTO").toString();
         String endPoint = "users/"+keyCloakUserId+"/role-mappings/realm";
         return keycloakUtils.create(endPoint, roleMappingAsString);
     }
@@ -250,6 +256,43 @@ public class DegaUserResource {
         log.debug("REST request to get DegaUser : {}", id);
         Optional<DegaUserDTO> degaUserDTO = degaUserService.findOne(id);
         return ResponseUtil.wrapOrNotFound(degaUserDTO);
+    }
+
+    /**
+     * GET  /dega-users/:id : get the "id" degaUser.
+     *
+     * @param id the id of the degaUserDTO to retrieve
+     * @return the ResponseEntity with status 200 (OK) and with body the degaUserDTO, or with status 404 (Not Found)
+     */
+    @GetMapping("/dega-users/{id}/organizations")
+    @Timed
+    public ResponseEntity<List<OrganizationDTO>> getDegaUserOrganizations(Pageable pageable, @PathVariable String id) {
+        log.debug("REST request to get DegaUser : {}", id);
+        Optional<DegaUserDTO> degaUserDTO = degaUserService.findOne(id);
+
+        if (degaUserDTO.get() == null) {
+            return null;
+        }
+        DegaUserDTO degaUser = degaUserDTO.get();
+        Boolean isSuperAdmin = degaUser.isIsSuperAdmin();
+        if (isSuperAdmin != null && isSuperAdmin == true) {
+            // return all oprgs
+            Page<OrganizationDTO> page = organizationService.findAll(pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } else {
+            Set<RoleMappingDTO> roleMappings = degaUser.getRoleMappings();
+            Set<OrganizationDTO> orgDTOs = new HashSet<>();
+            roleMappings.stream().forEach(rm -> {
+                OrganizationDTO organizationDTO = new OrganizationDTO();
+                organizationDTO.setName(rm.getName());
+                organizationDTO.setId(rm.getOrganizationId());
+                orgDTOs.add(organizationDTO);
+            });
+            List<OrganizationDTO> aList = orgDTOs.stream().collect(Collectors.toList());
+
+            return ResponseEntity.ok().body(aList);
+        }
     }
 
     /**
