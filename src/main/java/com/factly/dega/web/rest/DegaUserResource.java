@@ -76,45 +76,53 @@ public class DegaUserResource {
         }
         degaUserDTO.setCreatedDate(ZonedDateTime.now());
 
-        // save the user to keycloak
-        JsonObject jObj = transformDTO(degaUserDTO);
-        String jsonAsString = jObj.toString();
-        Boolean status = keycloakUtils.create("users", jsonAsString);
-        if(status == false) {
-            return null;
-        }
-
         // get the keycloak id
         String keyCloakId = keycloakUtils.getUserId("users?username="+degaUserDTO.getEmail());
         if (keyCloakId.equals("NOT_FOUND")) {
             throw new RuntimeException("Failed to retrieve keycloak unique id");
         }
-        degaUserDTO.setKeycloakId(keyCloakId);
 
-        // set slug
-        degaUserDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(degaUserDTO.getDisplayName())));
+        Boolean isSuperAdmin = degaUserDTO.isIsSuperAdmin();
+        if (isSuperAdmin != null && isSuperAdmin == true) {
+            boolean createStatus = addSuperAdminRole(keyCloakId);
+            if (!createStatus) {
+                return null;
+            }
+        } else {
+            // save the user to keycloak
+            JsonObject jObj = transformDTO(degaUserDTO);
+            String jsonAsString = jObj.toString();
+            Boolean status = keycloakUtils.create("users", jsonAsString);
+            if(status == false) {
+                return null;
+            }
 
-        // pull role mapping for this org
-        Set<RoleMappingDTO> roleMappings = degaUserDTO.getRoleMappings();
-        Set<RoleMappingDTO> currentOrgsRoleMappings = roleMappings
-            .stream()
-            .filter(rm -> !rm.getId().equals(degaUserDTO.getOrganizationCurrentId()))
-            .collect(toSet());
+            degaUserDTO.setKeycloakId(keyCloakId);
+            degaUserDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(degaUserDTO.getDisplayName())));
 
-        // transform
-        KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO = new KeyCloakRoleMappingsDTO();
-        List<KeyCloakRoleMappingDTO> keyCloakOrgsRoleMappings =
-            currentOrgsRoleMappings.stream().map(rm -> transformRoleMapping(rm)).collect(toList());
-        keyCloakRoleMappingsDTO.setKeyCloakRoleMappingsDTO(keyCloakOrgsRoleMappings);
+            // pull role mapping for this org
+            Set<RoleMappingDTO> roleMappings = degaUserDTO.getRoleMappings();
+            Set<RoleMappingDTO> currentOrgsRoleMappings = roleMappings
+                .stream()
+                .filter(rm -> !rm.getId().equals(degaUserDTO.getOrganizationCurrentId()))
+                .collect(toSet());
 
-        // add new roles
-        String endPoint = "users/"+keyCloakId+"/role-mappings/realm";
-        JsonObject jObj1 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO);
-        String roleMappingAsString = jObj1.get("keyCloakRoleMappingsDTO").toString();
-        boolean createStatus = keycloakUtils.create(endPoint, roleMappingAsString);
-        if (!createStatus) {
-            return null;
+            // transform
+            KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO = new KeyCloakRoleMappingsDTO();
+            List<KeyCloakRoleMappingDTO> keyCloakOrgsRoleMappings =
+                currentOrgsRoleMappings.stream().map(rm -> transformRoleMapping(rm)).collect(toList());
+            keyCloakRoleMappingsDTO.setKeyCloakRoleMappingsDTO(keyCloakOrgsRoleMappings);
+
+            // add new roles
+            String endPoint = "users/"+keyCloakId+"/role-mappings/realm";
+            JsonObject jObj1 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO);
+            String roleMappingAsString = jObj1.get("keyCloakRoleMappingsDTO").toString();
+            boolean createStatus = keycloakUtils.create(endPoint, roleMappingAsString);
+            if (!createStatus) {
+                return null;
+            }
         }
+
         // save the user to mongo database
         log.info("Keycloak user creation is successful, adding user to dega backend");
         DegaUserDTO result = degaUserService.save(degaUserDTO);
@@ -140,53 +148,73 @@ public class DegaUserResource {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
 
-        // TODO: if super admin ignore rest of the logic
-
-        // pull role mapping for this org
-        Set<RoleMappingDTO> roleMappings = degaUserDTO.getRoleMappings();
-        List<RoleMappingDTO> currentOrgRoleMappings = roleMappings
-            .stream()
-            .filter(rm -> rm.getOrganizationId().equals(degaUserDTO.getOrganizationCurrentId()))
-            .collect(toList());
-        List<KeyCloakRoleMappingDTO> keyCloakOrgsRoleMappings =
-            currentOrgRoleMappings.stream().map(rm -> transformRoleMapping(rm)).collect(toList());
-
-        // get current user role mapping and remove current dega role mappings (if any exists)
         String keyCloakUserId = degaUserDTO.getKeycloakId();
-        String endPoint = "users/"+keyCloakUserId+"/role-mappings/realm";
-        KeyCloakRoleMappingDTO[] roleMappingsDTO = keycloakUtils.getRoleMappingsDTO(endPoint);
+        Boolean isSuperAdmin = degaUserDTO.isIsSuperAdmin();
+        if (isSuperAdmin != null && isSuperAdmin == true) {
+            boolean createStatus = addSuperAdminRole(keyCloakUserId);
+            if (!createStatus) {
+                return null;
+            }
+        } else {
+            // pull role mapping for this org
+            Set<RoleMappingDTO> roleMappings = degaUserDTO.getRoleMappings();
+            List<RoleMappingDTO> currentOrgRoleMappings = roleMappings
+                .stream()
+                .filter(rm -> rm.getOrganizationId().equals(degaUserDTO.getOrganizationCurrentId()))
+                .collect(toList());
+            List<KeyCloakRoleMappingDTO> keyCloakOrgsRoleMappings =
+                currentOrgRoleMappings.stream().map(rm -> transformRoleMapping(rm)).collect(toList());
 
-        // Delete all the dega roles
-        List<KeyCloakRoleMappingDTO> rolesToBeRemoved = Arrays.stream(roleMappingsDTO)
-            .filter(rm -> rm.getDescription().startsWith("DEGA_ROLE"))
-            .collect(toList());
-        KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO1 = new KeyCloakRoleMappingsDTO();
-        keyCloakRoleMappingsDTO1.setKeyCloakRoleMappingsDTO(rolesToBeRemoved);
-        JsonObject jObj1 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO1);
-        String rolesToBeRemovedAsString = jObj1.get("keyCloakRoleMappingsDTO").toString();
-        boolean deleteStatus = keycloakUtils.delete(endPoint, rolesToBeRemovedAsString);
-        if (!deleteStatus) {
-            return null;
-        }
+            // get current user role mapping and remove current dega role mappings (if any exists)
+            String endPoint = "users/"+keyCloakUserId+"/role-mappings/realm";
+            KeyCloakRoleMappingDTO[] roleMappingsDTO = keycloakUtils.getRoleMappingsDTO(endPoint);
 
-        // Add new roles on the current org
-        List<KeyCloakRoleMappingDTO> newRoles = Arrays.stream(roleMappingsDTO)
-            .filter(rm -> !rm.getDescription().startsWith("DEGA_ROLE"))
-            .collect(toList());
-        newRoles.addAll(keyCloakOrgsRoleMappings);
-        KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO2 = new KeyCloakRoleMappingsDTO();
-        keyCloakRoleMappingsDTO2.setKeyCloakRoleMappingsDTO(newRoles);
-        JsonObject jObj2 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO2);
-        String roleMappingAsString = jObj2.get("keyCloakRoleMappingsDTO").toString();
-        boolean createStatus = keycloakUtils.create(endPoint, roleMappingAsString);
-        if (!createStatus) {
-            return null;
+            // Delete all the dega roles
+            List<KeyCloakRoleMappingDTO> rolesToBeRemoved = Arrays.stream(roleMappingsDTO)
+                .filter(rm -> rm.getDescription().startsWith("DEGA_ROLE"))
+                .collect(toList());
+            KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO1 = new KeyCloakRoleMappingsDTO();
+            keyCloakRoleMappingsDTO1.setKeyCloakRoleMappingsDTO(rolesToBeRemoved);
+            JsonObject jObj1 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO1);
+            String rolesToBeRemovedAsString = jObj1.get("keyCloakRoleMappingsDTO").toString();
+            boolean deleteStatus = keycloakUtils.delete(endPoint, rolesToBeRemovedAsString);
+            if (!deleteStatus) {
+                return null;
+            }
+
+            // Add new roles on the current org
+            List<KeyCloakRoleMappingDTO> newRoles = Arrays.stream(roleMappingsDTO)
+                .filter(rm -> !rm.getDescription().startsWith("DEGA_ROLE"))
+                .collect(toList());
+            newRoles.addAll(keyCloakOrgsRoleMappings);
+            KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO2 = new KeyCloakRoleMappingsDTO();
+            keyCloakRoleMappingsDTO2.setKeyCloakRoleMappingsDTO(newRoles);
+            JsonObject jObj2 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO2);
+            String roleMappingAsString = jObj2.get("keyCloakRoleMappingsDTO").toString();
+            boolean createStatus = keycloakUtils.create(endPoint, roleMappingAsString);
+            if (!createStatus) {
+                return null;
+            }
         }
 
         DegaUserDTO result = degaUserService.save(degaUserDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, degaUserDTO.getId().toString()))
             .body(result);
+    }
+
+    private boolean addSuperAdminRole(String keyCloakUserId) {
+        // get keycloak role name and role id
+        String endpointUrl = "roles/ROLE_SUPER_ADMIN";
+        KeyCloakRoleMappingDTO keyCloakRoleMappingDTO = keycloakUtils.getRoleMapping(endpointUrl);
+        List<KeyCloakRoleMappingDTO> roles = new ArrayList<>();
+        roles.add(keyCloakRoleMappingDTO);
+        KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO2 = new KeyCloakRoleMappingsDTO();
+        keyCloakRoleMappingsDTO2.setKeyCloakRoleMappingsDTO(roles);
+        JsonObject jObj2 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO2);
+        String roleMappingAsString = jObj2.get("keyCloakRoleMappingsDTO").toString();
+        String endPoint = "users/"+keyCloakUserId+"/role-mappings/realm";
+        return keycloakUtils.create(endPoint, roleMappingAsString);
     }
 
     /**
