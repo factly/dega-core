@@ -82,30 +82,29 @@ public class DegaUserResource {
         }
         degaUserDTO.setCreatedDate(ZonedDateTime.now());
 
+        // save the user to keycloak
+        JsonObject jObj = transformDTO(degaUserDTO);
+        String jsonAsString = jObj.toString();
+        Boolean status = keycloakUtils.create("users", jsonAsString);
+        if(status == false) {
+            throw new RuntimeException("Failed to create new keycloak user");
+        }
+
         // get the keycloak id
         String keyCloakId = keycloakUtils.getUserId("users?username="+degaUserDTO.getEmail());
         if (keyCloakId.equals("NOT_FOUND")) {
             throw new RuntimeException("Failed to retrieve keycloak unique id");
         }
+        degaUserDTO.setKeycloakId(keyCloakId);
+        degaUserDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(degaUserDTO.getDisplayName())));
 
         Boolean isSuperAdmin = degaUserDTO.isIsSuperAdmin();
         if (isSuperAdmin != null && isSuperAdmin == true) {
             boolean createStatus = addSuperAdminRole(keyCloakId);
             if (!createStatus) {
-                return null;
+                throw new RuntimeException("Failed to add super admin role mapping to the keycloak user");
             }
         } else {
-            // save the user to keycloak
-            JsonObject jObj = transformDTO(degaUserDTO);
-            String jsonAsString = jObj.toString();
-            Boolean status = keycloakUtils.create("users", jsonAsString);
-            if(status == false) {
-                return null;
-            }
-
-            degaUserDTO.setKeycloakId(keyCloakId);
-            degaUserDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(degaUserDTO.getDisplayName())));
-
             // pull role mapping for this org
             Set<RoleMappingDTO> roleMappings = degaUserDTO.getRoleMappings();
             Set<RoleMappingDTO> currentOrgsRoleMappings = roleMappings
@@ -113,19 +112,19 @@ public class DegaUserResource {
                 .filter(rm -> !rm.getId().equals(degaUserDTO.getOrganizationCurrentId()))
                 .collect(toSet());
 
-            // transform
+            // transform dega dto to keycloak dto
             KeyCloakRoleMappingsDTO keyCloakRoleMappingsDTO = new KeyCloakRoleMappingsDTO();
             List<KeyCloakRoleMappingDTO> keyCloakOrgsRoleMappings =
                 currentOrgsRoleMappings.stream().map(rm -> transformRoleMapping(rm)).collect(toList());
             keyCloakRoleMappingsDTO.setKeyCloakRoleMappingsDTO(keyCloakOrgsRoleMappings);
 
-            // add new roles
+            // add new roles to keycloak
             String endPoint = "users/"+keyCloakId+"/role-mappings/realm";
             JsonObject jObj1 = (JsonObject)new GsonBuilder().create().toJsonTree(keyCloakRoleMappingsDTO);
             String roleMappingAsString = jObj1.get("keyCloakRoleMappingsDTO").toString();
             boolean createStatus = keycloakUtils.create(endPoint, roleMappingAsString);
             if (!createStatus) {
-                return null;
+                throw new RuntimeException("Failed to apply current organization's role mappings on the keycloak user");
             }
         }
 
@@ -159,7 +158,7 @@ public class DegaUserResource {
         if (isSuperAdmin != null && isSuperAdmin == true) {
             boolean createStatus = addSuperAdminRole(keyCloakUserId);
             if (!createStatus) {
-                return null;
+                throw new RuntimeException("Failed to add super admin role mapping to the keycloak user");
             }
         } else {
             // pull role mapping for this org
@@ -185,7 +184,7 @@ public class DegaUserResource {
             String rolesToBeRemovedAsString = jObj1.get("keyCloakRoleMappingsDTO").toString();
             boolean deleteStatus = keycloakUtils.delete(endPoint, rolesToBeRemovedAsString);
             if (!deleteStatus) {
-                return null;
+                throw new RuntimeException("Failed to delete existing dega roles on the keycloak user");
             }
 
             // Add new roles on the current org
@@ -199,7 +198,7 @@ public class DegaUserResource {
             String roleMappingAsString = jObj2.get("keyCloakRoleMappingsDTO").toString();
             boolean createStatus = keycloakUtils.create(endPoint, roleMappingAsString);
             if (!createStatus) {
-                return null;
+                throw new RuntimeException("Failed to apply current organization's role mappings on the keycloak user");
             }
         }
 
