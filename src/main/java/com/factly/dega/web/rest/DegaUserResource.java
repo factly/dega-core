@@ -284,7 +284,7 @@ public class DegaUserResource {
             Set<OrganizationDTO> orgDTOs = new HashSet<>();
             roleMappings.stream().forEach(rm -> {
                 OrganizationDTO organizationDTO = new OrganizationDTO();
-                organizationDTO.setName(rm.getName());
+                organizationDTO.setName(rm.getOrganizationName());
                 organizationDTO.setId(rm.getOrganizationId());
                 orgDTOs.add(organizationDTO);
             });
