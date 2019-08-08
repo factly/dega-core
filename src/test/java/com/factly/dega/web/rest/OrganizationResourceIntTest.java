@@ -5,6 +5,7 @@ import com.factly.dega.CoreApp;
 import com.factly.dega.domain.Organization;
 import com.factly.dega.repository.OrganizationRepository;
 import com.factly.dega.repository.search.OrganizationSearchRepository;
+import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.OrganizationService;
 import com.factly.dega.service.dto.OrganizationDTO;
 import com.factly.dega.service.mapper.OrganizationMapper;
@@ -221,10 +222,13 @@ public class OrganizationResourceIntTest {
     @Mock
     private OrganizationService organizationServiceMock;
 
+    @Mock
+    private DegaUserService degaUserService;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final OrganizationResource organizationResource = new OrganizationResource(organizationService);
+        final OrganizationResource organizationResource = new OrganizationResource(organizationService, degaUserService);
         this.restOrganizationMockMvc = MockMvcBuilders.standaloneSetup(organizationResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
