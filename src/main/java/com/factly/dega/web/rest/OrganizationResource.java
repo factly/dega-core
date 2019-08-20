@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -100,16 +101,22 @@ public class OrganizationResource {
     /**
      * GET  /organizations : get all the organizations.
      *
+     * @param keycloakId the keycloakId of the user
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of organizations in body
      */
     @GetMapping("/organizations")
     @Timed
-    public ResponseEntity<List<OrganizationDTO>> getAllOrganizations(Pageable pageable, HttpServletRequest request) {
-        log.debug("REST request to get a page of Organizations");
-        Page<OrganizationDTO> page = organizationService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    public ResponseEntity<List<OrganizationDTO>> getOrganizations(@RequestParam(value = "keycloakId", required = false) String keycloakId,
+                                                                  Pageable pageable) {
+        log.debug("REST request to get a page of Organizations: query {}", keycloakId);
+            if(StringUtils.isEmpty(keycloakId)){
+                Page<OrganizationDTO> page = organizationService.findAll(pageable);
+                HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
+                return ResponseEntity.ok().headers(headers).body(page.getContent());
+            }
+            return ResponseEntity.ok().body(organizationService.getOrganizations(keycloakId, pageable));
+
     }
 
     /**
@@ -169,44 +176,6 @@ public class OrganizationResource {
         log.debug("REST request to get Organization by slug : {}", slug);
         Optional<OrganizationDTO> organizationDTO = organizationService.findBySlug(slug);
         return organizationDTO;
-    }
-
-
-    /**
-     * GET  /organizations/logged-in-user/:email : get the list of organizations
-     *
-     * @param email the email of the degaUserDTO to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the List<OrganizationDTO, or with status 404 (Not Found)
-     */
-    @GetMapping("/organizations/logged-in-user/{email}")
-    @Timed
-    public ResponseEntity<List<OrganizationDTO>> getDegaUserOrganizations(Pageable pageable, @PathVariable String email) {
-        log.debug("REST request to get DegaUser : {}", email);
-        Optional<DegaUserDTO> degaUserDTO = degaUserService.findByEmailId(email);
-
-        if (degaUserDTO.get() == null) {
-            return null;
-        }
-        DegaUserDTO degaUser = degaUserDTO.get();
-        Boolean isSuperAdmin = degaUser.isIsSuperAdmin();
-        if (isSuperAdmin != null && isSuperAdmin == true) {
-            // return all orgs
-            Page<OrganizationDTO> page = organizationService.findAll(pageable);
-            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
-            return ResponseEntity.ok().headers(headers).body(page.getContent());
-        } else {
-            Set<RoleMappingDTO> roleMappings = degaUser.getRoleMappings();
-            Set<OrganizationDTO> orgDTOs = new HashSet<>();
-            roleMappings.stream().forEach(rm -> {
-                OrganizationDTO organizationDTO = new OrganizationDTO();
-                organizationDTO.setName(rm.getOrganizationName());
-                organizationDTO.setId(rm.getOrganizationId());
-                orgDTOs.add(organizationDTO);
-            });
-            List<OrganizationDTO> aList = orgDTOs.stream().collect(Collectors.toList());
-
-            return ResponseEntity.ok().body(aList);
-        }
     }
 
     public String getSlug(String name){

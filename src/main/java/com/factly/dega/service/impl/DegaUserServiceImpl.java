@@ -142,4 +142,17 @@ public class DegaUserServiceImpl implements DegaUserService {
             .map(degaUserMapper::toDto);
     }
 
+    /**
+     * Get one degaUser by keycloakId.
+     *
+     * @param keycloakId the id of the entity
+     * @return the entity
+     */
+    @Override
+    public Optional<DegaUserDTO> findByKeycloakId(String keycloakId) {
+        log.debug("Request to get DegaUser : {}", keycloakId);
+        return degaUserRepository.findByKeycloakId(keycloakId)
+            .map(degaUserMapper::toDto);
+    }
+
 }
