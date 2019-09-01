@@ -1,5 +1,6 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.service.MediaService;
 import com.factly.dega.service.OrganizationService;
 import com.factly.dega.domain.Organization;
 import com.factly.dega.repository.OrganizationRepository;
@@ -7,6 +8,7 @@ import com.factly.dega.repository.search.OrganizationSearchRepository;
 import com.factly.dega.service.RoleMappingService;
 import com.factly.dega.service.RoleService;
 import com.factly.dega.service.dto.OrganizationDTO;
+import com.factly.dega.service.dto.MediaDTO;
 import com.factly.dega.service.dto.RoleDTO;
 import com.factly.dega.service.dto.RoleMappingDTO;
 import com.factly.dega.service.mapper.OrganizationMapper;
@@ -42,14 +44,18 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final RoleMappingService roleMappingService;
 
+    private final MediaService mediaService;
+
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
                                    OrganizationSearchRepository organizationSearchRepository,
-                                   RoleService roleService, RoleMappingService roleMappingService) {
+                                   RoleService roleService, RoleMappingService roleMappingService,
+                                   MediaService mediaService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.organizationSearchRepository = organizationSearchRepository;
         this.roleService = roleService;
         this.roleMappingService = roleMappingService;
+        this.mediaService = mediaService;
     }
 
     /**
@@ -65,6 +71,22 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = organizationMapper.toEntity(organizationDTO);
         organization = organizationRepository.save(organization);
         OrganizationDTO result = organizationMapper.toDto(organization);
+        Optional<MediaDTO> mediaLogoDTO = mediaService.findOne(result.getMediaLogoDTO().getId());
+        if(mediaLogoDTO.isPresent()) {
+            result.setMediaLogoDTO(mediaLogoDTO.get());
+        }
+        Optional<MediaDTO> mediaMobileLogoDTO = mediaService.findOne(result.getMediaMobileLogoDTO().getId());
+        if(mediaMobileLogoDTO.isPresent()) {
+            result.setMediaMobileLogoDTO(mediaMobileLogoDTO.get());
+        }
+        Optional<MediaDTO> mediaFaviconDTO = mediaService.findOne(result.getMediaFaviconDTO().getId());
+        if(mediaFaviconDTO.isPresent()) {
+            result.setMediaFaviconDTO(mediaFaviconDTO.get());
+        }
+        Optional<MediaDTO> mediaMobileIconDTO = mediaService.findOne(result.getMediaMobileIconDTO().getId());
+        if(mediaMobileIconDTO.isPresent()) {
+            result.setMediaMobileIconDTO(mediaMobileIconDTO.get());
+        }
         organizationSearchRepository.save(organization);
         createRoleMappings(result, roleService, roleMappingService);
         return result;
