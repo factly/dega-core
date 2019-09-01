@@ -4,7 +4,9 @@ import com.factly.dega.service.DegaUserService;
 import com.factly.dega.domain.DegaUser;
 import com.factly.dega.repository.DegaUserRepository;
 import com.factly.dega.repository.search.DegaUserSearchRepository;
+import com.factly.dega.service.MediaService;
 import com.factly.dega.service.dto.DegaUserDTO;
+import com.factly.dega.service.dto.MediaDTO;
 import com.factly.dega.service.mapper.DegaUserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,10 +33,13 @@ public class DegaUserServiceImpl implements DegaUserService {
 
     private final DegaUserSearchRepository degaUserSearchRepository;
 
-    public DegaUserServiceImpl(DegaUserRepository degaUserRepository, DegaUserMapper degaUserMapper, DegaUserSearchRepository degaUserSearchRepository) {
+    private final MediaService mediaService;
+
+    public DegaUserServiceImpl(DegaUserRepository degaUserRepository, DegaUserMapper degaUserMapper, DegaUserSearchRepository degaUserSearchRepository, MediaService mediaService) {
         this.degaUserRepository = degaUserRepository;
         this.degaUserMapper = degaUserMapper;
         this.degaUserSearchRepository = degaUserSearchRepository;
+        this.mediaService = mediaService;
     }
 
     /**
@@ -50,6 +55,10 @@ public class DegaUserServiceImpl implements DegaUserService {
         DegaUser degaUser = degaUserMapper.toEntity(degaUserDTO);
         degaUser = degaUserRepository.save(degaUser);
         DegaUserDTO result = degaUserMapper.toDto(degaUser);
+        Optional<MediaDTO> mediaDTO = mediaService.findOne(result.getMediaDTO().getId());
+        if(mediaDTO.isPresent()) {
+            result.setMediaDTO(mediaDTO.get());
+        }
         degaUserSearchRepository.save(degaUser);
         return result;
     }
