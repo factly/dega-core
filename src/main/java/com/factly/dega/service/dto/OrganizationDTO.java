@@ -106,13 +106,13 @@ public class OrganizationDTO implements Serializable {
 
     private Boolean enableFactchecking;
 
-    private String mediaLogoId;
+    private MediaDTO mediaLogoDTO;
 
-    private String mediaMobileLogoId;
+    private MediaDTO mediaMobileLogoDTO;
 
-    private String mediaFaviconId;
+    private MediaDTO mediaFaviconDTO;
 
-    private String mediaMobileIconId;
+    private MediaDTO mediaMobileIconDTO;
 
     public String getId() {
         return id;
@@ -482,36 +482,36 @@ public class OrganizationDTO implements Serializable {
         this.enableFactchecking = enableFactchecking;
     }
 
-    public String getMediaLogoId() {
-        return mediaLogoId;
+    public MediaDTO getMediaLogoDTO() {
+        return mediaLogoDTO;
     }
 
-    public void setMediaLogoId(String mediaId) {
-        this.mediaLogoId = mediaId;
+    public void setMediaLogoDTO(MediaDTO mediaDTO) {
+        this.mediaLogoDTO = mediaDTO;
     }
 
-    public String getMediaMobileLogoId() {
-        return mediaMobileLogoId;
+    public MediaDTO getMediaMobileLogoDTO() {
+        return mediaMobileLogoDTO;
     }
 
-    public void setMediaMobileLogoId(String mediaId) {
-        this.mediaMobileLogoId = mediaId;
+    public void setMediaMobileLogoDTO(MediaDTO mediaDTO) {
+        this.mediaMobileLogoDTO = mediaDTO;
     }
 
-    public String getMediaFaviconId() {
-        return mediaFaviconId;
+    public MediaDTO getMediaFaviconDTO() {
+        return mediaFaviconDTO;
     }
 
-    public void setMediaFaviconId(String mediaId) {
-        this.mediaFaviconId = mediaId;
+    public void setMediaFaviconDTO(MediaDTO mediaDTO) {
+        this.mediaFaviconDTO = mediaDTO;
     }
 
-    public String getMediaMobileIconId() {
-        return mediaMobileIconId;
+    public MediaDTO getMediaMobileIconDTO() {
+        return mediaMobileIconDTO;
     }
 
-    public void setMediaMobileIconId(String mediaId) {
-        this.mediaMobileIconId = mediaId;
+    public void setMediaMobileIconDTO(MediaDTO mediaDTO) {
+        this.mediaMobileIconDTO = mediaDTO;
     }
 
     @Override
@@ -584,10 +584,6 @@ public class OrganizationDTO implements Serializable {
             ", lastUpdatedDate='" + getLastUpdatedDate() + "'" +
             ", siteAddress='" + getSiteAddress() + "'" +
             ", enableFactchecking='" + isEnableFactchecking() + "'" +
-            ", mediaLogo=" + getMediaLogoId() +
-            ", mediaMobileLogo=" + getMediaMobileLogoId() +
-            ", mediaFavicon=" + getMediaFaviconId() +
-            ", mediaMobileIcon=" + getMediaMobileIconId() +
             "}";
     }
 }

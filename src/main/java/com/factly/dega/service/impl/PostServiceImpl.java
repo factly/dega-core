@@ -1,9 +1,11 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.service.MediaService;
 import com.factly.dega.service.PostService;
 import com.factly.dega.domain.Post;
 import com.factly.dega.repository.PostRepository;
 import com.factly.dega.repository.search.PostSearchRepository;
+import com.factly.dega.service.dto.MediaDTO;
 import com.factly.dega.service.dto.PostDTO;
 import com.factly.dega.service.mapper.PostMapper;
 import org.slf4j.Logger;
@@ -31,10 +33,13 @@ public class PostServiceImpl implements PostService {
 
     private final PostSearchRepository postSearchRepository;
 
-    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, PostSearchRepository postSearchRepository) {
+    private final MediaService mediaService;
+
+    public PostServiceImpl(PostRepository postRepository, PostMapper postMapper, PostSearchRepository postSearchRepository, MediaService mediaService) {
         this.postRepository = postRepository;
         this.postMapper = postMapper;
         this.postSearchRepository = postSearchRepository;
+        this.mediaService = mediaService;
     }
 
     /**
@@ -50,6 +55,10 @@ public class PostServiceImpl implements PostService {
         Post post = postMapper.toEntity(postDTO);
         post = postRepository.save(post);
         PostDTO result = postMapper.toDto(post);
+        Optional<MediaDTO> mediaDTO = mediaService.findOne(result.getMediaDTO().getId());
+        if(mediaDTO.isPresent()) {
+            result.setMediaDTO(mediaDTO.get());
+        }
         postSearchRepository.save(post);
         return result;
     }

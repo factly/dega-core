@@ -85,7 +85,7 @@ public class DegaUserDTO implements Serializable {
 
     private OrganizationDTO organizationCurrent;
 
-    private String mediaId;
+    private MediaDTO mediaDTO;
 
     public String getId() {
         return id;
@@ -287,12 +287,12 @@ public class DegaUserDTO implements Serializable {
         this.roleMappings = roleMappings;
     }
 
-    public String getMediaId() {
-        return mediaId;
+    public MediaDTO getMediaDTO() {
+        return mediaDTO;
     }
 
-    public void setMediaId(String mediaId) {
-        this.mediaId = mediaId;
+    public void setMediaDTO(MediaDTO mediaDTO) {
+        this.mediaDTO = mediaDTO;
     }
 
     @Override
@@ -342,7 +342,6 @@ public class DegaUserDTO implements Serializable {
             ", organizationDefault='" + getOrganizationDefaultName() + "'" +
             ", organizationCurrent=" + getOrganizationCurrentId() +
             ", organizationCurrent='" + getOrganizationCurrentName() + "'" +
-            ", media=" + getMediaId() +
             "}";
     }
 }
