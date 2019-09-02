@@ -185,14 +185,14 @@ public class OrganizationServiceImpl implements OrganizationService {
     /**
      * Get the organizations by keycloakId and pageable.
      *
-     * @param keycloakId the keycloakId of the User
+     * @param keycloakUserId the keycloakId of the User
      * @param pageable the pagination information
      *
      * @return List<OrganizationDTO> List of Organizations by keycloakId and pageable
      */
-    public List<OrganizationDTO> getOrganizations(String keycloakId, Pageable pageable){
+    public List<OrganizationDTO> getOrganizations(String keycloakUserId, Pageable pageable){
 
-        Optional<DegaUserDTO> degaUserDTO = degaUserService.findByKeycloakId(keycloakId);
+        Optional<DegaUserDTO> degaUserDTO = degaUserService.findByKeycloakId(keycloakUserId);
 
         if (degaUserDTO.get() == null) {
             return null;

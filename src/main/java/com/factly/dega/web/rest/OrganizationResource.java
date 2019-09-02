@@ -107,7 +107,7 @@ public class OrganizationResource {
      */
     @GetMapping("/organizations")
     @Timed
-    public ResponseEntity<List<OrganizationDTO>> getOrganizations(@RequestParam(value = "keycloakId", required = false) String keycloakId,
+    public ResponseEntity<List<OrganizationDTO>> getOrganizations(@RequestParam(value = "keycloakUserId", required = false) String keycloakId,
                                                                   Pageable pageable) {
         log.debug("REST request to get a page of Organizations: query {}", keycloakId);
             if(StringUtils.isEmpty(keycloakId)){

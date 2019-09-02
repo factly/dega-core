@@ -71,6 +71,6 @@ public interface OrganizationService {
      *
      * @return List<OrganizationDTO> List of Organizations by keycloakId and pageable
      */
-    List<OrganizationDTO> getOrganizations(String keycloakId, Pageable pageable);
+    List<OrganizationDTO> getOrganizations(String keycloakUserId, Pageable pageable);
 
 }
