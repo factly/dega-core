@@ -29,4 +29,7 @@ public interface DegaUserRepository extends MongoRepository<DegaUser, String> {
     Optional<DegaUser> findByEmailId(String emailId);
 
     Optional<DegaUser> findBySlug(String slug);
+
+    @Query("{'keycloakId': ?0}")
+    Optional<DegaUser> findByKeycloakId(String keycloakId);
 }

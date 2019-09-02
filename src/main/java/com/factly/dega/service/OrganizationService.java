@@ -5,6 +5,7 @@ import com.factly.dega.service.dto.OrganizationDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -61,5 +62,15 @@ public interface OrganizationService {
      * @return Optional<OrganizationDTO> post by clientId and slug
      */
     Optional<OrganizationDTO> findBySlug(String slug);
+
+    /**
+     * Get the organizations by keycloakId and pageable.
+     *
+     * @param keycloakId the keycloakId of the User
+     * @param pageable the pagination information
+     *
+     * @return List<OrganizationDTO> List of Organizations by keycloakId and pageable
+     */
+    List<OrganizationDTO> getOrganizations(String keycloakUserId, Pageable pageable);
 
 }

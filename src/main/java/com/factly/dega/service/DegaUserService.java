@@ -75,4 +75,12 @@ public interface DegaUserService {
      * @return Optional<DegaUserDTO> post by clientId and slug
      */
     Optional<DegaUserDTO> findBySlug(String slug);
+
+    /**
+     * Get the degaUser by keycloakId.
+     *
+     * @param keycloakId the id of the entity
+     * @return the entity
+     */
+    Optional<DegaUserDTO> findByKeycloakId(String keycloakId);
 }

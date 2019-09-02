@@ -1,5 +1,6 @@
 package com.factly.dega.service.impl;
 
+import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.MediaService;
 import com.factly.dega.service.OrganizationService;
 import com.factly.dega.domain.Organization;
@@ -7,6 +8,7 @@ import com.factly.dega.repository.OrganizationRepository;
 import com.factly.dega.repository.search.OrganizationSearchRepository;
 import com.factly.dega.service.RoleMappingService;
 import com.factly.dega.service.RoleService;
+import com.factly.dega.service.dto.DegaUserDTO;
 import com.factly.dega.service.dto.OrganizationDTO;
 import com.factly.dega.service.dto.MediaDTO;
 import com.factly.dega.service.dto.RoleDTO;
@@ -20,8 +22,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.elasticsearch.index.query.QueryBuilders.*;
@@ -44,17 +48,21 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     private final RoleMappingService roleMappingService;
 
+    private final DegaUserService degaUserService;
+
     private final MediaService mediaService;
 
     public OrganizationServiceImpl(OrganizationRepository organizationRepository, OrganizationMapper organizationMapper,
                                    OrganizationSearchRepository organizationSearchRepository,
                                    RoleService roleService, RoleMappingService roleMappingService,
+                                   DegaUserService degaUserService,
                                    MediaService mediaService) {
         this.organizationRepository = organizationRepository;
         this.organizationMapper = organizationMapper;
         this.organizationSearchRepository = organizationSearchRepository;
         this.roleService = roleService;
         this.roleMappingService = roleMappingService;
+        this.degaUserService = degaUserService;
         this.mediaService = mediaService;
     }
 
@@ -172,6 +180,42 @@ public class OrganizationServiceImpl implements OrganizationService {
         log.debug("Request to get Organization by slug : {}", slug);
         return organizationRepository.findBySlug(slug)
             .map(organizationMapper::toDto);
+    }
+
+    /**
+     * Get the organizations by keycloakId and pageable.
+     *
+     * @param keycloakUserId the keycloakId of the User
+     * @param pageable the pagination information
+     *
+     * @return List<OrganizationDTO> List of Organizations by keycloakId and pageable
+     */
+    public List<OrganizationDTO> getOrganizations(String keycloakUserId, Pageable pageable){
+
+        Optional<DegaUserDTO> degaUserDTO = degaUserService.findByKeycloakId(keycloakUserId);
+
+        if (degaUserDTO.get() == null) {
+            return null;
+        }
+        DegaUserDTO degaUser = degaUserDTO.get();
+        Boolean isSuperAdmin = degaUser.isIsSuperAdmin();
+        if (isSuperAdmin != null && isSuperAdmin == true) {
+            // return all orgs
+            Page<OrganizationDTO> page = findAll(pageable);
+            return page.getContent();
+        } else {
+            Set<RoleMappingDTO> roleMappings = degaUser.getRoleMappings();
+            Set<OrganizationDTO> orgDTOs = new HashSet<>();
+            roleMappings.stream().forEach(rm -> {
+                OrganizationDTO organizationDTO = new OrganizationDTO();
+                organizationDTO.setName(rm.getOrganizationName());
+                organizationDTO.setId(rm.getOrganizationId());
+                orgDTOs.add(organizationDTO);
+            });
+            List<OrganizationDTO> orgsList = orgDTOs.stream().collect(Collectors.toList());
+
+            return orgsList;
+        }
     }
 
 }

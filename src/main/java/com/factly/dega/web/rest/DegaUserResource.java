@@ -258,43 +258,6 @@ public class DegaUserResource {
     }
 
     /**
-     * GET  /dega-users/:id : get the "id" degaUser.
-     *
-     * @param id the id of the degaUserDTO to retrieve
-     * @return the ResponseEntity with status 200 (OK) and with body the degaUserDTO, or with status 404 (Not Found)
-     */
-    @GetMapping("/dega-users/{id}/organizations")
-    @Timed
-    public ResponseEntity<List<OrganizationDTO>> getDegaUserOrganizations(Pageable pageable, @PathVariable String id) {
-        log.debug("REST request to get DegaUser : {}", id);
-        Optional<DegaUserDTO> degaUserDTO = degaUserService.findOne(id);
-
-        if (degaUserDTO.get() == null) {
-            return null;
-        }
-        DegaUserDTO degaUser = degaUserDTO.get();
-        Boolean isSuperAdmin = degaUser.isIsSuperAdmin();
-        if (isSuperAdmin != null && isSuperAdmin == true) {
-            // return all oprgs
-            Page<OrganizationDTO> page = organizationService.findAll(pageable);
-            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
-            return ResponseEntity.ok().headers(headers).body(page.getContent());
-        } else {
-            Set<RoleMappingDTO> roleMappings = degaUser.getRoleMappings();
-            Set<OrganizationDTO> orgDTOs = new HashSet<>();
-            roleMappings.stream().forEach(rm -> {
-                OrganizationDTO organizationDTO = new OrganizationDTO();
-                organizationDTO.setName(rm.getOrganizationName());
-                organizationDTO.setId(rm.getOrganizationId());
-                orgDTOs.add(organizationDTO);
-            });
-            List<OrganizationDTO> aList = orgDTOs.stream().collect(Collectors.toList());
-
-            return ResponseEntity.ok().body(aList);
-        }
-    }
-
-    /**
      * DELETE  /dega-users/:id : delete the "id" degaUser.
      *
      * @param id the id of the degaUserDTO to delete

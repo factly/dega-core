@@ -1,13 +1,15 @@
 package com.factly.dega.web.rest;
 
 import com.codahale.metrics.annotation.Timed;
-import com.factly.dega.config.Constants;
+import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.OrganizationService;
+import com.factly.dega.service.dto.DegaUserDTO;
+import com.factly.dega.service.dto.OrganizationDTO;
+import com.factly.dega.service.dto.RoleMappingDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
 import com.factly.dega.web.rest.util.PaginationUtil;
-import com.factly.dega.service.dto.OrganizationDTO;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,18 +19,18 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import java.time.ZonedDateTime;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * REST controller for managing Organization.
@@ -42,9 +44,11 @@ public class OrganizationResource {
     private static final String ENTITY_NAME = "coreOrganization";
 
     private final OrganizationService organizationService;
+    private final DegaUserService degaUserService;
 
-    public OrganizationResource(OrganizationService organizationService) {
+    public OrganizationResource(OrganizationService organizationService, DegaUserService degaUserService) {
         this.organizationService = organizationService;
+        this.degaUserService = degaUserService;
     }
 
     /**
@@ -97,16 +101,22 @@ public class OrganizationResource {
     /**
      * GET  /organizations : get all the organizations.
      *
+     * @param keycloakId the keycloakId of the user
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of organizations in body
      */
     @GetMapping("/organizations")
     @Timed
-    public ResponseEntity<List<OrganizationDTO>> getAllOrganizations(Pageable pageable, HttpServletRequest request) {
-        log.debug("REST request to get a page of Organizations");
-        Page<OrganizationDTO> page = organizationService.findAll(pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    public ResponseEntity<List<OrganizationDTO>> getOrganizations(@RequestParam(value = "keycloakUserId", required = false) String keycloakId,
+                                                                  Pageable pageable) {
+        log.debug("REST request to get a page of Organizations: query {}", keycloakId);
+            if(StringUtils.isEmpty(keycloakId)){
+                Page<OrganizationDTO> page = organizationService.findAll(pageable);
+                HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
+                return ResponseEntity.ok().headers(headers).body(page.getContent());
+            }
+            return ResponseEntity.ok().body(organizationService.getOrganizations(keycloakId, pageable));
+
     }
 
     /**
