@@ -101,7 +101,7 @@ public class OrganizationResource {
     /**
      * GET  /organizations : get all the organizations.
      *
-     * @param keycloakUserId the keycloakUserId of the user
+     * @param keycloakUserId the keycloakId of the user
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of organizations in body
      */
