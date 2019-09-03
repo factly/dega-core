@@ -101,21 +101,21 @@ public class OrganizationResource {
     /**
      * GET  /organizations : get all the organizations.
      *
-     * @param keycloakId the keycloakId of the user
+     * @param keycloakUserId the keycloakId of the user
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of organizations in body
      */
     @GetMapping("/organizations")
     @Timed
-    public ResponseEntity<List<OrganizationDTO>> getOrganizations(@RequestParam(value = "keycloakUserId", required = false) String keycloakId,
+    public ResponseEntity<List<OrganizationDTO>> getOrganizations(@RequestParam(value = "keycloakUserId", required = false) String keycloakUserId,
                                                                   Pageable pageable) {
-        log.debug("REST request to get a page of Organizations: query {}", keycloakId);
-            if(StringUtils.isEmpty(keycloakId)){
+        log.debug("REST request to get a page of Organizations: query {}", keycloakUserId);
+            if(StringUtils.isEmpty(keycloakUserId)){
                 Page<OrganizationDTO> page = organizationService.findAll(pageable);
                 HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/organizations");
                 return ResponseEntity.ok().headers(headers).body(page.getContent());
             }
-            return ResponseEntity.ok().body(organizationService.getOrganizations(keycloakId, pageable));
+            return ResponseEntity.ok().body(organizationService.getOrganizations(keycloakUserId, pageable));
 
     }
 
