@@ -55,7 +55,7 @@ public class PostServiceImpl implements PostService {
         Post post = postMapper.toEntity(postDTO);
         post = postRepository.save(post);
         PostDTO result = postMapper.toDto(post);
-        if(result.getMediaDTO() != null && result.getMediaDTO().getId().isEmpty()) {
+        if(result.getMediaDTO() != null && !result.getMediaDTO().getId().isEmpty()) {
             Optional<MediaDTO> mediaDTO = mediaService.findOne(result.getMediaDTO().getId());
             if (mediaDTO.isPresent()) {
                 result.setMediaDTO(mediaDTO.get());
