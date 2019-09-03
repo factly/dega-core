@@ -79,22 +79,34 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = organizationMapper.toEntity(organizationDTO);
         organization = organizationRepository.save(organization);
         OrganizationDTO result = organizationMapper.toDto(organization);
-        Optional<MediaDTO> mediaLogoDTO = mediaService.findOne(result.getMediaLogoDTO().getId());
-        if(mediaLogoDTO.isPresent()) {
-            result.setMediaLogoDTO(mediaLogoDTO.get());
+        if(result.getMediaLogoDTO() != null && !result.getMediaLogoDTO().getId().isEmpty()){
+            Optional<MediaDTO> mediaLogoDTO = mediaService.findOne(result.getMediaLogoDTO().getId());
+            if(mediaLogoDTO.isPresent()) {
+                result.setMediaLogoDTO(mediaLogoDTO.get());
+            }
         }
-        Optional<MediaDTO> mediaMobileLogoDTO = mediaService.findOne(result.getMediaMobileLogoDTO().getId());
-        if(mediaMobileLogoDTO.isPresent()) {
-            result.setMediaMobileLogoDTO(mediaMobileLogoDTO.get());
+
+        if(result.getMediaMobileLogoDTO() != null && !result.getMediaMobileLogoDTO().getId().isEmpty()){
+            Optional<MediaDTO> mediaMobileLogoDTO = mediaService.findOne(result.getMediaMobileLogoDTO().getId());
+            if(mediaMobileLogoDTO.isPresent()) {
+                result.setMediaMobileLogoDTO(mediaMobileLogoDTO.get());
+            }
         }
-        Optional<MediaDTO> mediaFaviconDTO = mediaService.findOne(result.getMediaFaviconDTO().getId());
-        if(mediaFaviconDTO.isPresent()) {
-            result.setMediaFaviconDTO(mediaFaviconDTO.get());
+
+        if(result.getMediaFaviconDTO() != null && !result.getMediaFaviconDTO().getId().isEmpty()){
+            Optional<MediaDTO> mediaFaviconDTO = mediaService.findOne(result.getMediaFaviconDTO().getId());
+            if(mediaFaviconDTO.isPresent()) {
+                result.setMediaFaviconDTO(mediaFaviconDTO.get());
+            }
         }
-        Optional<MediaDTO> mediaMobileIconDTO = mediaService.findOne(result.getMediaMobileIconDTO().getId());
-        if(mediaMobileIconDTO.isPresent()) {
-            result.setMediaMobileIconDTO(mediaMobileIconDTO.get());
+
+        if(result.getMediaMobileIconDTO() != null && !result.getMediaMobileIconDTO().getId().isEmpty()){
+            Optional<MediaDTO> mediaMobileIconDTO = mediaService.findOne(result.getMediaMobileIconDTO().getId());
+            if(mediaMobileIconDTO.isPresent()) {
+                result.setMediaMobileIconDTO(mediaMobileIconDTO.get());
+            }
         }
+
         organizationSearchRepository.save(organization);
         createRoleMappings(result, roleService, roleMappingService);
         return result;
