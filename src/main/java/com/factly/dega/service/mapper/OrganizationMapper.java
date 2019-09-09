@@ -11,20 +11,20 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring", uses = {MediaMapper.class})
 public interface OrganizationMapper extends EntityMapper<OrganizationDTO, Organization> {
 
-    @Mapping(source = "mediaLogo", target = "mediaLogoDTO")
-    @Mapping(source = "mediaMobileLogo", target = "mediaMobileLogoDTO")
-    @Mapping(source = "mediaFavicon", target = "mediaFaviconDTO")
-    @Mapping(source = "mediaMobileIcon", target = "mediaMobileIconDTO")
+    @Mapping(source = "mediaLogo", target = "mediaLogo")
+    @Mapping(source = "mediaMobileLogo", target = "mediaMobileLogo")
+    @Mapping(source = "mediaFavicon", target = "mediaFavicon")
+    @Mapping(source = "mediaMobileIcon", target = "mediaMobileIcon")
     OrganizationDTO toDto(Organization organization);
 
     @Mapping(target = "degaUsers", ignore = true)
     @Mapping(target = "degaUserDefaults", ignore = true)
     @Mapping(target = "degaUserCurrents", ignore = true)
     @Mapping(target = "roleMappings", ignore = true)
-    @Mapping(source = "mediaLogoDTO.id", target = "mediaLogo")
-    @Mapping(source = "mediaMobileLogoDTO.id", target = "mediaMobileLogo")
-    @Mapping(source = "mediaFaviconDTO.id", target = "mediaFavicon")
-    @Mapping(source = "mediaMobileIconDTO.id", target = "mediaMobileIcon")
+    @Mapping(source = "mediaLogo.id", target = "mediaLogo")
+    @Mapping(source = "mediaMobileLogo.id", target = "mediaMobileLogo")
+    @Mapping(source = "mediaFavicon.id", target = "mediaFavicon")
+    @Mapping(source = "mediaMobileIcon.id", target = "mediaMobileIcon")
     Organization toEntity(OrganizationDTO organizationDTO);
 
     default Organization fromId(String id) {

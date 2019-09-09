@@ -56,7 +56,7 @@ public class PostDTO implements Serializable {
 
     private Set<DegaUserDTO> degaUsers = new HashSet<>();
 
-    private MediaDTO mediaDTO;
+    private MediaDTO media;
 
     public String getId() {
         return id;
@@ -226,12 +226,12 @@ public class PostDTO implements Serializable {
         this.degaUsers = degaUsers;
     }
 
-    public MediaDTO getMediaDTO() {
-        return mediaDTO;
+    public MediaDTO getMedia() {
+        return media;
     }
 
-    public void setMediaDTO(MediaDTO mediaDTO) {
-        this.mediaDTO = mediaDTO;
+    public void setMedia(MediaDTO media) {
+        this.media = media;
     }
 
     @Override

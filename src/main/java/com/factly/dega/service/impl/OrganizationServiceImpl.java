@@ -79,31 +79,31 @@ public class OrganizationServiceImpl implements OrganizationService {
         Organization organization = organizationMapper.toEntity(organizationDTO);
         organization = organizationRepository.save(organization);
         OrganizationDTO result = organizationMapper.toDto(organization);
-        if(result.getMediaLogoDTO() != null && !result.getMediaLogoDTO().getId().isEmpty()){
-            Optional<MediaDTO> mediaLogoDTO = mediaService.findOne(result.getMediaLogoDTO().getId());
+        if(result.getMediaLogo() != null && !result.getMediaLogo().getId().isEmpty()){
+            Optional<MediaDTO> mediaLogoDTO = mediaService.findOne(result.getMediaLogo().getId());
             if(mediaLogoDTO.isPresent()) {
-                result.setMediaLogoDTO(mediaLogoDTO.get());
+                result.setMediaLogo(mediaLogoDTO.get());
             }
         }
 
-        if(result.getMediaMobileLogoDTO() != null && !result.getMediaMobileLogoDTO().getId().isEmpty()){
-            Optional<MediaDTO> mediaMobileLogoDTO = mediaService.findOne(result.getMediaMobileLogoDTO().getId());
+        if(result.getMediaMobileLogo() != null && !result.getMediaMobileLogo().getId().isEmpty()){
+            Optional<MediaDTO> mediaMobileLogoDTO = mediaService.findOne(result.getMediaMobileLogo().getId());
             if(mediaMobileLogoDTO.isPresent()) {
-                result.setMediaMobileLogoDTO(mediaMobileLogoDTO.get());
+                result.setMediaMobileLogo(mediaMobileLogoDTO.get());
             }
         }
 
-        if(result.getMediaFaviconDTO() != null && !result.getMediaFaviconDTO().getId().isEmpty()){
-            Optional<MediaDTO> mediaFaviconDTO = mediaService.findOne(result.getMediaFaviconDTO().getId());
+        if(result.getMediaFavicon() != null && !result.getMediaFavicon().getId().isEmpty()){
+            Optional<MediaDTO> mediaFaviconDTO = mediaService.findOne(result.getMediaFavicon().getId());
             if(mediaFaviconDTO.isPresent()) {
-                result.setMediaFaviconDTO(mediaFaviconDTO.get());
+                result.setMediaFavicon(mediaFaviconDTO.get());
             }
         }
 
-        if(result.getMediaMobileIconDTO() != null && !result.getMediaMobileIconDTO().getId().isEmpty()){
-            Optional<MediaDTO> mediaMobileIconDTO = mediaService.findOne(result.getMediaMobileIconDTO().getId());
+        if(result.getMediaMobileIcon() != null && !result.getMediaMobileIcon().getId().isEmpty()){
+            Optional<MediaDTO> mediaMobileIconDTO = mediaService.findOne(result.getMediaMobileIcon().getId());
             if(mediaMobileIconDTO.isPresent()) {
-                result.setMediaMobileIconDTO(mediaMobileIconDTO.get());
+                result.setMediaMobileIcon(mediaMobileIconDTO.get());
             }
         }
 
