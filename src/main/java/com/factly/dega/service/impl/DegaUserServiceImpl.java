@@ -55,10 +55,10 @@ public class DegaUserServiceImpl implements DegaUserService {
         DegaUser degaUser = degaUserMapper.toEntity(degaUserDTO);
         degaUser = degaUserRepository.save(degaUser);
         DegaUserDTO result = degaUserMapper.toDto(degaUser);
-        if(result.getMediaDTO() != null && !result.getMediaDTO().getId().isEmpty()) {
-            Optional<MediaDTO> mediaDTO = mediaService.findOne(result.getMediaDTO().getId());
+        if(result.getMedia() != null && !result.getMedia().getId().isEmpty()) {
+            Optional<MediaDTO> mediaDTO = mediaService.findOne(result.getMedia().getId());
             if (mediaDTO.isPresent()) {
-                result.setMediaDTO(mediaDTO.get());
+                result.setMedia(mediaDTO.get());
             }
         }
         degaUserSearchRepository.save(degaUser);

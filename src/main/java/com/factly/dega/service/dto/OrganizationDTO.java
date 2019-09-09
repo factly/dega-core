@@ -106,13 +106,13 @@ public class OrganizationDTO implements Serializable {
 
     private Boolean enableFactchecking;
 
-    private MediaDTO mediaLogoDTO;
+    private MediaDTO mediaLogo;
 
-    private MediaDTO mediaMobileLogoDTO;
+    private MediaDTO mediaMobileLogo;
 
-    private MediaDTO mediaFaviconDTO;
+    private MediaDTO mediaFavicon;
 
-    private MediaDTO mediaMobileIconDTO;
+    private MediaDTO mediaMobileIcon;
 
     public String getId() {
         return id;
@@ -482,36 +482,36 @@ public class OrganizationDTO implements Serializable {
         this.enableFactchecking = enableFactchecking;
     }
 
-    public MediaDTO getMediaLogoDTO() {
-        return mediaLogoDTO;
+    public MediaDTO getMediaLogo() {
+        return mediaLogo;
     }
 
-    public void setMediaLogoDTO(MediaDTO mediaDTO) {
-        this.mediaLogoDTO = mediaDTO;
+    public void setMediaLogo(MediaDTO mediaDTO) {
+        this.mediaLogo = mediaDTO;
     }
 
-    public MediaDTO getMediaMobileLogoDTO() {
-        return mediaMobileLogoDTO;
+    public MediaDTO getMediaMobileLogo() {
+        return mediaMobileLogo;
     }
 
-    public void setMediaMobileLogoDTO(MediaDTO mediaDTO) {
-        this.mediaMobileLogoDTO = mediaDTO;
+    public void setMediaMobileLogo(MediaDTO mediaDTO) {
+        this.mediaMobileLogo = mediaDTO;
     }
 
-    public MediaDTO getMediaFaviconDTO() {
-        return mediaFaviconDTO;
+    public MediaDTO getMediaFavicon() {
+        return mediaFavicon;
     }
 
-    public void setMediaFaviconDTO(MediaDTO mediaDTO) {
-        this.mediaFaviconDTO = mediaDTO;
+    public void setMediaFavicon(MediaDTO mediaDTO) {
+        this.mediaFavicon = mediaDTO;
     }
 
-    public MediaDTO getMediaMobileIconDTO() {
-        return mediaMobileIconDTO;
+    public MediaDTO getMediaMobileIcon() {
+        return mediaMobileIcon;
     }
 
-    public void setMediaMobileIconDTO(MediaDTO mediaDTO) {
-        this.mediaMobileIconDTO = mediaDTO;
+    public void setMediaMobileIcon(MediaDTO mediaDTO) {
+        this.mediaMobileIcon = mediaDTO;
     }
 
     @Override

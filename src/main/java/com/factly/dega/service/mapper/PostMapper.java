@@ -15,12 +15,12 @@ public interface PostMapper extends EntityMapper<PostDTO, Post> {
     @Mapping(source = "status.name", target = "statusName")
     @Mapping(source = "format.id", target = "formatId")
     @Mapping(source = "format.name", target = "formatName")
-    @Mapping(source = "media", target = "mediaDTO")
+    @Mapping(source = "media", target = "media")
     PostDTO toDto(Post post);
 
     @Mapping(source = "statusId", target = "status")
     @Mapping(source = "formatId", target = "format")
-    @Mapping(source = "mediaDTO.id", target = "media")
+    @Mapping(source = "media.id", target = "media")
     Post toEntity(PostDTO postDTO);
 
     default Post fromId(String id) {

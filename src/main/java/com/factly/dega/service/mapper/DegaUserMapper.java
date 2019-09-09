@@ -15,13 +15,13 @@ public interface DegaUserMapper extends EntityMapper<DegaUserDTO, DegaUser> {
     @Mapping(source = "organizationDefault.name", target = "organizationDefaultName")
     @Mapping(source = "organizationCurrent.id", target = "organizationCurrentId")
     @Mapping(source = "organizationCurrent.name", target = "organizationCurrentName")
-    @Mapping(source = "media", target = "mediaDTO")
+    @Mapping(source = "media", target = "media")
     DegaUserDTO toDto(DegaUser degaUser);
 
     @Mapping(source = "organizationDefaultId", target = "organizationDefault")
     @Mapping(source = "organizationCurrentId", target = "organizationCurrent")
     @Mapping(target = "posts", ignore = true)
-    @Mapping(source = "mediaDTO.id", target = "media")
+    @Mapping(source = "media.id", target = "media")
     DegaUser toEntity(DegaUserDTO degaUserDTO);
 
     default DegaUser fromId(String id) {
