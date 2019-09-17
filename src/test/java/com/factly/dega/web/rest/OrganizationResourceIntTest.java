@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -27,11 +28,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -225,15 +226,20 @@ public class OrganizationResourceIntTest {
     @Mock
     private DegaUserService degaUserService;
 
+    @MockBean
+    private Clock clock;
+
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final OrganizationResource organizationResource = new OrganizationResource(organizationService, degaUserService);
+        final OrganizationResource organizationResource = new OrganizationResource(organizationService, degaUserService, clock);
         this.restOrganizationMockMvc = MockMvcBuilders.standaloneSetup(organizationResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
+
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
     }
 
     /**
@@ -302,6 +308,8 @@ public class OrganizationResourceIntTest {
     public void createOrganization() throws Exception {
         int databaseSizeBeforeCreate = organizationRepository.findAll().size();
 
+        when(clock.instant()).thenReturn(DEFAULT_CREATED_DATE.toInstant(), DEFAULT_LAST_UPDATED_DATE.toInstant());
+
         // Create the Organization
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
         restOrganizationMockMvc.perform(post("/api/organizations")
@@ -351,8 +359,8 @@ public class OrganizationResourceIntTest {
         assertThat(testOrganization.getMailchimpAPIKey()).isEqualTo(DEFAULT_MAILCHIMP_API_KEY);
         assertThat(testOrganization.getSiteLanguage()).isEqualTo(DEFAULT_SITE_LANGUAGE);
         assertThat(testOrganization.getTimeZone()).isEqualTo(DEFAULT_TIME_ZONE);
-        assertThat(testOrganization.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
-        assertThat(testOrganization.getSlug()).isEqualTo(DEFAULT_SLUG);
+        assertThat(testOrganization.getClientId()).isEqualToIgnoringCase(DEFAULT_CLIENT_ID);
+        assertThat(testOrganization.getSlug()).isEqualToIgnoringCase(DEFAULT_SLUG);
         assertThat(testOrganization.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testOrganization.getCreatedDate()).isEqualTo(DEFAULT_CREATED_DATE);
         assertThat(testOrganization.getLastUpdatedDate()).isEqualTo(DEFAULT_LAST_UPDATED_DATE);
@@ -426,6 +434,7 @@ public class OrganizationResourceIntTest {
         int databaseSizeBeforeTest = organizationRepository.findAll().size();
         // set the field null
         organization.setClientId(null);
+        organization.setName(null);
 
         // Create the Organization, which fails.
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
@@ -444,6 +453,7 @@ public class OrganizationResourceIntTest {
         int databaseSizeBeforeTest = organizationRepository.findAll().size();
         // set the field null
         organization.setSlug(null);
+        organization.setName(null);
 
         // Create the Organization, which fails.
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
@@ -484,6 +494,8 @@ public class OrganizationResourceIntTest {
         // Create the Organization, which fails.
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
 
+        when(clock.instant()).thenReturn(DEFAULT_CREATED_DATE.toInstant(), DEFAULT_LAST_UPDATED_DATE.toInstant());
+
         restOrganizationMockMvc.perform(post("/api/organizations")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(organizationDTO)))
@@ -501,6 +513,8 @@ public class OrganizationResourceIntTest {
 
         // Create the Organization, which fails.
         OrganizationDTO organizationDTO = organizationMapper.toDto(organization);
+
+        when(clock.instant()).thenReturn(DEFAULT_CREATED_DATE.toInstant(), DEFAULT_LAST_UPDATED_DATE.toInstant());
 
         restOrganizationMockMvc.perform(post("/api/organizations")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -706,6 +720,8 @@ public class OrganizationResourceIntTest {
             .siteAddress(UPDATED_SITE_ADDRESS)
             .enableFactchecking(UPDATED_ENABLE_FACTCHECKING);
         OrganizationDTO organizationDTO = organizationMapper.toDto(updatedOrganization);
+
+        when(clock.instant()).thenReturn(UPDATED_LAST_UPDATED_DATE.toInstant());
 
         restOrganizationMockMvc.perform(put("/api/organizations")
             .contentType(TestUtil.APPLICATION_JSON_UTF8)

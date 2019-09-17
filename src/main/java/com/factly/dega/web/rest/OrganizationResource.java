@@ -3,9 +3,7 @@ package com.factly.dega.web.rest;
 import com.codahale.metrics.annotation.Timed;
 import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.OrganizationService;
-import com.factly.dega.service.dto.DegaUserDTO;
 import com.factly.dega.service.dto.OrganizationDTO;
-import com.factly.dega.service.dto.RoleMappingDTO;
 import com.factly.dega.web.rest.errors.BadRequestAlertException;
 import com.factly.dega.web.rest.util.CommonUtil;
 import com.factly.dega.web.rest.util.HeaderUtil;
@@ -25,12 +23,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.Clock;
 import java.time.ZonedDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * REST controller for managing Organization.
@@ -45,10 +41,12 @@ public class OrganizationResource {
 
     private final OrganizationService organizationService;
     private final DegaUserService degaUserService;
+    private final Clock clock;
 
-    public OrganizationResource(OrganizationService organizationService, DegaUserService degaUserService) {
+    public OrganizationResource(OrganizationService organizationService, DegaUserService degaUserService, Clock clock) {
         this.organizationService = organizationService;
         this.degaUserService = degaUserService;
+        this.clock = clock;
     }
 
     /**
@@ -67,8 +65,8 @@ public class OrganizationResource {
         }
         organizationDTO.setSlug(getSlug(CommonUtil.removeSpecialCharsFromString(organizationDTO.getName())));
         organizationDTO.setClientId(getSlug(CommonUtil.removeSpecialCharsFromString(organizationDTO.getName())));
-        organizationDTO.setCreatedDate(ZonedDateTime.now());
-        organizationDTO.setLastUpdatedDate(ZonedDateTime.now());
+        organizationDTO.setCreatedDate(ZonedDateTime.now(clock));
+        organizationDTO.setLastUpdatedDate(ZonedDateTime.now(clock));
         OrganizationDTO result = organizationService.save(organizationDTO);
         return ResponseEntity.created(new URI("/api/organizations/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
@@ -91,7 +89,7 @@ public class OrganizationResource {
         if (organizationDTO.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        organizationDTO.setLastUpdatedDate(ZonedDateTime.now());
+        organizationDTO.setLastUpdatedDate(ZonedDateTime.now(clock));
         OrganizationDTO result = organizationService.save(organizationDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, organizationDTO.getId().toString()))

@@ -88,6 +88,13 @@ keycloak:
 dega:
     media:
         upload-dir: ./uploads
+        hostname: testmediahostname
+        storage: testmediastorage
+
+imageproxy:
+    hostname: testimageproxyhostname
+    enabled: false
+
 # ===================================================================
 # Application specific properties
 # Add your own application properties here, see the ApplicationProperties class
@@ -98,3 +105,8 @@ dega:
 # ===================================================================
 
 # application:
+google:
+    cloud:
+        storage:
+            hostname: testgooglecloudhostname
+            bucketname: testgooglecloudbucketname

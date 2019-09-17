@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
+import static com.factly.dega.web.rest.TestUtil.clientIDSessionAttributes;
 import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -148,7 +148,7 @@ public class CategoryResourceIntTest {
 
         // Create the Category
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
-        restCategoryMockMvc.perform(post("/api/categories")
+        restCategoryMockMvc.perform(post("/api/categories").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(categoryDTO)))
             .andExpect(status().isCreated());
@@ -159,7 +159,7 @@ public class CategoryResourceIntTest {
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testCategory.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testCategory.getSlug()).isEqualTo(DEFAULT_SLUG);
+        assertThat(testCategory.getSlug()).isEqualToIgnoringCase(DEFAULT_SLUG);
         assertThat(testCategory.getParent()).isEqualTo(DEFAULT_PARENT);
         assertThat(testCategory.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testCategory.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
@@ -254,7 +254,7 @@ public class CategoryResourceIntTest {
         // Create the Category, which fails.
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
 
-        restCategoryMockMvc.perform(post("/api/categories")
+        restCategoryMockMvc.perform(post("/api/categories").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(categoryDTO)))
             .andExpect(status().isCreated());
@@ -272,7 +272,7 @@ public class CategoryResourceIntTest {
         // Create the Category, which fails.
         CategoryDTO categoryDTO = categoryMapper.toDto(category);
 
-        restCategoryMockMvc.perform(post("/api/categories")
+        restCategoryMockMvc.perform(post("/api/categories").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(categoryDTO)))
             .andExpect(status().isCreated());
@@ -357,7 +357,7 @@ public class CategoryResourceIntTest {
             .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE);
         CategoryDTO categoryDTO = categoryMapper.toDto(updatedCategory);
 
-        restCategoryMockMvc.perform(put("/api/categories")
+        restCategoryMockMvc.perform(put("/api/categories").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(categoryDTO)))
             .andExpect(status().isOk());
@@ -368,9 +368,9 @@ public class CategoryResourceIntTest {
         Category testCategory = categoryList.get(categoryList.size() - 1);
         assertThat(testCategory.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testCategory.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
-        assertThat(testCategory.getSlug()).isEqualTo(UPDATED_SLUG);
+        assertThat(testCategory.getSlug()).isEqualToIgnoringCase(UPDATED_SLUG);
         assertThat(testCategory.getParent()).isEqualTo(UPDATED_PARENT);
-        assertThat(testCategory.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testCategory.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testCategory.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
         assertThat(testCategory.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
@@ -426,7 +426,7 @@ public class CategoryResourceIntTest {
         when(mockCategorySearchRepository.search(queryStringQuery("id:" + category.getId()), PageRequest.of(0, 20)))
             .thenReturn(new PageImpl<>(Collections.singletonList(category), PageRequest.of(0, 1), 1));
         // Search the category
-        restCategoryMockMvc.perform(get("/api/_search/categories?query=id:" + category.getId()))
+        restCategoryMockMvc.perform(get("/api/_search/categories?query=id:" + category.getId()).sessionAttrs(clientIDSessionAttributes()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(category.getId())))
