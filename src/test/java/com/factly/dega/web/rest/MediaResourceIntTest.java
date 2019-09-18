@@ -2,7 +2,6 @@ package com.factly.dega.web.rest;
 
 import com.factly.dega.CoreApp;
 
-import com.factly.dega.config.Constants;
 import com.factly.dega.domain.Media;
 import com.factly.dega.repository.MediaRepository;
 import com.factly.dega.repository.search.MediaSearchRepository;
@@ -32,11 +31,10 @@ import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
+import static com.factly.dega.web.rest.TestUtil.clientIDSessionAttributes;
 import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -190,7 +188,7 @@ public class MediaResourceIntTest {
 
         // Create the Media
         MediaDTO mediaDTO = mediaMapper.toDto(media);
-        restMediaMockMvc.perform(post("/api/media")
+        restMediaMockMvc.perform(post("/api/media").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(mediaDTO)))
             .andExpect(status().isCreated());
@@ -342,7 +340,7 @@ public class MediaResourceIntTest {
         // Create the Media, which fails.
         MediaDTO mediaDTO = mediaMapper.toDto(media);
 
-        restMediaMockMvc.perform(post("/api/media")
+        restMediaMockMvc.perform(post("/api/media").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(mediaDTO)))
             .andExpect(status().isCreated());
@@ -396,7 +394,7 @@ public class MediaResourceIntTest {
         // Create the Media, which fails.
         MediaDTO mediaDTO = mediaMapper.toDto(media);
 
-        restMediaMockMvc.perform(post("/api/media")
+        restMediaMockMvc.perform(post("/api/media").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(mediaDTO)))
             .andExpect(status().isCreated());
@@ -411,7 +409,7 @@ public class MediaResourceIntTest {
         mediaRepository.save(media);
 
         // Get all the mediaList
-        restMediaMockMvc.perform(get("/api/media?sort=id,desc").sessionAttr(Constants.CLIENT_ID, "testClientID"))
+        restMediaMockMvc.perform(get("/api/media?sort=id,desc").sessionAttrs(clientIDSessionAttributes()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(media.getId())))
@@ -493,13 +491,13 @@ public class MediaResourceIntTest {
             .publishedDate(UPDATED_PUBLISHED_DATE)
             .lastUpdatedDate(UPDATED_LAST_UPDATED_DATE)
             .slug(UPDATED_SLUG)
-            .clientId(UPDATED_CLIENT_ID)
+            .clientId(DEFAULT_CLIENT_ID)
             .createdDate(UPDATED_CREATED_DATE)
             .relativeURL(UPDATED_RELATIVE_URL)
             .sourceURL(UPDATED_SOURCE_URL);
         MediaDTO mediaDTO = mediaMapper.toDto(updatedMedia);
 
-        restMediaMockMvc.perform(put("/api/media")
+        restMediaMockMvc.perform(put("/api/media").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(mediaDTO)))
             .andExpect(status().isOk());
@@ -521,7 +519,7 @@ public class MediaResourceIntTest {
         assertThat(testMedia.getPublishedDate()).isEqualTo(UPDATED_PUBLISHED_DATE);
         assertThat(testMedia.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
         assertThat(testMedia.getSlug()).isEqualTo(UPDATED_SLUG);
-        assertThat(testMedia.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testMedia.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testMedia.getCreatedDate()).isEqualTo(UPDATED_CREATED_DATE);
         assertThat(testMedia.getRelativeURL()).isEqualTo(UPDATED_RELATIVE_URL);
         assertThat(testMedia.getSourceURL()).isEqualTo(UPDATED_SOURCE_URL);
@@ -578,7 +576,7 @@ public class MediaResourceIntTest {
         when(mockMediaSearchRepository.search(queryStringQuery("id:" + media.getId()), PageRequest.of(0, 20)))
             .thenReturn(new PageImpl<>(Collections.singletonList(media), PageRequest.of(0, 1), 1));
         // Search the media
-        restMediaMockMvc.perform(get("/api/_search/media?query=id:" + media.getId()))
+        restMediaMockMvc.perform(get("/api/_search/media?query=id:" + media.getId()).sessionAttrs(clientIDSessionAttributes()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(media.getId())))

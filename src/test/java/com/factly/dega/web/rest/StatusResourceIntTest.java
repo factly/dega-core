@@ -2,6 +2,7 @@ package com.factly.dega.web.rest;
 
 import com.factly.dega.CoreApp;
 
+import com.factly.dega.config.Constants;
 import com.factly.dega.domain.Status;
 import com.factly.dega.repository.StatusRepository;
 import com.factly.dega.repository.search.StatusSearchRepository;
@@ -32,7 +33,8 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
-
+import static com.factly.dega.config.Constants.DEFAULT_CLIENTID;
+import static com.factly.dega.web.rest.TestUtil.clientIDSessionAttributes;
 import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -74,7 +76,7 @@ public class StatusResourceIntTest {
 
     @Autowired
     private StatusMapper statusMapper;
-    
+
     @Autowired
     private StatusService statusService;
 
@@ -139,7 +141,7 @@ public class StatusResourceIntTest {
 
         // Create the Status
         StatusDTO statusDTO = statusMapper.toDto(status);
-        restStatusMockMvc.perform(post("/api/statuses")
+        restStatusMockMvc.perform(post("/api/statuses").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(statusDTO)))
             .andExpect(status().isCreated());
@@ -151,7 +153,7 @@ public class StatusResourceIntTest {
         assertThat(testStatus.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testStatus.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testStatus.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
-        assertThat(testStatus.getSlug()).isEqualTo(DEFAULT_SLUG);
+        assertThat(testStatus.getSlug()).isEqualToIgnoringCase(DEFAULT_SLUG);
         assertThat(testStatus.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
         assertThat(testStatus.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
@@ -244,7 +246,7 @@ public class StatusResourceIntTest {
         // Create the Status, which fails.
         StatusDTO statusDTO = statusMapper.toDto(status);
 
-        restStatusMockMvc.perform(post("/api/statuses")
+        restStatusMockMvc.perform(post("/api/statuses").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(statusDTO)))
             .andExpect(status().isCreated());
@@ -262,7 +264,7 @@ public class StatusResourceIntTest {
         // Create the Status, which fails.
         StatusDTO statusDTO = statusMapper.toDto(status);
 
-        restStatusMockMvc.perform(post("/api/statuses")
+        restStatusMockMvc.perform(post("/api/statuses").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(statusDTO)))
             .andExpect(status().isCreated());
@@ -288,7 +290,7 @@ public class StatusResourceIntTest {
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
-    
+
     @Test
     public void getStatus() throws Exception {
         // Initialize the database
@@ -342,7 +344,7 @@ public class StatusResourceIntTest {
         assertThat(statusList).hasSize(databaseSizeBeforeUpdate);
         Status testStatus = statusList.get(statusList.size() - 1);
         assertThat(testStatus.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testStatus.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testStatus.getClientId()).isEqualTo(DEFAULT_CLIENTID);
         assertThat(testStatus.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
         assertThat(testStatus.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testStatus.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
@@ -400,7 +402,7 @@ public class StatusResourceIntTest {
         when(mockStatusSearchRepository.search(queryStringQuery("id:" + status.getId()), PageRequest.of(0, 20)))
             .thenReturn(new PageImpl<>(Collections.singletonList(status), PageRequest.of(0, 1), 1));
         // Search the status
-        restStatusMockMvc.perform(get("/api/_search/statuses?query=id:" + status.getId()))
+        restStatusMockMvc.perform(get("/api/_search/statuses?query=id:" + status.getId()).sessionAttrs(clientIDSessionAttributes()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(status.getId())))

@@ -3,9 +3,6 @@ package com.factly.dega.web.rest;
 import com.factly.dega.CoreApp;
 
 import com.factly.dega.domain.DegaUser;
-import com.factly.dega.domain.Role;
-import com.factly.dega.domain.Organization;
-import com.factly.dega.domain.Organization;
 import com.factly.dega.domain.Organization;
 import com.factly.dega.domain.RoleMapping;
 import com.factly.dega.repository.DegaUserRepository;
@@ -13,6 +10,7 @@ import com.factly.dega.repository.search.DegaUserSearchRepository;
 import com.factly.dega.service.DegaUserService;
 import com.factly.dega.service.OrganizationService;
 import com.factly.dega.service.dto.DegaUserDTO;
+import com.factly.dega.service.dto.KeyCloakUserDTO;
 import com.factly.dega.service.mapper.DegaUserMapper;
 import com.factly.dega.utils.KeycloakUtils;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
@@ -25,20 +23,22 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.internal.matchers.Any;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.client.RestTemplate;
 
-import java.security.Principal;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.ZoneOffset;
@@ -136,13 +136,13 @@ public class DegaUserResourceIntTest {
     @Autowired
     private DegaUserService degaUserService;
 
-    @Autowired
-    private RestTemplate restTemplate;
+    @MockBean
+    private OAuth2RestTemplate oauth2RestTemplate;
+
+    @Value("${keycloak.api.uri}")
+    private String keycloakApiUri;
 
     private static final String keycloakServerURI = "http://localhost:9080/auth/admin/realms/jhipster/users";
-
-    @Mock
-    private RestTemplate restTemplateMock;
 
     @Mock
     private OAuth2Authentication oauth;
@@ -180,12 +180,20 @@ public class DegaUserResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final DegaUserResource degaUserResource = new DegaUserResource(degaUserService, restTemplate, keycloakUtils, organizationService);
+        final DegaUserResource degaUserResource = new DegaUserResource(degaUserService, oauth2RestTemplate, keycloakUtils, organizationService);
         this.restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
+
+        ReflectionTestUtils.setField(keycloakUtils, "oauth2RestTemplate", oauth2RestTemplate);
+
+        final KeyCloakUserDTO keyCloakUserDTO = new KeyCloakUserDTO();
+        keyCloakUserDTO.setId(DEFAULT_KEYCLOAK_ID);
+
+        when(oauth2RestTemplate.getForObject(keycloakApiUri+ "users?username=" + DEFAULT_EMAIL, KeyCloakUserDTO[].class))
+            .thenReturn(new KeyCloakUserDTO[]{keyCloakUserDTO});
     }
 
     /**
@@ -244,7 +252,7 @@ public class DegaUserResourceIntTest {
 
         // Create the DegaUser
         DegaUserDTO degaUserDTO = degaUserMapper.toDto(degaUser);
-        when(restTemplateMock.postForObject(keycloakServerURI, Any.class, String.class)).thenReturn("");
+        when(oauth2RestTemplate.postForObject(keycloakServerURI, Any.class, String.class)).thenReturn("");
         restDegaUserMockMvc.perform(post("/api/dega-users")
             .principal(oauth).contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(degaUserDTO)))
@@ -322,6 +330,7 @@ public class DegaUserResourceIntTest {
         int databaseSizeBeforeTest = degaUserRepository.findAll().size();
         // set the field null
         degaUser.setSlug(null);
+        degaUser.setDisplayName(null);
 
         // Create the DegaUser, which fails.
         DegaUserDTO degaUserDTO = degaUserMapper.toDto(degaUser);
@@ -421,7 +430,7 @@ public class DegaUserResourceIntTest {
     }
 
     public void getAllDegaUsersWithEagerRelationshipsIsEnabled() throws Exception {
-        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakUtils, organizationService);
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, oauth2RestTemplate, keycloakUtils, organizationService);
         when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
 
         MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
@@ -437,7 +446,7 @@ public class DegaUserResourceIntTest {
     }
 
     public void getAllDegaUsersWithEagerRelationshipsIsNotEnabled() throws Exception {
-        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, restTemplateMock, keycloakUtils, organizationService);
+        DegaUserResource degaUserResource = new DegaUserResource(degaUserServiceMock, oauth2RestTemplate, keycloakUtils, organizationService);
             when(degaUserServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
             MockMvc restDegaUserMockMvc = MockMvcBuilders.standaloneSetup(degaUserResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)

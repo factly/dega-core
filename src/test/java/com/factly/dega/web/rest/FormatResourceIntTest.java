@@ -11,6 +11,7 @@ import com.factly.dega.service.mapper.FormatMapper;
 import com.factly.dega.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
@@ -32,7 +33,8 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
-
+import static com.factly.dega.config.Constants.DEFAULT_CLIENTID;
+import static com.factly.dega.web.rest.TestUtil.clientIDSessionAttributes;
 import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -77,7 +79,7 @@ public class FormatResourceIntTest {
 
     @Autowired
     private FormatMapper formatMapper;
-    
+
     @Autowired
     private FormatService formatService;
 
@@ -143,7 +145,7 @@ public class FormatResourceIntTest {
 
         // Create the Format
         FormatDTO formatDTO = formatMapper.toDto(format);
-        restFormatMockMvc.perform(post("/api/formats")
+        restFormatMockMvc.perform(post("/api/formats").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(formatDTO)))
             .andExpect(status().isCreated());
@@ -156,7 +158,7 @@ public class FormatResourceIntTest {
         assertThat(testFormat.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
         assertThat(testFormat.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testFormat.getDescription()).isEqualTo(DEFAULT_DESCRIPTION);
-        assertThat(testFormat.getSlug()).isEqualTo(DEFAULT_SLUG);
+        assertThat(testFormat.getSlug()).isEqualToIgnoringCase(DEFAULT_SLUG);
         assertThat(testFormat.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
         assertThat(testFormat.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
 
@@ -231,7 +233,7 @@ public class FormatResourceIntTest {
         // Create the Format, which fails.
         FormatDTO formatDTO = formatMapper.toDto(format);
 
-        restFormatMockMvc.perform(post("/api/formats")
+        restFormatMockMvc.perform(post("/api/formats").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(formatDTO)))
             .andExpect(status().isCreated());
@@ -241,6 +243,7 @@ public class FormatResourceIntTest {
     }
 
     @Test
+    @Ignore("Last updated date always for format always has a value")
     public void checkLastUpdatedDateIsRequired() throws Exception {
         int databaseSizeBeforeTest = formatRepository.findAll().size();
         // set the field null
@@ -276,7 +279,7 @@ public class FormatResourceIntTest {
             .andExpect(jsonPath("$.[*].createdDate").value(hasItem(sameInstant(DEFAULT_CREATED_DATE))))
             .andExpect(jsonPath("$.[*].lastUpdatedDate").value(hasItem(sameInstant(DEFAULT_LAST_UPDATED_DATE))));
     }
-    
+
     @Test
     public void getFormat() throws Exception {
         // Initialize the database
@@ -333,7 +336,7 @@ public class FormatResourceIntTest {
         Format testFormat = formatList.get(formatList.size() - 1);
         assertThat(testFormat.getName()).isEqualTo(UPDATED_NAME);
         assertThat(testFormat.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
-        assertThat(testFormat.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testFormat.getClientId()).isEqualTo(DEFAULT_CLIENTID);
         assertThat(testFormat.getDescription()).isEqualTo(UPDATED_DESCRIPTION);
         assertThat(testFormat.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testFormat.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
@@ -391,7 +394,7 @@ public class FormatResourceIntTest {
         when(mockFormatSearchRepository.search(queryStringQuery("id:" + format.getId()), PageRequest.of(0, 20)))
             .thenReturn(new PageImpl<>(Collections.singletonList(format), PageRequest.of(0, 1), 1));
         // Search the format
-        restFormatMockMvc.perform(get("/api/_search/formats?query=id:" + format.getId()))
+        restFormatMockMvc.perform(get("/api/_search/formats?query=id:" + format.getId()).sessionAttrs(clientIDSessionAttributes()))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(format.getId())))

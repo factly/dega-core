@@ -26,14 +26,12 @@ import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import static org.elasticsearch.index.query.QueryBuilders.*;
 
 /**
  * REST controller for managing Post.
@@ -50,9 +48,12 @@ public class PostResource {
 
     private final StatusService statusService;
 
-    public PostResource(PostService postService, StatusService statusService) {
+    private final Clock clock;
+
+    public PostResource(PostService postService, StatusService statusService, Clock clock) {
         this.postService = postService;
         this.statusService = statusService;
+        this.clock = clock;
     }
 
     /**
@@ -83,10 +84,10 @@ public class PostResource {
             throw new BadRequestAlertException("ClientID not found", ENTITY_NAME, "cliendIDinvalid");
         }
         postDTO.setSlug(getSlug((String) obj, CommonUtil.removeSpecialCharsFromString(postDTO.getTitle())));
-        postDTO.setCreatedDate(ZonedDateTime.now());
-        postDTO.setLastUpdatedDate(ZonedDateTime.now());
+        postDTO.setCreatedDate(ZonedDateTime.now(clock));
+        postDTO.setLastUpdatedDate(ZonedDateTime.now(clock));
         if (postDTO.getStatusName().equalsIgnoreCase("publish")) {
-            postDTO.setPublishedDate(ZonedDateTime.now());
+            postDTO.setPublishedDate(ZonedDateTime.now(clock));
         }
         PostDTO result = postService.save(postDTO);
         return ResponseEntity.created(new URI("/api/posts/" + result.getId()))
@@ -134,8 +135,8 @@ public class PostResource {
         }
 
         //(TODO) Publish date logic needs to be modified, anytime anyone would update a post, publish date would get updated, which is not desired.
-        postDTO.setPublishedDate(ZonedDateTime.now());
-        postDTO.setLastUpdatedDate(ZonedDateTime.now());
+        postDTO.setPublishedDate(ZonedDateTime.now(clock));
+        postDTO.setLastUpdatedDate(ZonedDateTime.now(clock));
         PostDTO result = postService.save(postDTO);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, postDTO.getId().toString()))

@@ -6,6 +6,7 @@ import com.factly.dega.domain.Role;
 import com.factly.dega.repository.RoleRepository;
 import com.factly.dega.repository.search.RoleSearchRepository;
 import com.factly.dega.service.RoleService;
+import com.factly.dega.service.dto.KeyCloakRoleMappingDTO;
 import com.factly.dega.service.dto.RoleDTO;
 import com.factly.dega.service.mapper.RoleMapper;
 import com.factly.dega.utils.KeycloakUtils;
@@ -16,13 +17,17 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -33,7 +38,8 @@ import java.time.ZoneId;
 import java.util.Collections;
 import java.util.List;
 
-
+import static com.factly.dega.config.Constants.DEFAULT_CLIENTID;
+import static com.factly.dega.web.rest.TestUtil.clientIDSessionAttributes;
 import static com.factly.dega.web.rest.TestUtil.sameInstant;
 import static com.factly.dega.web.rest.TestUtil.createFormattingConversionService;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -105,8 +111,15 @@ public class RoleResourceIntTest {
     private MockMvc restRoleMockMvc;
 
     private Role role;
+
     @Autowired
     private KeycloakUtils keycloakUtils;
+
+    @MockBean
+    private OAuth2RestTemplate oauth2RestTemplate;
+
+    @Value("${keycloak.api.uri}")
+    private String keycloakApiUri;
 
     @Before
     public void setup() {
@@ -117,6 +130,15 @@ public class RoleResourceIntTest {
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
             .setMessageConverters(jacksonMessageConverter).build();
+
+        ReflectionTestUtils.setField(keycloakUtils, "oauth2RestTemplate", oauth2RestTemplate);
+
+        final KeyCloakRoleMappingDTO keyCloakRoleMappingDTO = new KeyCloakRoleMappingDTO();
+        keyCloakRoleMappingDTO.setId(DEFAULT_KEYCLOAK_ID);
+        keyCloakRoleMappingDTO.setName(DEFAULT_KEYCLOAK_NAME);
+
+        when(oauth2RestTemplate.getForObject(keycloakApiUri+ "roles/ROLE_" + DEFAULT_NAME, KeyCloakRoleMappingDTO.class))
+            .thenReturn(keyCloakRoleMappingDTO);
     }
 
     /**
@@ -150,7 +172,7 @@ public class RoleResourceIntTest {
 
         // Create the Role
         RoleDTO roleDTO = roleMapper.toDto(role);
-        restRoleMockMvc.perform(post("/api/roles")
+        restRoleMockMvc.perform(post("/api/roles").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
             .andExpect(status().isCreated());
@@ -162,7 +184,7 @@ public class RoleResourceIntTest {
         assertThat(testRole.getName()).isEqualTo(DEFAULT_NAME);
         assertThat(testRole.getClientId()).isEqualTo(DEFAULT_CLIENT_ID);
         assertThat(testRole.isIsDefault()).isEqualTo(DEFAULT_IS_DEFAULT);
-        assertThat(testRole.getSlug()).isEqualTo(DEFAULT_SLUG);
+        assertThat(testRole.getSlug()).isEqualToIgnoringCase(DEFAULT_SLUG);
         assertThat(testRole.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
         assertThat(testRole.getLastUpdatedDate().toLocalDate()).isEqualTo(UPDATED_LAST_UPDATED_DATE.toLocalDate());
         assertThat(testRole.getKeycloakId()).isEqualTo(DEFAULT_KEYCLOAK_ID);
@@ -257,7 +279,7 @@ public class RoleResourceIntTest {
         // Create the Role, which fails.
         RoleDTO roleDTO = roleMapper.toDto(role);
 
-        restRoleMockMvc.perform(post("/api/roles")
+        restRoleMockMvc.perform(post("/api/roles").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
             .andExpect(status().isCreated());
@@ -275,7 +297,7 @@ public class RoleResourceIntTest {
         // Create the Role, which fails.
         RoleDTO roleDTO = roleMapper.toDto(role);
 
-        restRoleMockMvc.perform(post("/api/roles")
+        restRoleMockMvc.perform(post("/api/roles").sessionAttrs(clientIDSessionAttributes())
             .contentType(TestUtil.APPLICATION_JSON_UTF8)
             .content(TestUtil.convertObjectToJsonBytes(roleDTO)))
             .andExpect(status().isCreated());
@@ -361,7 +383,7 @@ public class RoleResourceIntTest {
         assertThat(roleList).hasSize(databaseSizeBeforeUpdate);
         Role testRole = roleList.get(roleList.size() - 1);
         assertThat(testRole.getName()).isEqualTo(UPDATED_NAME);
-        assertThat(testRole.getClientId()).isEqualTo(UPDATED_CLIENT_ID);
+        assertThat(testRole.getClientId()).isEqualTo(DEFAULT_CLIENTID);
         assertThat(testRole.isIsDefault()).isEqualTo(UPDATED_IS_DEFAULT);
         assertThat(testRole.getSlug()).isEqualTo(UPDATED_SLUG);
         assertThat(testRole.getCreatedDate().toLocalDate()).isEqualTo(UPDATED_CREATED_DATE.toLocalDate());
